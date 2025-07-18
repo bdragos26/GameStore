@@ -1,0 +1,120 @@
+﻿@page "/EditGame"
+@page "/EditGame/{id:int}"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+@inject IGamesClient gamesClient
+@inject IGenresClient genresClient
+@rendermode InteractiveServer
+
+<PageTitle>@title</PageTitle>
+
+<h3>@title</h3>
+
+
+@if (genres == null || game == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div class="row">
+		<div class="col-md-4">
+			<EditForm Model="@game" OnValidSubmit="HandleSubmitAsync" FormName="Newgame">
+				<DataAnnotationsValidator />
+				<div class="mb-3">
+					<label for="name" class="form-label">Name: </label>
+					<InputText id="name" class="form-control" @bind-Value="game.Name"/>
+					<ValidationMessage For="@(() => game.Name)"/>
+				</div>
+				<div class="mb-3">
+					<label for="genre" class="form-label">GenreId: </label>
+					<InputSelect id="genre" class="form-control" @bind-Value="game.GenreId">
+						<option value="">Select a genre</option>
+						@foreach (var genre in genres)
+						{
+							<option value="@genre.Id">@genre.Name</option>
+						}
+					</InputSelect>
+					<ValidationMessage For="@(() => game.GenreId)"/>
+
+				</div>
+				<div class="mb-3">
+					<label for="price" class="form-label">Price: </label>
+					<InputNumber id="price" class="form-control" @bind-Value="game.Price"/>
+					<ValidationMessage For="@(() => game.Price)"/>
+				</div>
+				<div class="mb-3">
+					<label for="releaseDate" class="form-label">Release Date: </label>
+					<InputDate id="releaseDate" class="form-control" @bind-Value="game.ReleaseDate"/>
+				</div>
+
+				<button class="btn btn-primary" type="submit">Submit</button>
+				@* <a role="button" class="btn btn-secondary" href="/" @onclick="CancelAsync">Cancel</a>  *@
+				<button class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
+			</EditForm>
+		</div>
+	</div>
+}
+
+@code {
+	[SupplyParameterFromForm]
+	public GameDetails? game { get; set; }
+	private List<Genre>? genres;
+	[Parameter]
+	public int? Id { get; set; }
+
+	private string title = string.Empty;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (game != null)
+		{
+			return;
+		}
+		if (Id != null)
+		{
+			game = await gamesClient.GetGameAsync(Id.Value);
+			title = $"Edit {game.Name}";
+		}
+		else
+		{
+			game = new()
+			{
+				Name = string.Empty,
+				ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
+			};
+			title = "New Game";
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		genres = await genresClient.GetGenreAsync();
+	}
+
+	private async Task HandleSubmitAsync()
+	{
+		if (Id == null)
+		{
+			await gamesClient.AddGameAsync(game);
+		}
+		else
+		{
+			game.Id = Id.Value;
+			await gamesClient.UpdateGameAsync(game);
+		}
+		NavigationManager.NavigateTo("/");
+	}
+
+	IJSObjectReference jsmodule;
+
+	public async Task CancelAsync()
+	{
+		jsmodule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "/Components/Pages/EditGame.razor.js");
+		var leave = await jsmodule.InvokeAsync<bool>("showConfirm", "Are you sure you want to cancel?");
+		if (leave)
+		{
+			NavigationManager.NavigateTo("/");
+		}
+	}
+}
