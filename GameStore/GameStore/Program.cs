@@ -1,11 +1,13 @@
+using Blazored.LocalStorage;
 using GameStore.Client.Clients;
 using GameStore.Components;
 using GameStore.Data;
 using GameStore.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,9 @@ builder.Services.AddScoped<IUserClient, UserClient>();
 
 var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
+
+builder.Services.AddAuthenticationCore();
+builder.Services.AddScoped<ProtectedSessionStorage>();
 
 var app = builder.Build();
 
