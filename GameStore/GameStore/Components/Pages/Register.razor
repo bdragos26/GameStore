@@ -1,0 +1,80 @@
+﻿@page "/register"
+@using GameStore.Shared.DTOs
+@inject NavigationManager NavigationManager
+@inject IUserClient UserClient
+@rendermode InteractiveServer
+
+<PageTitle>Register Account</PageTitle>
+
+<h3>Register new account</h3>
+
+<div class="row">
+	<div class="col-md-6">
+		<EditForm Model="@userRegister" OnValidSubmit="HandleRegisterAsync">
+			<DataAnnotationsValidator />
+
+			@if (!string.IsNullOrEmpty(errorMessage))
+			{
+				<div class="alert-danger">@errorMessage</div>
+			}
+			<div class="mb-3">
+				<label for="username" class="form-label">Username:</label>
+				<InputText id="username" class="form-control" @bind-Value="userRegister.Username" />
+				<ValidationMessage For="@(() => userRegister.Username)" />
+			</div>
+
+			<div class="mb-3">
+				<label for="email" class="form-label">Email:</label>
+				<InputText id="email" class="form-control" @bind-Value="userRegister.Email" />
+				<ValidationMessage For="@(() => userRegister.Email)" />
+			</div>
+
+			<div class="mb-3">
+				<label for="password" class="form-label">Password:</label>
+				<InputText type="password" id="password" class="form-control" @bind-Value="userRegister.Password" />
+				<ValidationMessage For="@(() => userRegister.Password)" />
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label for="firstName" class="form-label">First Name:</label>
+					<InputText id="firstName" class="form-control" @bind-Value="userRegister.FirstName" />
+				</div>
+
+				<div class="col-md-6 mb-3">
+					<label for="lastName" class="form-label">Last Name:</label>
+					<InputText id="lastName" class="form-control" @bind-Value="userRegister.LastName" />
+				</div>
+			</div>
+
+			<div class="mb-3">
+				<label for="dateOfBirth" class="form-label">Date of Birth:</label>
+				<InputDate id="dateOfBirth" class="form-control" @bind-Value="userRegister.DateOfBirth" />
+			</div>
+
+			<div class="mb-3 d-flex justify-content-between align-items-center">
+				<button class="btn btn-primary" type="submit">Register</button>
+				<NavLink class="btn btn-link" href="/login">Already have an account? Login</NavLink>
+			</div>
+
+		</EditForm>
+	</div>
+</div>
+
+@code {
+	private UserRegisterDto userRegister = new();
+	private string? errorMessage;
+
+	private async Task HandleRegisterAsync()
+	{
+		try
+		{
+			await UserClient.RegisterAsync(userRegister);
+			NavigationManager.NavigateTo("/");
+		}
+		catch (Exception e)
+		{
+			errorMessage = e.Message;
+		}
+	}
+}

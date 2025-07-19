@@ -1,0 +1,17 @@
+﻿@GameStore_HostAddress = https://localhost:7194
+
+GET {{GameStore_HostAddress}}/games
+
+###
+
+POST {{GameStore_HostAddress}}/games
+Content-Type: application/json
+
+{
+  "name": "Street Fighter IV",
+  "genreId": 7,
+  "price": 99.99,
+  "releaseDate": "2025-07-16"
+}
+
+###

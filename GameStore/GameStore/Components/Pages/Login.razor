@@ -1,0 +1,66 @@
+@page "/login"
+@using GameStore.Shared.DTOs
+@inject NavigationManager NavigationManager
+@inject IUserClient UserClient
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
+
+<h3>Login</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="@userDto" OnValidSubmit="HandleLoginAsync" FormName="loginForm">
+            <DataAnnotationsValidator />
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">
+                    @errorMessage
+                </div>
+            }
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <InputText id="username" class="form-control" @bind-Value="userDto.Username" />
+                <ValidationMessage For="@(() => userDto.Username)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <InputText type="password" id="password" class="form-control" @bind-Value="userDto.Password" />
+                <ValidationMessage For="@(() => userDto.Password)" />
+            </div>
+
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <button class="btn btn-primary" type="submit">Login</button>
+                <NavLink class="btn btn-link" href="/register">Register</NavLink>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private readonly UserLoginDTO userDto = new();
+    private string? errorMessage;
+
+    private async Task HandleLoginAsync()
+    {
+        try
+        {
+            var user = await UserClient.LoginAsync(userDto);
+            if (user != null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Invalid username or password";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred during login";
+        }
+    }
+}

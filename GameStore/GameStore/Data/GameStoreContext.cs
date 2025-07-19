@@ -7,6 +7,7 @@ namespace GameStore.Data
     {
         public DbSet<GameDetails> Games { get; set; }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +28,14 @@ namespace GameStore.Data
                 .HasOne(g => g.Genre)
                 .WithMany()
                 .HasForeignKey(g => g.GenreId);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }
