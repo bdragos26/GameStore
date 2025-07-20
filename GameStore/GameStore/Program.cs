@@ -5,7 +5,8 @@ using GameStore.Data;
 using GameStore.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +32,9 @@ var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
 
 builder.Services.AddAuthenticationCore();
-builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -43,14 +46,16 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
