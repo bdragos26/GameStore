@@ -32,11 +32,13 @@ namespace GameStore.Endpoints
                 }
             });
 
-            group.MapPost("/login", async (UserLoginDTO userLoginDto, IUserService userService) =>
+            group.MapPost("/login", async (UserLoginDTO loginDto, IUserService userService) =>
             {
-                var user = await userService.AuthenticateUserAsync(userLoginDto.Username, userLoginDto.Password);
+                var user = await userService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
                 return user == null ? Results.Unauthorized() : Results.Ok(user);
             });
+
+            group.MapPost("/logout", () => Results.Ok());
 
             group.MapGet("/", async (IUserService userService) =>
                 Results.Ok(await userService.GetAllUsers()));

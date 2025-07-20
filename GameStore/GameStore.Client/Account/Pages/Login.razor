@@ -1,7 +1,10 @@
 @page "/login"
+@using GameStore.Client.Clients
 @using GameStore.Shared.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject IUserClient UserClient
+@inject AuthenticationStateProvider CustomAuthProvider
 @rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
@@ -41,7 +44,7 @@
 </div>
 
 @code {
-    private readonly UserLoginDTO userDto = new();
+	private UserLoginDTO userDto = new();
     private string? errorMessage;
 
     private async Task HandleLoginAsync()
@@ -51,7 +54,11 @@
             var user = await UserClient.LoginAsync(userDto);
             if (user != null)
             {
-                NavigationManager.NavigateTo("/");
+	            if (CustomAuthProvider is CustomAuthStateProvider customAuthProvider)
+	            {
+		            await customAuthProvider.UpdateAuthenticationState(user);
+	            }
+	            NavigationManager.NavigateTo("/");
             }
             else
             {
@@ -60,7 +67,7 @@
         }
         catch (Exception ex)
         {
-            errorMessage = "An error occurred during login";
+            errorMessage = ex.Message;
         }
     }
 }

@@ -28,8 +28,17 @@ namespace GameStore.Client.Clients
 
         public async Task<User?> LoginAsync(UserLoginDTO loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("/users/login", loginDto);
-            return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<User>() : null;
+            var response = await _httpClient.PostAsJsonAsync("users/login", loginDto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<User>();
+            }
+            return null;
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _httpClient.PostAsync("users/logout", null);
         }
 
         public async Task<User?> GetUserByIdAsync(int id)

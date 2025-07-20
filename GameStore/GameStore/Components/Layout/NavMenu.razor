@@ -1,5 +1,19 @@
 ﻿<nav class="navbar bg-body-tertiary" style="background-color: lightgray">
 	<div class="container">
-		<span class="navbar-brand mb-0 h1">Game Store</span>
+		<a class="navbar-brand mb-0 h1" href="/">Game Store</a>
 	</div>
+	<CascadingAuthenticationState>
+	<AuthorizeView>
+		<Authorized>
+			<div class="d-flex align-items-center">
+				<span class="me-2">Hello, @context.User.Identity?.Name!</span>
+				<a href="/logout" class="btn btn-outline-danger">Logout</a>
+			</div>
+		</Authorized>
+		<NotAuthorized>
+			<a href="/login" class="btn btn-outline-primary">Login</a>
+			<a href="/register" class="btn btn-primary ms-2">Register</a>
+		</NotAuthorized>
+	</AuthorizeView>
+	</CascadingAuthenticationState>
 </nav>

@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using GameStore.Client;
 using GameStore.Client.Clients;
 using GameStore.Components;
 using GameStore.Data;
@@ -7,6 +8,7 @@ using GameStore.Services;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,9 +34,8 @@ var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
 
 builder.Services.AddAuthenticationCore();
-builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddAuthorization();
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 
@@ -52,10 +53,6 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-// Add authentication and authorization middleware
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

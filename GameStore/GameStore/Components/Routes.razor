@@ -1,6 +1,7 @@
-﻿@using GameStore.Components.Account.Pages
+﻿@using GameStore.Client.Account.Pages
+<CascadingAuthenticationState>
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
-		<Found Context="routeData">
+	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
 			<NotAuthorized>
 				<RedirectToLogin/>
@@ -12,3 +13,4 @@
 		<FocusOnNavigate RouteData="routeData" Selector="h1" />
 	</Found>
 </Router>
+</CascadingAuthenticationState>
