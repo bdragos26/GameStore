@@ -8,7 +8,7 @@ namespace GameStore.Client
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private readonly ClaimsPrincipal customClaimsPrincipal = new(new ClaimsIdentity());
+        private readonly ClaimsPrincipal defaultClaimsPrincipal = new(new ClaimsIdentity());
 
         public CustomAuthStateProvider(ILocalStorageService localStorage)
         {
@@ -24,7 +24,7 @@ namespace GameStore.Client
                 var email = await _localStorage.GetItemAsync<string>("email");
 
                 if (userId == 0 || string.IsNullOrEmpty(username))
-                    return new AuthenticationState(customClaimsPrincipal);
+                    return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));   
 
                 var claims = new List<Claim>
                 {
@@ -33,12 +33,12 @@ namespace GameStore.Client
                     new(ClaimTypes.Email, email)
                 };
 
-                var identity = new ClaimsIdentity(claims, "GameStoreAuth");
-                return new AuthenticationState(new ClaimsPrincipal(identity));
+                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(
+                    new ClaimsIdentity(claims, "GameStoreAuth"))));
             }
             catch
             {
-                return new AuthenticationState(customClaimsPrincipal);
+                return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));
             }
         }
 
@@ -66,7 +66,7 @@ namespace GameStore.Client
                 await _localStorage.RemoveItemAsync("userId");
                 await _localStorage.RemoveItemAsync("username");
                 await _localStorage.RemoveItemAsync("email");
-                claimsPrincipal = customClaimsPrincipal;
+                claimsPrincipal = defaultClaimsPrincipal;
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));

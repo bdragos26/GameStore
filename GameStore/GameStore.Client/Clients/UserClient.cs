@@ -9,6 +9,7 @@ namespace GameStore.Client.Clients
     {
         Task RegisterAsync(UserRegisterDto registerDto);
         Task<User?> LoginAsync(UserLoginDTO loginDto);
+        Task LogoutAsync();
         Task<User?> GetUserByIdAsync(int id);
         Task<List<User>> GetUsersAsync();
     }

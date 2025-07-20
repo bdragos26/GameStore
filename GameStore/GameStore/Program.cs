@@ -6,9 +6,7 @@ using GameStore.Data;
 using GameStore.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
