@@ -1,4 +1,4 @@
-﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+﻿@rendermode InteractiveServer
 
 <nav class="navbar bg-body-tertiary" style="background-color: lightgray">
 	<div class="container">
@@ -12,8 +12,16 @@
 			</div>
 		</Authorized>
 		<NotAuthorized>
-			<a href="/login" class="btn btn-outline-primary">Login</a>
-			<a href="/register" class="btn btn-primary ms-2">Register</a>
+			<div class="d-flex">
+				<a href="/login" class="btn btn-outline-primary">Login</a>
+				<a href="/register" class="btn btn-primary ms-2">Register</a>
+			</div>
 		</NotAuthorized>
+		<Authorizing>
+			<div class="d-flex align-items-center">
+				<div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
+				<span>Checking auth status...</span>
+			</div>
+		</Authorizing>
 	</AuthorizeView>
 </nav>

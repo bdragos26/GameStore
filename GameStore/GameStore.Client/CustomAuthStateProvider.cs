@@ -17,6 +17,7 @@ namespace GameStore.Client
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
+            await Task.Delay(500);
             try
             {
                 var userId = await _localStorage.GetItemAsync<int>("userId");
