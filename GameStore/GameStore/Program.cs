@@ -31,8 +31,9 @@ builder.Services.AddScoped<IUserClient, UserClient>();
 var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
 
-builder.Services.AddAuthenticationCore();
+builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
