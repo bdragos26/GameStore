@@ -7,7 +7,7 @@
 @inject IUserClient UserClient
 @rendermode InteractiveServer
 
-<h3 class="mb-4">Your Profile</h3>
+<h3 class="mb-4" style="margin-top: 30px;">Your Profile</h3>
 
 <AuthorizeView>
     <Authorized>
@@ -17,7 +17,7 @@
         }
         else
         {
-            <div class="card shadow rounded p-4 border border-secondary-subtle bg-light" style="max-width: 500px;">
+            <div class="card shadow rounded p-4 border border-secondary-subtle bg-light" style="max-width: 1000px;">
                 @if (!isEditing)
                 {
                     <div class="d-flex align-items-center mb-4">
