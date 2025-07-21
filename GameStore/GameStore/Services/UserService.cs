@@ -13,6 +13,7 @@ namespace GameStore.Services
         Task<User?> GetUserById(int id);
         Task<List<User>> GetAllUsers();
         Task<bool> UserExistsAsync(string username);
+        Task<User> UpdateUserAsync(int id, User updatedUser);
     }
     public class UserService : IUserService
     {
@@ -60,6 +61,17 @@ namespace GameStore.Services
         public async Task<bool> UserExistsAsync(string username)
         {
             return await _dbContext.Users.AnyAsync(u => u.Username == username);
+        }
+
+        public async Task<User> UpdateUserAsync(int id, User updatedUser)
+        {
+            var existingUser = await _dbContext.Users.FindAsync(id);
+            _dbContext.Entry(existingUser)
+                .CurrentValues
+                .SetValues(updatedUser);
+            
+            await _dbContext.SaveChangesAsync();
+            return existingUser;
         }
     }
 }

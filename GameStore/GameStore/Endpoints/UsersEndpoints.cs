@@ -43,6 +43,17 @@ namespace GameStore.Endpoints
             group.MapGet("/", async (IUserService userService) =>
                 Results.Ok(await userService.GetAllUsers()));
 
+            group.MapPut("/{id:int}", async (int id, User updatedUser, IUserService userService) =>
+            {
+                var existingUser = await userService.UpdateUserAsync(id, updatedUser);
+                if (existingUser == null)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.NoContent();
+            });
+
             return group;
         }
     }

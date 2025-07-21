@@ -14,10 +14,11 @@ namespace GameStore.Shared.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
+        [Required]
         public string? FirstName { get; set; }
+        [Required]
         public string? LastName { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

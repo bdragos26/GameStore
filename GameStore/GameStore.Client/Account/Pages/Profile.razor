@@ -1,0 +1,133 @@
+﻿@page "/profile"
+@using Blazored.LocalStorage
+@using GameStore.Shared.Models
+@using GameStore.Client.Clients
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ILocalStorageService LocalStorage
+@inject IUserClient UserClient
+@rendermode InteractiveServer
+
+<h3 class="mb-4">Your Profile</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (user == null)
+        {
+            <div class="alert alert-info">Loading user...</div>
+        }
+        else
+        {
+            <div class="card shadow rounded p-4 border border-secondary-subtle bg-light" style="max-width: 500px;">
+                @if (!isEditing)
+                {
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-person-circle fs-1 text-secondary me-3"></i>
+                        <div>
+                            <h4 class="mb-0">@user.Username</h4>
+                            <span class="text-muted">Member since @user.CreatedAt.ToString("yyyy-MM-dd")</span>
+                        </div>
+                    </div>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-secondary">Email:</dt>
+                        <dd class="col-sm-8">@user.Email</dd>
+                        <dt class="col-sm-4 text-secondary">First Name:</dt>
+                        <dd class="col-sm-8">@user.FirstName</dd>
+                        <dt class="col-sm-4 text-secondary">Last Name:</dt>
+                        <dd class="col-sm-8">@user.LastName</dd>
+                        <dt class="col-sm-4 text-secondary">Date of Birth:</dt>
+                        <dd class="col-sm-8">@user.DateOfBirth?.ToString("yyyy-MM-dd")</dd>
+                        <dt class="col-sm-4 text-secondary">User ID:</dt>
+                        <dd class="col-sm-8">@user.Id</dd>
+                    </dl>
+                    <button class="btn btn-primary mt-3" @onclick="EnableEdit">Edit</button>
+                }
+                else
+                {
+                    <EditForm Model="editUser" OnValidSubmit="SaveChanges" Context="formContext">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-2">
+                            <label class="form-label">First Name</label>
+                            <InputText class="form-control" @bind-Value="editUser.FirstName" />
+                            <ValidationMessage For="@(() => editUser.FirstName)" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Last Name</label>
+                            <InputText class="form-control" @bind-Value="editUser.LastName" />
+                            <ValidationMessage For="@(() => editUser.LastName)" />
+                        </div>
+                        <div class="mb-2">
+	                        <label class="form-label">Date of Birth</label>
+	                        <InputDate class="form-control" @bind-Value="editUser.DateOfBirth" />
+                        </div>
+                        <div class="mb-2">
+	                        <label class="form-label">Email</label>
+	                        <InputText class="form-control" @bind-Value="editUser.Email" />
+	                        <ValidationMessage For="@(() => editUser.Email)" />
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn btn-success" type="submit">Save</button>
+                            <button class="btn btn-secondary" @onclick="CancelEdit" type="button">Cancel</button>
+                        </div>
+                    </EditForm>
+                }
+            </div>
+        }
+    </Authorized>
+    <Authorizing>
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
+            <span>Checking authentication...</span>
+        </div>
+    </Authorizing>
+</AuthorizeView>
+
+@code {
+    private User? user;
+    private User? editUser;
+    private bool isEditing = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            user = await LocalStorage.GetItemAsync<User>("user");
+            StateHasChanged();
+        }
+    }
+
+    private void EnableEdit()
+    {
+        if (user != null)
+        {
+            editUser = new User
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = user.DateOfBirth,
+                CreatedAt = user.CreatedAt
+            };
+            isEditing = true;
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        if (editUser != null)
+        {
+            await UserClient.UpdateUserAsync(editUser);
+            user = editUser;
+            await LocalStorage.SetItemAsync("user", user);
+            isEditing = false;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+        editUser = null;
+    }
+}

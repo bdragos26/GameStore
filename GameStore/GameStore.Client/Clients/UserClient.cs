@@ -1,3 +1,4 @@
+using System.Formats.Asn1;
 using System.Net.Http.Json;
 using GameStore.Shared.Models;
 using GameStore.Shared.DTOs;
@@ -12,6 +13,7 @@ namespace GameStore.Client.Clients
         Task LogoutAsync();
         Task<User?> GetUserByIdAsync(int id);
         Task<List<User>> GetUsersAsync();
+        Task UpdateUserAsync(User updatedUser);
     }
 
     public class UserClient : IUserClient
@@ -47,5 +49,8 @@ namespace GameStore.Client.Clients
 
         public async Task<List<User>> GetUsersAsync()
             => await _httpClient.GetFromJsonAsync<List<User>>("/users") ?? new List<User>();
+
+        public async Task UpdateUserAsync(User updatedUser)
+            => await _httpClient.PutAsJsonAsync($"/users/{updatedUser.Id}", updatedUser);
     }
 }

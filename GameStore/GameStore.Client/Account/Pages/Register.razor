@@ -40,11 +40,13 @@
 				<div class="col-md-6 mb-3">
 					<label for="firstName" class="form-label">First Name:</label>
 					<InputText id="firstName" class="form-control" @bind-Value="userRegister.FirstName" />
+					<ValidationMessage For="@(() => userRegister.FirstName)" />
 				</div>
 
 				<div class="col-md-6 mb-3">
 					<label for="lastName" class="form-label">Last Name:</label>
 					<InputText id="lastName" class="form-control" @bind-Value="userRegister.LastName" />
+					<ValidationMessage For="@(() => userRegister.LastName)" />
 				</div>
 			</div>
 
