@@ -1,9 +1,12 @@
 ﻿@rendermode InteractiveServer
 
-<nav class="navbar" style="background-color: #e3f2fd;" data-bs-theme="light">
-	<div class="container">
-		<a class="navbar-brand mb-0 h1" href="/">Game Store</a>
-	</div>
+<nav class="navbar sticky-top shadow-sm" style="background-color: #e3f2fd;" data-bs-theme="light">
+	<NavLink href="/" Match="NavLinkMatch.All" class="nav-link custom-nav">
+		<i class="bi bi-house-door me-2"></i> Game Store
+	</NavLink>
+	<NavLink href="/gameList" Match="NavLinkMatch.All" class="nav-link custom-nav">
+		<i class="bi bi-list-ul me-2"></i> Game Catalog
+	</NavLink>
 	<AuthorizeView>
 		<Authorized>
 			<div class="dropdown me-2">
@@ -38,3 +41,37 @@
 		</Authorizing>
 	</AuthorizeView>
 </nav>
+
+<style>
+	.active {
+		background-color: lightblue;
+		border-radius: 8px;
+		border-style: none;
+		box-sizing: border-box;
+		color: #FFFFFF;
+		cursor: pointer;
+		display: inline-block;
+		font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 14px;
+		font-weight: 500;
+		height: 40px;
+		line-height: 20px;
+		list-style: none;
+		margin: 0;
+		outline: none;
+		padding: 10px 16px;
+		position: relative;
+		text-align: center;
+		text-decoration: none;
+		transition: color 100ms;
+		vertical-align: baseline;
+		user-select: none;
+		-webkit-user-select: none;
+		touch-action: manipulation;
+	}
+
+	.active:hover,
+	.active:focus {
+			background-color: lightblue;
+	}
+</style>

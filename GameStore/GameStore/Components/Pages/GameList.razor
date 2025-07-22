@@ -1,0 +1,71 @@
+﻿@page "/gameList"  
+@inject NavigationManager NavigationManager  
+@inject IGamesClient gamesClient
+@inject IGenresClient genresClient
+@rendermode InteractiveServer
+
+<PageTitle>Game Catalog</PageTitle>  
+
+<div class="mt-2">  
+	<NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>  
+</div>  
+
+@if (games == null)  
+{  
+	<p><em>Loading...</em></p>  
+}  
+else  
+{  
+	<table class="table table-striped table-bordered table-hover mt-3">  
+		<thead class="table-dark">  
+		<th>Id</th>  
+		<th>Name</th>  
+		<th>GenreId</th>  
+		<th class="text-end">Price</th>  
+		<th>Release Date</th>  
+		<th></th>  
+		</thead>  
+		<tbody>  
+		@foreach (var game in games)  
+		{  
+			<tr>  
+				<td>@game.Id</td>  
+				<td>@game.Name</td>
+				<td>@genres.Find((genre) => genre.Id == game.GenreId).Name</td>
+				<td class="text-end">$@game.Price</td>  
+				<td>@game.ReleaseDate</td>  
+				<td>  
+					<div class="d-flex">  
+						<button class="btn btn-primary me-2" @onclick="@(() => GoToEdit(game.Id))">  
+							<i class="bi bi-pencil"></i>  
+						</button>  
+						<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">Delete</button>  
+					</div>  
+					<DeleteGame Game="@game" />  
+				</td>  
+			</tr>  
+		}  
+		</tbody>  
+	</table>  
+}  
+
+@code {
+	private List<GameDetails> games;  
+	private List<Genre> genres;
+
+	protected override async Task OnInitializedAsync()
+	{
+		games = await gamesClient.GetGamesAsync();
+		genres = await genresClient.GetGenreAsync();
+	}  
+
+	private string GetDeleteModalId(GameDetails game)  
+	{  
+		return $"#{DeleteGame.GetModalId(game)}";  
+	}  
+
+	private void GoToEdit(int id)  
+	{  
+		NavigationManager.NavigateTo($"/EditGame/{id}");  
+	}  
+}

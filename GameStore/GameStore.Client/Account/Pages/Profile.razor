@@ -1,8 +1,6 @@
 ﻿@page "/profile"
 @using Blazored.LocalStorage
 @using GameStore.Shared.Models
-@using GameStore.Client.Clients
-@using Microsoft.AspNetCore.Components.Authorization
 @inject ILocalStorageService LocalStorage
 @inject IUserClient UserClient
 @rendermode InteractiveServer
@@ -47,24 +45,29 @@
                         <DataAnnotationsValidator />
 
                         <div class="mb-2">
-                            <label class="form-label">First Name</label>
-                            <InputText class="form-control" @bind-Value="editUser.FirstName" />
-                            <ValidationMessage For="@(() => editUser.FirstName)" />
+	                        <label class="form-label">First Name</label>
+	                        <InputText class="form-control" @bind-Value="editUser.FirstName" />
+	                        <ValidationMessage For="@(() => editUser.FirstName)" />
                         </div>
+
                         <div class="mb-2">
-                            <label class="form-label">Last Name</label>
-                            <InputText class="form-control" @bind-Value="editUser.LastName" />
-                            <ValidationMessage For="@(() => editUser.LastName)" />
+	                        <label class="form-label">Last Name</label>
+	                        <InputText class="form-control" @bind-Value="editUser.LastName" />
+	                        <ValidationMessage For="@(() => editUser.LastName)" />
                         </div>
+
                         <div class="mb-2">
 	                        <label class="form-label">Date of Birth</label>
 	                        <InputDate class="form-control" @bind-Value="editUser.DateOfBirth" />
                         </div>
+
                         <div class="mb-2">
 	                        <label class="form-label">Email</label>
 	                        <InputText class="form-control" @bind-Value="editUser.Email" />
 	                        <ValidationMessage For="@(() => editUser.Email)" />
                         </div>
+						
+
                         <div class="d-flex gap-2 mt-3">
                             <button class="btn btn-success" type="submit">Save</button>
                             <button class="btn btn-secondary" @onclick="CancelEdit" type="button">Cancel</button>
@@ -105,6 +108,7 @@
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
+                PasswordHash = user.PasswordHash,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 DateOfBirth = user.DateOfBirth,

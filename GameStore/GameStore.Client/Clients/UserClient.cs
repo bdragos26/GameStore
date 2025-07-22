@@ -14,6 +14,7 @@ namespace GameStore.Client.Clients
         Task<User?> GetUserByIdAsync(int id);
         Task<List<User>> GetUsersAsync();
         Task UpdateUserAsync(User updatedUser);
+        Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto);
     }
 
     public class UserClient : IUserClient
@@ -52,5 +53,15 @@ namespace GameStore.Client.Clients
 
         public async Task UpdateUserAsync(User updatedUser)
             => await _httpClient.PutAsJsonAsync($"/users/{updatedUser.Id}", updatedUser);
+
+        public async Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/users/resetPass", resetPasswordDto);
+            if (response.IsSuccessStatusCode)
+                return;
+
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(error);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GameStore.Services;
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.Endpoints
 {
@@ -41,7 +42,7 @@ namespace GameStore.Endpoints
             group.MapPost("/logout", () => Results.Ok());
 
             group.MapGet("/", async (IUserService userService) =>
-                Results.Ok(await userService.GetAllUsers()));
+                Results.Ok(await userService.GetAllUsersAsync()));
 
             group.MapPut("/{id:int}", async (int id, User updatedUser, IUserService userService) =>
             {
@@ -52,6 +53,26 @@ namespace GameStore.Endpoints
                 }
 
                 return Results.NoContent();
+            });
+
+            group.MapPost("/resetPass", async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
+            {
+                try
+                {
+                    var user = await userService.ResetUserPasswordAsync(resetPasswordDto.Email,
+                        resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
+                    if (user == null)
+                    {
+                        return Results.NotFound("User not found");
+                    }
+
+                    await userService.UpdateUserAsync(user.Id, user);
+                    return Results.Ok();
+                }
+                catch (Exception e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
             });
 
             return group;
