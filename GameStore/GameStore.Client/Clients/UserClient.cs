@@ -52,7 +52,7 @@ namespace GameStore.Client.Clients
             => await _httpClient.GetFromJsonAsync<List<User>>("/users") ?? new List<User>();
 
         public async Task UpdateUserAsync(User updatedUser)
-            => await _httpClient.PutAsJsonAsync($"/users/{updatedUser.Id}", updatedUser);
+            => await _httpClient.PutAsJsonAsync($"/users/{updatedUser.UserId}", updatedUser);
 
         public async Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {

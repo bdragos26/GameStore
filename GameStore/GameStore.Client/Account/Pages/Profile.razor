@@ -35,7 +35,7 @@
                         <dt class="col-sm-4 text-secondary">Date of Birth:</dt>
                         <dd class="col-sm-8">@user.DateOfBirth?.ToString("yyyy-MM-dd")</dd>
                         <dt class="col-sm-4 text-secondary">User ID:</dt>
-                        <dd class="col-sm-8">@user.Id</dd>
+                        <dd class="col-sm-8">@user.UserId</dd>
                     </dl>
                     <button class="btn btn-primary mt-3" @onclick="EnableEdit">Edit</button>
                 }
@@ -105,7 +105,7 @@
         {
             editUser = new User
             {
-                Id = user.Id,
+                UserId = user.UserId,
                 Username = user.Username,
                 Email = user.Email,
                 PasswordHash = user.PasswordHash,

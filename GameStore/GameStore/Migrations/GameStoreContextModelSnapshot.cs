@@ -17,9 +17,9 @@ namespace GameStore.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
 
-            modelBuilder.Entity("GameStore.Shared.Models.GameDetails", b =>
+            modelBuilder.Entity("GameStore.Shared.Models.Game", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GameId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -36,16 +36,34 @@ namespace GameStore.Migrations
                     b.Property<DateOnly>("ReleaseDate")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("GameId");
 
                     b.HasIndex("GenreId");
 
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("GameStore.Shared.Models.GameRating", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("GameStore.Shared.Models.Genre", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GenreId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -53,66 +71,66 @@ namespace GameStore.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("GenreId");
 
                     b.ToTable("Genres");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            GenreId = 1,
                             Name = "Fighting"
                         },
                         new
                         {
-                            Id = 2,
+                            GenreId = 2,
                             Name = "Adventure"
                         },
                         new
                         {
-                            Id = 3,
+                            GenreId = 3,
                             Name = "Platformer"
                         },
                         new
                         {
-                            Id = 4,
+                            GenreId = 4,
                             Name = "Shooter"
                         },
                         new
                         {
-                            Id = 5,
+                            GenreId = 5,
                             Name = "RPG"
                         },
                         new
                         {
-                            Id = 6,
+                            GenreId = 6,
                             Name = "Sandbox"
                         },
                         new
                         {
-                            Id = 7,
+                            GenreId = 7,
                             Name = "Action"
                         },
                         new
                         {
-                            Id = 8,
+                            GenreId = 8,
                             Name = "Action RPG"
                         },
                         new
                         {
-                            Id = 9,
+                            GenreId = 9,
                             Name = "Puzzle"
                         },
                         new
                         {
-                            Id = 10,
+                            GenreId = 10,
                             Name = "Strategy"
                         });
                 });
 
             modelBuilder.Entity("GameStore.Shared.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -124,18 +142,22 @@ namespace GameStore.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Role")
@@ -148,7 +170,7 @@ namespace GameStore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -159,7 +181,7 @@ namespace GameStore.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GameStore.Shared.Models.GameDetails", b =>
+            modelBuilder.Entity("GameStore.Shared.Models.Game", b =>
                 {
                     b.HasOne("GameStore.Shared.Models.Genre", "Genre")
                         .WithMany()
@@ -168,6 +190,25 @@ namespace GameStore.Migrations
                         .IsRequired();
 
                     b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("GameStore.Shared.Models.GameRating", b =>
+                {
+                    b.HasOne("GameStore.Shared.Models.Game", "GameDetails")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Shared.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GameDetails");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

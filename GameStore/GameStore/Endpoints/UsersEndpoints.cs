@@ -67,7 +67,7 @@ namespace GameStore.Endpoints
                         return Results.NotFound("User not found");
                     }
 
-                    await userService.UpdateUserAsync(user.Id, user);
+                    await userService.UpdateUserAsync(user.UserId, user);
                     return Results.Ok();
                 }
                 catch (Exception e)

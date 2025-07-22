@@ -20,9 +20,9 @@ else
 {  
 	<table class="table table-striped table-bordered table-hover mt-3">  
 		<thead class="table-dark">  
-		<th>Id</th>  
+		<th>GameGenreUserId</th>  
 		<th>Name</th>  
-		<th>GenreId</th>  
+		<th>GenreGameGenreUserId</th>  
 		<th class="text-end">Price</th>  
 		<th>Release Date</th> 
 		<th></th>
@@ -31,15 +31,15 @@ else
 		@foreach (var game in games)  
 		{  
 			<tr>  
-				<td>@game.Id</td>  
+				<td>@game.GameId</td>  
 				<td>@game.Name</td>
-				<td>@genres.Find((genre) => genre.Id == game.GenreId).Name</td>
+				<td>@genres.Find((genre) => genre.GenreId == game.GenreId).Name</td>
 				<td class="text-end">$@game.Price</td>  
 				<td>@game.ReleaseDate</td>  
 				<AuthorizeView Roles="Admin">
 				<td>  
 					<div class="d-flex">  
-						<button class="btn btn-primary me-2" @onclick="@(() => GoToEdit(game.Id))">  
+						<button class="btn btn-primary me-2" @onclick="@(() => GoToEdit(game.GameId))">  
 							<i class="bi bi-pencil"></i>  
 						</button>  
 						<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">Delete</button>  
@@ -54,7 +54,7 @@ else
 }  
 
 @code {
-	private List<GameDetails> games;  
+	private List<Game> games;  
 	private List<Genre> genres;
 
 	protected override async Task OnInitializedAsync()
@@ -63,7 +63,7 @@ else
 		genres = await genresClient.GetGenreAsync();
 	}  
 
-	private string GetDeleteModalId(GameDetails game)  
+	private string GetDeleteModalId(Game game)  
 	{  
 		return $"#{DeleteGame.GetModalId(game)}";  
 	}  

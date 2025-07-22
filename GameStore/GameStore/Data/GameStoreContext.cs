@@ -5,26 +5,27 @@ namespace GameStore.Data
 {
     public class GameStoreContext(DbContextOptions<GameStoreContext> options) : DbContext(options)
     {
-        public DbSet<GameDetails> Games { get; set; }
+        public DbSet<Game> Games { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<GameRating> Ratings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Genre>().HasData(
-                new Genre { Id = 1, Name = "Fighting" },
-                new Genre { Id = 2, Name = "Adventure" },
-                new Genre { Id = 3, Name = "Platformer" },
-                new Genre { Id = 4, Name = "Shooter" },
-                new Genre { Id = 5, Name = "RPG" },
-                new Genre { Id = 6, Name = "Sandbox" },
-                new Genre { Id = 7, Name = "Action" },
-                new Genre { Id = 8, Name = "Action RPG" },
-                new Genre { Id = 9, Name = "Puzzle" },
-                new Genre { Id = 10, Name = "Strategy" }
+                new Genre { GenreId = 1, Name = "Fighting" },
+                new Genre { GenreId = 2, Name = "Adventure" },
+                new Genre { GenreId = 3, Name = "Platformer" },
+                new Genre { GenreId = 4, Name = "Shooter" },
+                new Genre { GenreId = 5, Name = "RPG" },
+                new Genre { GenreId = 6, Name = "Sandbox" },
+                new Genre { GenreId = 7, Name = "Action" },
+                new Genre { GenreId = 8, Name = "Action RPG" },
+                new Genre { GenreId = 9, Name = "Puzzle" },
+                new Genre { GenreId = 10, Name = "Strategy" }
             );
 
-            modelBuilder.Entity<GameDetails>()
+            modelBuilder.Entity<Game>()
                 .HasOne(g => g.Genre)
                 .WithMany()
                 .HasForeignKey(g => g.GenreId);
@@ -36,6 +37,19 @@ namespace GameStore.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<GameRating>()
+                .HasKey(r => new { r.UserId, r.GameId });
+
+            modelBuilder.Entity<GameRating>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId);
+
+            modelBuilder.Entity<GameRating>()
+                .HasOne(r => r.GameDetails)
+                .WithMany()
+                .HasForeignKey(r => r.GameId);
         }
     }
 }

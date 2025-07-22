@@ -5,7 +5,7 @@
 @inject IJSRuntime JsRuntime
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
-@attribute [Authorize(Roles="Admin")]
+@* @attribute [Authorize(Roles="Admin")] *@
 @rendermode InteractiveServer
 
 <PageTitle>@title</PageTitle>
@@ -29,12 +29,12 @@ else
 					<ValidationMessage For="@(() => game.Name)"/>
 				</div>
 				<div class="mb-3">
-					<label for="genre" class="form-label">GenreId: </label>
+					<label for="genre" class="form-label">GenreGameGenreUserId: </label>
 					<InputSelect id="genre" class="form-control" @bind-Value="game.GenreId">
 						<option value="">Select a genre</option>
 						@foreach (var genre in genres)
 						{
-							<option value="@genre.Id">@genre.Name</option>
+							<option value="@genre.GenreId">@genre.Name</option>
 						}
 					</InputSelect>
 					<ValidationMessage For="@(() => game.GenreId)"/>
@@ -60,7 +60,7 @@ else
 
 @code {
 	[SupplyParameterFromForm]
-	public GameDetails? game { get; set; }
+	public Game? game { get; set; }
 	private List<Genre>? genres;
 	[Parameter]
 	public int? Id { get; set; }
@@ -102,7 +102,7 @@ else
 		}
 		else
 		{
-			game.Id = Id.Value;
+			game.GameId = Id.Value;
 			await gamesClient.UpdateGameAsync(game);
 		}
 		NavigationManager.NavigateTo("/");

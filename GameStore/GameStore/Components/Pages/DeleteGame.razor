@@ -18,7 +18,7 @@
 
 @code {
 	[Parameter]
-	public GameDetails? Game { get; set; }
+	public Game? Game { get; set; }
 	private string title = string.Empty;
 
 	protected override void OnParametersSet()
@@ -26,15 +26,15 @@
 		title = $"Delete {Game?.Name}?";
 	}
 
-	public static string GetModalId(GameDetails? game)
+	public static string GetModalId(Game? game)
 	{
 		ArgumentNullException.ThrowIfNull(game);
-		return $"deleteModal-{game.Id}";
+		return $"deleteModal-{game.GameId}";
 	}
 
 	private async Task ConfirmAsync()
 	{
-		await gamesClient.DeleteGameAsync(Game.Id);
+		await gamesClient.DeleteGameAsync(Game.GameId);
 		NavigationManager.Refresh(true);
 	}
 }

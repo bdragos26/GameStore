@@ -33,7 +33,7 @@ namespace GameStore.Client
 
                 var claims = new List<Claim>
                 {
-                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new(ClaimTypes.Name, user.Username),
                     new(ClaimTypes.Email, user.Email),
                     new(ClaimTypes.Role, user.Role)
@@ -54,14 +54,14 @@ namespace GameStore.Client
 
             if (user != null)
             {
-                //await _localStorage.SetItemAsync("userId", user.Id);
+                //await _localStorage.SetItemAsync("userId", user.GameId);
                 //await _localStorage.SetItemAsync("username", user.Username);
                 //await _localStorage.SetItemAsync("email", user.Email);
                 await _localStorage.SetItemAsync("user", user);
 
                 var claims = new List<Claim>
                 {
-                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new(ClaimTypes.Name, user.Username),
                     new(ClaimTypes.Email, user.Email),
                     new(ClaimTypes.Role, user.Role)

@@ -2,9 +2,9 @@
 
 namespace GameStore.Shared.Models
 {
-    public class GameDetails
+    public class Game
     {
-        public int Id { get; set; }
+        public int GameId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
