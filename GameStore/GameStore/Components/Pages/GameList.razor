@@ -6,9 +6,11 @@
 
 <PageTitle>Game Catalog</PageTitle>  
 
-<div class="mt-2">  
-	<NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>  
-</div>  
+<AuthorizeView Roles="Admin">
+	<div class="mt-2">  
+		<NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>  
+	</div>  
+</AuthorizeView>
 
 @if (games == null)  
 {  
@@ -22,8 +24,8 @@ else
 		<th>Name</th>  
 		<th>GenreId</th>  
 		<th class="text-end">Price</th>  
-		<th>Release Date</th>  
-		<th></th>  
+		<th>Release Date</th> 
+		<th></th>
 		</thead>  
 		<tbody>  
 		@foreach (var game in games)  
@@ -34,6 +36,7 @@ else
 				<td>@genres.Find((genre) => genre.Id == game.GenreId).Name</td>
 				<td class="text-end">$@game.Price</td>  
 				<td>@game.ReleaseDate</td>  
+				<AuthorizeView Roles="Admin">
 				<td>  
 					<div class="d-flex">  
 						<button class="btn btn-primary me-2" @onclick="@(() => GoToEdit(game.Id))">  
@@ -43,6 +46,7 @@ else
 					</div>  
 					<DeleteGame Game="@game" />  
 				</td>  
+				</AuthorizeView>
 			</tr>  
 		}  
 		</tbody>  

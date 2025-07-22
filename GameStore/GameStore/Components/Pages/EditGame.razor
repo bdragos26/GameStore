@@ -1,9 +1,11 @@
 ﻿@page "/EditGame"
 @page "/EditGame/{id:int}"
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
+@attribute [Authorize(Roles="Admin")]
 @rendermode InteractiveServer
 
 <PageTitle>@title</PageTitle>

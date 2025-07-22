@@ -6,12 +6,10 @@ namespace GameStore.Shared.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [Required, StringLength(50)]
         public string Username { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
         public string PasswordHash { get; set; } = string.Empty;
@@ -21,5 +19,7 @@ namespace GameStore.Shared.Models
         public string? LastName { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required, StringLength(20)] 
+        public string Role { get; set; } = "User";
     }
 }

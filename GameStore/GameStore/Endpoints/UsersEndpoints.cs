@@ -21,7 +21,8 @@ namespace GameStore.Endpoints
                         Email = UserRegisterDto.Email,
                         FirstName = UserRegisterDto.FirstName,
                         LastName = UserRegisterDto.LastName,
-                        DateOfBirth = UserRegisterDto.DateOfBirth
+                        DateOfBirth = UserRegisterDto.DateOfBirth,
+                        Role = "User"
                     };
 
                     await userService.RegisterUserAsync(user, UserRegisterDto.Password);
