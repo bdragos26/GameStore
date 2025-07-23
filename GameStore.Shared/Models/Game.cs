@@ -13,5 +13,6 @@ namespace GameStore.Shared.Models
         [Range(1, 100)]
         public double Price { get; set; }
         public DateOnly ReleaseDate { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
