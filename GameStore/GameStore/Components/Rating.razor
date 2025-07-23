@@ -1,0 +1,47 @@
+﻿@inject IGameRatingClient GameRatingClient
+
+<style>
+	.rating span {
+		font-size: 2rem;
+		transition: color 0.2s;
+	}
+</style>
+
+<div class="rating">
+	@for (int i = 1; i <= 5; i++)
+	{
+		var index = i; 
+		<span style="margin-left:5px; cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
+			<i class="bi bi-star"></i>
+		</span>
+	}
+</div>
+
+@code {
+	[Parameter] 
+	public int GameId { get; set; }
+	[Parameter] 
+	public int UserId { get; set; }
+
+	private int currentRating = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var rating = await GameRatingClient.GetGameRatingAsync(UserId, GameId);
+		if (rating != null)
+		{
+			currentRating = rating.Score;
+		}
+	}
+
+	private async Task SetRating(int score)
+	{
+		currentRating = score;
+		await GameRatingClient.UpdateGameRatingAsync(new GameRating()
+		{
+			UserId = UserId,
+			GameId = GameId,
+			Score = currentRating
+		});
+	}
+}

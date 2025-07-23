@@ -24,11 +24,14 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IGamesClient, GamesClient>();
 builder.Services.AddScoped<IGenresClient, GenresClient>();
 builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IGenreService, GenreService>();
 
 builder.Services.AddScoped<PasswordHasher<User>>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserClient, UserClient>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IGameRatingClient, GameRatingClient>();
+builder.Services.AddScoped<IGameRatingService, GameRatingService>();
+
 
 var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
@@ -81,6 +84,7 @@ app.MapRazorComponents<App>()
 app.MapGamesEndpoints();
 app.MapGenreEndpoints();
 app.MapUsersEndpoints();
+app.MapGameRatingsEndpoints();
 
 await app.MigrateDbAsync();
 

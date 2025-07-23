@@ -15,6 +15,9 @@ builder.Services.AddHttpClient<GenresClient>(client =>
 builder.Services.AddHttpClient<UserClient>(client =>
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
+builder.Services.AddHttpClient<GameRatingClient>(client =>
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+
 builder.Services.AddAuthenticationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddCascadingAuthenticationState();

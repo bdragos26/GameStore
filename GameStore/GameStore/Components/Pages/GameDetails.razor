@@ -1,8 +1,10 @@
-﻿@page "/GameDetails/{id:int}"
+﻿@page "/GameDetails/{GameId:int}"
+@using Blazored.LocalStorage
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
-
+@inject ILocalStorageService LocalStorage
 @rendermode InteractiveServer
+
 <PageTitle>Game Details</PageTitle>
 
 @if (game == null)
@@ -11,28 +13,61 @@
 }
 else
 {
-	<div class="card mx-auto mt-4 shadow" style="width: 24rem;">
-		<img src="@game.ImageUrl" class="card-img-top" alt="@game.Name" />
-		<div class="card-body">
-			<h4 class="card-title">@game.Name</h4>
-			<p class="card-text"><strong>Genre:</strong> @genre?.Name</p>
-			<p class="card-text"><strong>Price:</strong> $@game.Price</p>
-			<p class="card-text"><strong>Release Date:</strong> @game.ReleaseDate.ToShortDateString()</p>
+	<div class="container mt-5 d-flex justify-content-center">
+		<div class="card shadow" style="width: 100%; max-width: 900px; min-height: 500px;">
+			<div class="row g-0 h-100">
+				<img src="@game.ImageUrl"
+				     class="img-fluid rounded-start"
+				     alt="@game.Name"
+				     style="height: 100%; max-height: 400px; object-fit: cover; width: 100%;" />
+				<div class="col-md-7 d-flex align-items-center">
+					<div class="card-body">
+						<h3 class="card-title">@game.Name</h3>
+						<p class="card-text"><strong>Genre:</strong> @genre?.Name</p>
+						<p class="card-text"><strong>Price:</strong> $@game.Price</p>
+						<p class="card-text"><strong>Release Date:</strong> @game.ReleaseDate.ToShortDateString()</p>
+					</div>
+				</div>
+			</div>
+			<AuthorizeView>
+				<Authorized>
+					@if (userId > 0)
+					{
+						<h4>Rate this game:</h4>
+						<Rating GameId="@game.GameId" UserId="@userId"></Rating>
+					}
+				</Authorized>
+				<NotAuthorized>
+					<span class="alert alert-danger" style="max-width: 300px; margin-left: 10px;">Log in to rate this game</span>
+				</NotAuthorized>
+			</AuthorizeView>
+			<span>
+				<a href="/gameList" class="btn btn-outline-primary" style="margin-top: 10px; margin-left: 10px;">Back to games menu</a>
+			</span>
 		</div>
 	</div>
 }
 
 @code {
 	[Parameter]
-	public int id { get; set; }
-
+	public int GameId { get; set; }
 	private Game? game;
 	private Genre? genre;
+	private int userId;
 
 	protected override async Task OnInitializedAsync()
 	{
-		game = await gamesClient.GetGameByIdAsync(id);
+		game = await gamesClient.GetGameByIdAsync(GameId);
 		var genres = await genresClient.GetGenreAsync();
-		genre = genres.FirstOrDefault(g => g.GenreId == game?.GenreId);
+		genre = genres.FirstOrDefault(g => g.GenreId == game.GenreId);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		var user = await LocalStorage.GetItemAsync<User>("user");
+		if (user != null)
+		{
+			userId = user.UserId;
+		}
 	}
 }

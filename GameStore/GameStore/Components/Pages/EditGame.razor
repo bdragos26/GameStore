@@ -86,7 +86,7 @@
 		}
 		if (Id != null)
 		{
-			game = await gamesClient.GetGameAsync(Id.Value);
+			game = await gamesClient.GetGameByIdAsync(Id.Value);
 			title = $"Edit {game.Name}";
 		}
 		else

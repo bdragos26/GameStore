@@ -10,7 +10,7 @@ namespace GameStore.Client.Clients
         Task AddGameAsync(Game game);
         Task UpdateGameAsync(Game updatedGame);
         Task DeleteGameAsync(int id);
-        Task<Game> GetGameAsync(int id);
+        Task<Game> GetGameByIdAsync(int id);
     }
     public class GamesClient : IGamesClient
     {
@@ -33,7 +33,7 @@ namespace GameStore.Client.Clients
         public async Task DeleteGameAsync(int id)
             => await _httpClient.DeleteAsync($"/games/{id}");
 
-        public async Task<Game> GetGameAsync(int id)
+        public async Task<Game> GetGameByIdAsync(int id)
             => await _httpClient.GetFromJsonAsync<Game>($"/games/{id}") 
                ?? throw new Exception("Could not find the game");
     }
