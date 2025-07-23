@@ -1,29 +1,45 @@
 ﻿@inject IGameRatingClient GameRatingClient
 
-<style>
-	.rating span {
-		font-size: 2rem;
-		transition: color 0.2s;
-	}
-</style>
-
 <div class="rating">
 	@for (int i = 1; i <= 5; i++)
 	{
 		var index = i; 
 		<span style="margin-left:5px; cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
-			<i class="bi bi-star"></i>
+			<i class="bi bi-star-fill"></i>
 		</span>
 	}
 </div>
+
+@if (ratings?.Any() == true)
+{
+	<div class="mt-4">
+		<h5 class="mb-3" style="margin-left: 10px;">Other users ratings</h5>
+		@foreach (var rating in ratings)
+		{
+			<div class="user-rating-card">
+				<div><strong>@rating.User?.Username</strong></div>
+				<div class="rating-stars">
+					@for (int i = 1; i <= 5; i++)
+					{
+						<i style="color: @(i <= rating.Score ? "gold" : "gray")" class="bi @(i <= rating.Score ? "bi-star-fill" : "bi-star")"></i>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+else
+{
+	<p class="text-muted">This game was not rated by other users</p>
+}
 
 @code {
 	[Parameter] 
 	public int GameId { get; set; }
 	[Parameter] 
 	public int UserId { get; set; }
-
 	private int currentRating = 0;
+	private List<GameRating> ratings = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -32,6 +48,9 @@
 		{
 			currentRating = rating.Score;
 		}
+
+		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
+		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
 	}
 
 	private async Task SetRating(int score)
@@ -43,5 +62,8 @@
 			GameId = GameId,
 			Score = currentRating
 		});
+
+		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
+		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
 	}
 }
