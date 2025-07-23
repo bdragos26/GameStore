@@ -1,0 +1,38 @@
+﻿@page "/GameDetails/{id:int}"
+@inject IGamesClient gamesClient
+@inject IGenresClient genresClient
+
+@rendermode InteractiveServer
+<PageTitle>Game Details</PageTitle>
+
+@if (game == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div class="card mx-auto mt-4 shadow" style="width: 24rem;">
+		<img src="@game.ImageUrl" class="card-img-top" alt="@game.Name" />
+		<div class="card-body">
+			<h4 class="card-title">@game.Name</h4>
+			<p class="card-text"><strong>Genre:</strong> @genre?.Name</p>
+			<p class="card-text"><strong>Price:</strong> $@game.Price</p>
+			<p class="card-text"><strong>Release Date:</strong> @game.ReleaseDate.ToShortDateString()</p>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public int id { get; set; }
+
+	private Game? game;
+	private Genre? genre;
+
+	protected override async Task OnInitializedAsync()
+	{
+		game = await gamesClient.GetGameByIdAsync(id);
+		var genres = await genresClient.GetGenreAsync();
+		genre = genres.FirstOrDefault(g => g.GenreId == game?.GenreId);
+	}
+}
