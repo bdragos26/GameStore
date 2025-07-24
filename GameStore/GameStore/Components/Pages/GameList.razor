@@ -77,7 +77,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		games = await gamesClient.GetGamesAsync();
-		genres = await genresClient.GetGenreAsync();
+		genres = await genresClient.GetGenresAsync();
 	}  
 
 	private string GetDeleteModalId(Game game)  

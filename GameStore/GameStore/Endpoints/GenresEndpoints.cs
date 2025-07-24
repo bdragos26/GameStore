@@ -9,7 +9,10 @@ namespace GameStore.Endpoints
         public static WebApplication MapGenreEndpoints(this WebApplication app)
         {
             app.MapGet("/genres", async (IGenreService genreService) =>
-                Results.Ok(await genreService.GetAllGenresAsync()));
+            {
+                var response = await genreService.GetAllGenresAsync();
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
+            });
 
             return app;
         }

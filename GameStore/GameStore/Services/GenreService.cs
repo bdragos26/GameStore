@@ -6,7 +6,7 @@ namespace GameStore.Services
 {
     public interface IGenreService
     {
-        Task<List<Genre>> GetAllGenresAsync();
+        Task<ServiceResponse<List<Genre>>> GetAllGenresAsync();
     }
     public class GenreService : IGenreService
     {
@@ -17,10 +17,23 @@ namespace GameStore.Services
             _dbContext = dbContext;
         }
 
-        public async Task<List<Genre>> GetAllGenresAsync()
+        public async Task<ServiceResponse<List<Genre>>> GetAllGenresAsync()
         {
-            var genres = await _dbContext.Genres.ToListAsync();
-            return genres;
+            var response = new ServiceResponse<List<Genre>>();
+
+            try
+            {
+                var genres = await _dbContext.Genres.ToListAsync();
+                response.Data = genres;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error: {ex.Message}";
+            }
+
+            return response;
         }
     }
 }

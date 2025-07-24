@@ -14,20 +14,20 @@ namespace GameStore.Endpoints
 
             group.MapGet("/", async (IGameRatingService service, [FromQuery] int userId, [FromQuery] int gameId) =>
             {
-                var rating = await service.GetGameRatingAsync(userId, gameId);
-                return rating is null ? Results.NotFound() : Results.Ok(rating);
+                var response = await service.GetGameRatingAsync(userId, gameId);
+                return response.Success ? Results.Ok(response) : Results.NotFound(response);
             });
 
-            group.MapPost("/{userId}/{gameId}", async (IGameRatingService gameRatingService, GameRating gameRating) =>
+            group.MapPost("/{userId}/{gameId}", async (IGameRatingService service, GameRating gameRating) =>
             {
-                var rating = await gameRatingService.UpdateRatingAsync(gameRating);
-                return Results.Ok(rating);
+                var response = await service.UpdateRatingAsync(gameRating);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
-            group.MapGet("/{gameId}", async (IGameRatingService gameRatingService, int gameId) =>
+            group.MapGet("/{gameId}", async (IGameRatingService service, int gameId) =>
             {
-                var ratings = await gameRatingService.GetRatingsForGameAsync(gameId);
-                return Results.Ok(ratings);
+                var response = await service.GetRatingsForGameAsync(gameId);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
             return group;

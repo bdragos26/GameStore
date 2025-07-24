@@ -6,11 +6,11 @@ namespace GameStore.Services
 {
     public interface IGameService
     {
-        Task<List<Game>> GetAllGamesAsync();
-        Task<Game> GetGameByIdAsync(int id);
-        Task AddGameAsync(Game newGame);
-        Task<Game> UpdateGameAsync(int id, Game updatedGame);
-        Task DeleteGameAsync(int id);
+        Task<ServiceResponse<List<Game>>> GetAllGamesAsync();
+        Task<ServiceResponse<Game>> GetGameByIdAsync(int id);
+        Task<ServiceResponse<Game>> AddGameAsync(Game newGame);
+        Task<ServiceResponse<Game>> UpdateGameAsync(int id, Game updatedGame);
+        Task<ServiceResponse<bool>> DeleteGameAsync(int id);
     }
     public class GameService : IGameService
     {
@@ -21,46 +21,89 @@ namespace GameStore.Services
             _dbContext = gameContext;
         }
 
-        public async Task<List<Game>> GetAllGamesAsync()
+        public async Task<ServiceResponse<List<Game>>> GetAllGamesAsync()
         {
-            var games = await _dbContext.Games
-                .Include(game => game.Genre)
-                .AsNoTracking()
-                .ToListAsync();
-                
-            return games;
+            var response = new ServiceResponse<List<Game>>
+            {
+                Data = await _dbContext.Games
+                    .Include(game => game.Genre)
+                    .AsNoTracking()
+                    .ToListAsync()
+            };
+
+            return response;
         }
 
-        public async Task<Game> GetGameByIdAsync(int id)
+        public async Task<ServiceResponse<Game>> GetGameByIdAsync(int id)
         {
-            var game = await _dbContext.Games.FindAsync(id);
-            return game;
+            var response = new ServiceResponse<Game>()
+            {
+                Data = await _dbContext.Games.FindAsync(id)
+            };
+
+            if (response.Data == null)
+            {
+                response.Success = false;
+                response.Message = "Game not found";
+                return response;
+            }
+
+            return response;
         }
 
-        public async Task AddGameAsync(Game newGame)
-        { 
+        public async Task<ServiceResponse<Game>> AddGameAsync(Game newGame)
+        {
             _dbContext.Games.Add(newGame);
             await _dbContext.SaveChangesAsync();
+
+            return new ServiceResponse<Game>
+            {
+                Data = newGame 
+            };
         }
 
-        public async Task<Game> UpdateGameAsync(int id, Game updatedGame)
+        public async Task<ServiceResponse<Game>> UpdateGameAsync(int id, Game updatedGame)
         {
-             var existingGame = await _dbContext.Games.FindAsync(id);
+            var response = new ServiceResponse<Game>
+            {
+                Data = await _dbContext.Games.FindAsync(id)
+            };
 
-            _dbContext.Entry(existingGame)
+            if (response.Data == null)
+            {
+                response.Success = false;
+                response.Message = "Game not found";
+                return response;
+            }
+
+            _dbContext.Entry(response.Data)
                 .CurrentValues
                 .SetValues(updatedGame);
 
             await _dbContext.SaveChangesAsync();
 
-            return existingGame;
+            return response;
         }
-
-        public async Task DeleteGameAsync(int id)
+        public async Task<ServiceResponse<bool>> DeleteGameAsync(int id)
         {
-            await _dbContext.Games
-                .Where(game => game.GameId == id)
-                .ExecuteDeleteAsync();
+            var game = await _dbContext.Games.FindAsync(id);
+            if (game == null)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false, 
+                    Message = "Game not found"
+                };
+            }
+
+            _dbContext.Games.Remove(game);
+            await _dbContext.SaveChangesAsync();
+
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Success = true
+            };
         }
     }
 }

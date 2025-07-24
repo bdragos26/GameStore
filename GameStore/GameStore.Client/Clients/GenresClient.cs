@@ -6,7 +6,7 @@ namespace GameStore.Client.Clients
 {
     public interface IGenresClient
     {
-        Task<List<Genre>> GetGenreAsync();
+        Task<List<Genre>> GetGenresAsync();
     }
     public class GenresClient : IGenresClient
     {
@@ -18,7 +18,10 @@ namespace GameStore.Client.Clients
             _httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         }
 
-        public async Task<List<Genre>> GetGenreAsync() 
-            => await _httpClient.GetFromJsonAsync<List<Genre>>("/genres") ?? new List<Genre>();
+        public async Task<List<Genre>> GetGenresAsync()
+        {
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Genre>>>("/genres");
+            return response?.Data ?? new List<Genre>();
+        }
     }
 }

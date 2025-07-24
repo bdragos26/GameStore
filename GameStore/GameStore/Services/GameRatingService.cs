@@ -6,9 +6,9 @@ namespace GameStore.Services
 {
     public interface IGameRatingService
     {
-        Task<GameRating> GetGameRatingAsync(int userId, int gameId);
-        Task<GameRating> UpdateRatingAsync(GameRating rating);
-        Task<List<GameRating>> GetRatingsForGameAsync(int gameId);
+        Task<ServiceResponse<GameRating>> GetGameRatingAsync(int userId, int gameId);
+        Task<ServiceResponse<GameRating>> UpdateRatingAsync(GameRating rating);
+        Task<ServiceResponse<List<GameRating>>> GetRatingsForGameAsync(int gameId);
     }
     public class GameRatingService : IGameRatingService
     {
@@ -19,34 +19,90 @@ namespace GameStore.Services
             _dbContext = dbContext;
         }
 
-        public async Task<GameRating> GetGameRatingAsync(int userId, int gameId)
+        public async Task<ServiceResponse<GameRating>> GetGameRatingAsync(int userId, int gameId)
         {
-            return await _dbContext.Ratings.
-                FirstOrDefaultAsync(r => r.UserId == userId && r.GameId == gameId);
+            var response = new ServiceResponse<GameRating>();
+
+            try
+            {
+                var rating = await _dbContext.Ratings
+                    .FirstOrDefaultAsync(r => r.UserId == userId && r.GameId == gameId);
+
+                if (rating == null)
+                {
+                    response.Success = false;
+                    response.Message = "Rating not found!";
+                }
+                else
+                {
+                    response.Data = rating;
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving rating: {ex.Message}";
+            }
+
+            return response;
         }
 
-        public async Task<GameRating> UpdateRatingAsync(GameRating rating)
+        public async Task<ServiceResponse<GameRating>> UpdateRatingAsync(GameRating rating)
         {
-            var existingRating = await _dbContext.Ratings.
-                FirstOrDefaultAsync(r => r.UserId == rating.UserId && r.GameId == rating.GameId);
-            if (existingRating == null)
+            var response = new ServiceResponse<GameRating>();
+
+            try
             {
-                _dbContext.Ratings.Add(rating);
+                var existingRating = await _dbContext.Ratings
+                    .FirstOrDefaultAsync(r => r.UserId == rating.UserId && r.GameId == rating.GameId);
+
+                if (existingRating == null)
+                {
+                    _dbContext.Ratings.Add(rating);
+                    response.Message = "Rating added successfully.";
+                }
+                else
+                {
+                    existingRating.Score = rating.Score;
+                    _dbContext.Ratings.Update(existingRating);
+                    response.Message = "Rating updated successfully.";
+                }
+
+                await _dbContext.SaveChangesAsync();
+                response.Data = rating;
+                response.Success = true;
             }
-            else
+            catch (Exception ex)
             {
-                existingRating.Score = rating.Score;
-                _dbContext.Ratings.Update(existingRating);
+                response.Success = false;
+                response.Message = $"Error updating rating: {ex.Message}";
             }
 
-            await _dbContext.SaveChangesAsync();
-            return rating;
+            return response;
         }
 
-        public async Task<List<GameRating>> GetRatingsForGameAsync(int gameId)
+        public async Task<ServiceResponse<List<GameRating>>> GetRatingsForGameAsync(int gameId)
         {
-            return await _dbContext.Ratings.Where(r => r.GameId == gameId)
-                .Include(r => r.User).ToListAsync();
+            var response = new ServiceResponse<List<GameRating>>();
+
+            try
+            {
+                var ratings = await _dbContext.Ratings
+                    .Where(r => r.GameId == gameId)
+                    .Include(r => r.User)
+                    .ToListAsync();
+
+                response.Data = ratings;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving ratings: {ex.Message}";
+            }
+
+            return response;
         }
     }
 }

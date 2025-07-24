@@ -10,39 +10,35 @@ namespace GameStore.Endpoints
         public static RouteGroupBuilder MapGamesEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/games");
-           
-            group.MapGet("/", async (IGameService gameService) =>
-                Results.Ok(await gameService.GetAllGamesAsync()));
 
-            group.MapGet("/{id:int}", async (int id, IGameService gameService) =>
+            group.MapGet("/", async (IGameService gameService) =>
             {
-                Game? game = await gameService.GetGameByIdAsync(id);
-                return game == null ? Results.NotFound() : Results.Ok(game);
+                var result = await gameService.GetAllGamesAsync();
+                return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+            });
+
+            group.MapGet("/{gameId:int}", async (int gameId, IGameService gameService) =>
+            {
+                var result = await gameService.GetGameByIdAsync(gameId);
+                return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
             group.MapPost("/", async (Game newGame, IGameService gameService) =>
             {
-                await gameService.AddGameAsync(newGame);
-
-                return Results.Created();
+                var result = await gameService.AddGameAsync(newGame);
+                return result.Success ? Results.Created($"/games/{result.Data!.GameId}", result) : Results.BadRequest(result);
             });
 
-            group.MapPut("/{id:int}", async (int id, Game updatedGame, IGameService gameService) =>
+            group.MapPut("/{gameId:int}", async (int gameId, Game updatedGame, IGameService gameService) =>
             {
-                var existingGame = await gameService.UpdateGameAsync(id, updatedGame);
-
-                if (existingGame == null)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.NoContent();
+                var result = await gameService.UpdateGameAsync(gameId, updatedGame);
+                return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
-            group.MapDelete("/{id:int}", async (int id, IGameService gameService) =>
+            group.MapDelete("/{gameId:int}", async (int gameId, IGameService gameService) =>
             {
-                gameService.DeleteGameAsync(id);
-                return Results.NoContent();
+                var result = await gameService.DeleteGameAsync(gameId);
+                return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
             return group;

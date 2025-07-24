@@ -22,19 +22,48 @@ namespace GameStore.Client.Clients
             _httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         }
         public async Task<List<Game>> GetGamesAsync()
-            => await _httpClient.GetFromJsonAsync<List<Game>>("/games") ?? new List<Game>();
+        {
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Game>>>("/games");
+            if (response == null || !response.Success)
+                throw new Exception(response?.Message ?? "Failed to load games");
+
+            return response.Data!;
+        }
 
         public async Task AddGameAsync(Game game)
-            => await _httpClient.PostAsJsonAsync("/games", game);
+        {
+            var response = await _httpClient.PostAsJsonAsync("/games", game);
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
+
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+                throw new Exception(result?.Message ?? "Failed to add game");
+        }
 
         public async Task UpdateGameAsync(Game updatedGame)
-            => await _httpClient.PutAsJsonAsync($"/games/{updatedGame.GameId}", updatedGame);
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/games/{updatedGame.GameId}", updatedGame);
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
+
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+                throw new Exception(result?.Message ?? "Failed to update game");
+        }
 
         public async Task DeleteGameAsync(int id)
-            => await _httpClient.DeleteAsync($"/games/{id}");
+        {
+            var response = await _httpClient.DeleteAsync($"/games/{id}");
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+                throw new Exception(result?.Message ?? "Failed to delete game");
+        }
 
         public async Task<Game> GetGameByIdAsync(int id)
-            => await _httpClient.GetFromJsonAsync<Game>($"/games/{id}") 
-               ?? throw new Exception("Could not find the game");
+        {
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<Game>>($"/games/{id}");
+            if (response == null || !response.Success)
+                throw new Exception(response?.Message ?? "Game not found");
+
+            return response.Data!;
+        }
     }
 }

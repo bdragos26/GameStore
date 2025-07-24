@@ -58,7 +58,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		game = await gamesClient.GetGameByIdAsync(GameId);
-		var genres = await genresClient.GetGenreAsync();
+		var genres = await genresClient.GetGenresAsync();
 		genre = genres.FirstOrDefault(g => g.GenreId == game.GenreId);
 	}
 
