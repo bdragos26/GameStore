@@ -13,67 +13,56 @@ namespace GameStore.Endpoints
 
             group.MapPost("/register", async (UserRegisterDto UserRegisterDto, IUserService userService) =>
             {
-                try
+                var user = new User()
                 {
-                    var user = new User()
-                    {
-                        Username = UserRegisterDto.Username,
-                        Email = UserRegisterDto.Email,
-                        FirstName = UserRegisterDto.FirstName,
-                        LastName = UserRegisterDto.LastName,
-                        DateOfBirth = UserRegisterDto.DateOfBirth,
-                        Role = "User"
-                    };
+                    Username = UserRegisterDto.Username,
+                    Email = UserRegisterDto.Email,
+                    FirstName = UserRegisterDto.FirstName,
+                    LastName = UserRegisterDto.LastName,
+                    DateOfBirth = UserRegisterDto.DateOfBirth,
+                    Role = "User"
+                };
 
-                    await userService.RegisterUserAsync(user, UserRegisterDto.Password);
-                    return Results.Created();
-                } 
-                catch (Exception e)
-                {
-                    return Results.BadRequest(e.Message);
-                }
+                var response = await userService.RegisterUserAsync(user, UserRegisterDto.Password);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
             group.MapPost("/login", async (UserLoginDTO loginDto, IUserService userService) =>
             {
-                var user = await userService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
-                return user == null ? Results.Unauthorized() : Results.Ok(user);
+                var response = await userService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
+                return response.Success ? Results.Ok(response) : Results.Unauthorized();
             });
 
             group.MapPost("/logout", () => Results.Ok());
 
             group.MapGet("/", async (IUserService userService) =>
-                Results.Ok(await userService.GetAllUsersAsync()));
+            {
+                var response = await userService.GetAllUsersAsync();
+                if (!response.Success)
+                {
+                    Results.BadRequest(response);
+                }
+
+                Results.Ok(response);
+            });
 
             group.MapPut("/{id:int}", async (int id, User updatedUser, IUserService userService) =>
             {
-                var existingUser = await userService.UpdateUserAsync(id, updatedUser);
-                if (existingUser == null)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.NoContent();
+                var existingUserResponse = await userService.UpdateUserAsync(id, updatedUser);
+                return !existingUserResponse.Success ? Results.NotFound() : Results.NoContent();
             });
 
             group.MapPost("/resetPass", async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
             {
-                try
+                var response = await userService.ResetUserPasswordAsync(resetPasswordDto.Email,
+                    resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
+                if (!response.Success)
                 {
-                    var user = await userService.ResetUserPasswordAsync(resetPasswordDto.Email,
-                        resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
-                    if (user == null)
-                    {
-                        return Results.NotFound("User not found");
-                    }
+                    return Results.NotFound(response.Message);
+                }
 
-                    await userService.UpdateUserAsync(user.UserId, user);
-                    return Results.Ok();
-                }
-                catch (Exception e)
-                {
-                    return Results.BadRequest(e.Message);
-                }
+                await userService.UpdateUserAsync(response.Data!.UserId, response.Data);
+                return Results.Ok(response);
             });
 
             return group;

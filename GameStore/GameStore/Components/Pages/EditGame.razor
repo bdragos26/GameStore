@@ -31,7 +31,7 @@
 							<ValidationMessage For="@(() => game.Name)"/>
 						</div>
 						<div class="mb-3">
-							<label for="genre" class="form-label">GenreGameGenreUserId: </label>
+							<label for="genre" class="form-label">Genre: </label>
 							<InputSelect id="genre" class="form-control" @bind-Value="game.GenreId">
 								<option value="">Select a genre</option>
 								@foreach (var genre in genres)

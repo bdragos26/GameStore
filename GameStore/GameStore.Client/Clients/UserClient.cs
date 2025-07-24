@@ -27,15 +27,23 @@ namespace GameStore.Client.Clients
             _httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         }
 
-        public async Task RegisterAsync(UserRegisterDto registerDto) 
-            => await _httpClient.PostAsJsonAsync("/users/register", registerDto);
+        public async Task RegisterAsync(UserRegisterDto registerDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/users/register", registerDto);
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+            {
+                throw new Exception(result?.Message);
+            }
+        }
 
         public async Task<User?> LoginAsync(UserLoginDTO loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync("users/login", loginDto);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<User>();
+                var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+                return serviceResponse?.Data;
             }
             return null;
         }
@@ -49,19 +57,30 @@ namespace GameStore.Client.Clients
             => await _httpClient.GetFromJsonAsync<User>($"/users/{id}");
 
         public async Task<List<User>> GetUsersAsync()
-            => await _httpClient.GetFromJsonAsync<List<User>>("/users") ?? new List<User>();
+        {
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<User>>>("/users");
+            return response?.Data ?? new List<User>();
+        }
 
         public async Task UpdateUserAsync(User updatedUser)
-            => await _httpClient.PutAsJsonAsync($"/users/{updatedUser.UserId}", updatedUser);
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/users/{updatedUser.UserId}", updatedUser);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+        }
 
         public async Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {
             var response = await _httpClient.PostAsJsonAsync("/users/resetPass", resetPasswordDto);
-            if (response.IsSuccessStatusCode)
-                return;
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
 
-            var error = await response.Content.ReadAsStringAsync();
-            throw new Exception(error);
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+            {
+                throw new Exception(result?.Message);
+            }
         }
     }
 }
