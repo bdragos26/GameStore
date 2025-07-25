@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddScoped<IGamesClient, GamesClient>();
 builder.Services.AddScoped<IGenresClient, GenresClient>();
@@ -31,7 +34,6 @@ builder.Services.AddScoped<IUserClient, UserClient>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IGameRatingClient, GameRatingClient>();
 builder.Services.AddScoped<IGameRatingService, GameRatingService>();
-
 
 var connString = builder.Configuration.GetConnectionString("GameStore");
 builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
