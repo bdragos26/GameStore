@@ -25,10 +25,13 @@ namespace GameStore.Client.Clients
 
         public async Task<GameRating?> GetGameRatingAsync(int userId, int gameId)
         {
-            var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<GameRating>>(EndpointsRoutes.GameRatingRoutes.GetRating(userId, gameId));
+            var response = await _httpClient.GetAsync(EndpointsRoutes.GameRatingRoutes.GetRating(userId, gameId));
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return null;
 
-            return response?.Success == true ? response.Data : null;
+            response.EnsureSuccessStatusCode();
+            var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<GameRating>>();
+            return serviceResponse?.Success == true ? serviceResponse.Data : null;
         }
 
         public async Task<bool> UpdateGameRatingAsync(GameRating rating)
