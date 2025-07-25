@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net.Http.Json;
+using GameStore.Client.Endpoints;
 
 namespace GameStore.Client.Clients
 {
@@ -24,7 +25,7 @@ namespace GameStore.Client.Clients
         public async Task<GameRating?> GetGameRatingAsync(int userId, int gameId)
         {
             var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<GameRating>>($"/ratings?userId={userId}&gameId={gameId}");
+                .GetFromJsonAsync<ServiceResponse<GameRating>>(EndpointsRoutes.GameRatingRoutes.GetRating(userId, gameId));
 
             return response?.Success == true ? response.Data : null;
         }
@@ -32,7 +33,7 @@ namespace GameStore.Client.Clients
         public async Task<bool> UpdateGameRatingAsync(GameRating rating)
         {
             var response = await _httpClient
-                .PostAsJsonAsync($"/ratings/{rating.UserId}/{rating.GameId}", rating);
+                .PostAsJsonAsync(EndpointsRoutes.GameRatingRoutes.UpdateRating(rating.UserId, rating.GameId), rating);
 
             return response.IsSuccessStatusCode;
         }
@@ -40,7 +41,7 @@ namespace GameStore.Client.Clients
         public async Task<List<GameRating>> GetRatingsForGameAsync(int gameId)
         {
             var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>($"/ratings/{gameId}");
+                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.GameRatingRoutes.GetRatingsForGame(gameId));
 
             return response?.Data ?? new List<GameRating>();
         }

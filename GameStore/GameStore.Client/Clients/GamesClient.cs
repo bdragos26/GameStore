@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using GameStore.Client.Endpoints;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -23,7 +24,7 @@ namespace GameStore.Client.Clients
         }
         public async Task<List<Game>> GetGamesAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Game>>>("/games");
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Game>>>(EndpointsRoutes.GamesRoutes.baseRoute);
             if (response == null || !response.Success)
                 throw new Exception(response?.Message ?? "Failed to load games");
 
@@ -32,7 +33,7 @@ namespace GameStore.Client.Clients
 
         public async Task AddGameAsync(Game game)
         {
-            var response = await _httpClient.PostAsJsonAsync("/games", game);
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.GamesRoutes.baseRoute, game);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -41,7 +42,7 @@ namespace GameStore.Client.Clients
 
         public async Task UpdateGameAsync(Game updatedGame)
         {
-            var response = await _httpClient.PutAsJsonAsync($"/games/{updatedGame.GameId}", updatedGame);
+            var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.GamesRoutes.baseWithIdApi(updatedGame.GameId), updatedGame);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -50,7 +51,7 @@ namespace GameStore.Client.Clients
 
         public async Task DeleteGameAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"/games/{id}");
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.GamesRoutes.baseWithIdApi(id));
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -59,7 +60,7 @@ namespace GameStore.Client.Clients
 
         public async Task<Game> GetGameByIdAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<Game>>($"/games/{id}");
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<Game>>(EndpointsRoutes.GamesRoutes.baseWithIdApi(id));
             if (response == null || !response.Success)
                 throw new Exception(response?.Message ?? "Game not found");
 

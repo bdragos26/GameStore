@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using GameStore.Client.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace GameStore.Endpoints
     {
         public static RouteGroupBuilder MapGameRatingsEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/ratings");
+            var group = app.MapGroup(EndpointsRoutes.GameRatingRoutes.baseRoute);
 
             group.MapGet("/", async (IGameRatingService service, [FromQuery] int userId, [FromQuery] int gameId) =>
             {
@@ -18,13 +19,13 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.NotFound(response);
             });
 
-            group.MapPost("/{userId}/{gameId}", async (IGameRatingService service, GameRating gameRating) =>
+            group.MapPost(EndpointsRoutes.GameRatingRoutes.baseWithUserAndGameIdRoute, async (IGameRatingService service, GameRating gameRating) =>
             {
                 var response = await service.UpdateRatingAsync(gameRating);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
-            group.MapGet("/{gameId}", async (IGameRatingService service, int gameId) =>
+            group.MapGet(EndpointsRoutes.GameRatingRoutes.baseWithGameIdRoute, async (IGameRatingService service, int gameId) =>
             {
                 var response = await service.GetRatingsForGameAsync(gameId);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);

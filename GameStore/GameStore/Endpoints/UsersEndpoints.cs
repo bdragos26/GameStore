@@ -1,4 +1,5 @@
-﻿using GameStore.Services;
+﻿using GameStore.Client.Endpoints;
+using GameStore.Services;
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +10,9 @@ namespace GameStore.Endpoints
     {
         public static RouteGroupBuilder MapUsersEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/users");
+            var group = app.MapGroup(EndpointsRoutes.UserRoutes.baseRoute);
 
-            group.MapPost("/register", async (UserRegisterDto UserRegisterDto, IUserService userService) =>
+            group.MapPost(EndpointsRoutes.UserRoutes.registerRoute, async (UserRegisterDto UserRegisterDto, IUserService userService) =>
             {
                 var user = new User()
                 {
@@ -27,13 +28,13 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
-            group.MapPost("/login", async (UserLoginDTO loginDto, IUserService userService) =>
+            group.MapPost(EndpointsRoutes.UserRoutes.loginRoute, async (UserLoginDTO loginDto, IUserService userService) =>
             {
                 var response = await userService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
                 return response.Success ? Results.Ok(response) : Results.Unauthorized();
             });
 
-            group.MapPost("/logout", () => Results.Ok());
+            group.MapPost(EndpointsRoutes.UserRoutes.logoutRoute, () => Results.Ok());
 
             group.MapGet("/", async (IUserService userService) =>
             {
@@ -46,13 +47,13 @@ namespace GameStore.Endpoints
                 Results.Ok(response);
             });
 
-            group.MapPut("/{id:int}", async (int id, User updatedUser, IUserService userService) =>
+            group.MapPut(EndpointsRoutes.UserRoutes.baseWithIdRoute, async (int id, User updatedUser, IUserService userService) =>
             {
                 var existingUserResponse = await userService.UpdateUserAsync(id, updatedUser);
                 return !existingUserResponse.Success ? Results.NotFound() : Results.NoContent();
             });
 
-            group.MapPost("/resetPass", async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
+            group.MapPost(EndpointsRoutes.UserRoutes.resetPassRoute, async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
             {
                 var response = await userService.ResetUserPasswordAsync(resetPasswordDto.Email,
                     resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
