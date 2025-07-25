@@ -31,6 +31,12 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
+            group.MapGet(EndpointsRoutes.GameRatingRoutes.baseWithUserIdRoute, async (IGameRatingService service, int userId) =>
+            {
+                var response = await service.GetRatingsByUserAsync(userId);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
+            });
+
             return group;
         }
     }

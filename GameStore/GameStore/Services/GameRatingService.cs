@@ -9,6 +9,7 @@ namespace GameStore.Services
         Task<ServiceResponse<GameRating>> GetGameRatingAsync(int userId, int gameId);
         Task<ServiceResponse<GameRating>> UpdateRatingAsync(GameRating rating);
         Task<ServiceResponse<List<GameRating>>> GetRatingsForGameAsync(int gameId);
+        Task<ServiceResponse<List<GameRating>>> GetRatingsByUserAsync(int userId);
     }
     public class GameRatingService : IGameRatingService
     {
@@ -104,5 +105,29 @@ namespace GameStore.Services
 
             return response;
         }
+
+        public async Task<ServiceResponse<List<GameRating>>> GetRatingsByUserAsync(int userId)
+        {
+            var response = new ServiceResponse<List<GameRating>>();
+
+            try
+            {
+                var ratings = await _dbContext.Ratings
+                    .Where(r => r.UserId == userId)
+                    .Include(r => r.GameDetails)
+                    .ToListAsync();
+
+                response.Data = ratings;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving ratings by user: {ex.Message}";
+            }
+
+            return response;
+        }
+
     }
 }

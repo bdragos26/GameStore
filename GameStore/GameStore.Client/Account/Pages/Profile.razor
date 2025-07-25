@@ -3,6 +3,8 @@
 @using GameStore.Shared.Models
 @inject ILocalStorageService LocalStorage
 @inject IUserClient UserClient
+@inject IGameRatingClient GameRatingClient
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 <h3 class="mb-4" style="margin-top: 30px;">Your Profile</h3>
@@ -26,18 +28,57 @@
                         </div>
                     </div>
                     <dl class="row mb-0">
-                        <dt class="col-sm-4 text-secondary">Email:</dt>
-                        <dd class="col-sm-8">@user.Email</dd>
-                        <dt class="col-sm-4 text-secondary">First Name:</dt>
-                        <dd class="col-sm-8">@user.FirstName</dd>
-                        <dt class="col-sm-4 text-secondary">Last Name:</dt>
-                        <dd class="col-sm-8">@user.LastName</dd>
-                        <dt class="col-sm-4 text-secondary">Date of Birth:</dt>
-                        <dd class="col-sm-8">@user.DateOfBirth?.ToString("yyyy-MM-dd")</dd>
-                        <dt class="col-sm-4 text-secondary">User ID:</dt>
-                        <dd class="col-sm-8">@user.UserId</dd>
+	                    <dt class="col-sm-4 text-secondary">Email:</dt>
+	                    <dd class="col-sm-8">@user.Email</dd>
+	                    <dt class="col-sm-4 text-secondary">First Name:</dt>
+	                    <dd class="col-sm-8">@user.FirstName</dd>
+	                    <dt class="col-sm-4 text-secondary">Last Name:</dt>
+	                    <dd class="col-sm-8">@user.LastName</dd>
+	                    <dt class="col-sm-4 text-secondary">Date of Birth:</dt>
+	                    <dd class="col-sm-8">@user.DateOfBirth?.ToString("yyyy-MM-dd")</dd>
+	                    <dt class="col-sm-4 text-secondary">User ID:</dt>
+	                    <dd class="col-sm-8">@user.UserId</dd>
                     </dl>
                     <button class="btn btn-primary mt-3" @onclick="EnableEdit">Edit</button>
+
+                    @if (userRatings == null)
+                    {
+	                    <p>Loading user ratings...</p>
+                    }
+                    else if(!userRatings.Any())
+                    {
+	                    <p>You didn't rate any game yet</p>
+                    }
+                    else
+                    {
+	                    <h4 class="mb-3 mt-4">Games you rated</h4>
+	                    <div class="list-group">
+		                    @foreach (var rating in userRatings)
+		                    {
+			                    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+			                         @onclick="@(() => GoToGameDetail(rating.GameDetails.GameId))"
+			                         style="cursor: pointer">
+				                    <div>
+					                    <strong>@rating.GameDetails?.Name</strong>
+				                    </div>
+				                    <div>
+					                    @for (int i = 1; i <= 5; i++)
+					                    {
+						                    if (i <= rating.Score)
+						                    {
+							                    <i class="bi bi-star-fill text-warning"></i>
+						                    }
+						                    else
+						                    {
+							                    <i class="bi bi-star text-muted"></i>
+						                    }
+					                    }
+				                    </div>
+			                    </div>
+		                    }
+	                    </div>
+
+                    }
                 }
                 else
                 {
@@ -90,12 +131,17 @@
     private User? user;
     private User? editUser;
     private bool isEditing = false;
+    private List<GameRating> userRatings;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             user = await LocalStorage.GetItemAsync<User>("user");
+            if (user != null)
+            {
+	            userRatings = await GameRatingClient.GetRatingsByUserAsync(user.UserId);
+            }
             StateHasChanged();
         }
     }
@@ -135,5 +181,10 @@
     {
         isEditing = false;
         editUser = null;
+    }
+
+    private void GoToGameDetail(int gameId)
+    {
+        NavigationManager.NavigateTo($"/GameDetails/{gameId}");
     }
 }

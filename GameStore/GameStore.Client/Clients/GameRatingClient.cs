@@ -11,6 +11,7 @@ namespace GameStore.Client.Clients
         Task<GameRating?> GetGameRatingAsync(int userId, int gameId);
         Task<bool> UpdateGameRatingAsync(GameRating rating);
         Task<List<GameRating>> GetRatingsForGameAsync(int gameId);
+        Task<List<GameRating>> GetRatingsByUserAsync(int userId);
     }
     public class GameRatingClient : IGameRatingClient
     {
@@ -42,6 +43,13 @@ namespace GameStore.Client.Clients
         {
             var response = await _httpClient
                 .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.GameRatingRoutes.GetRatingsForGame(gameId));
+
+            return response?.Data ?? new List<GameRating>();
+        }
+        public async Task<List<GameRating>> GetRatingsByUserAsync(int userId)
+        {
+            var response = await _httpClient
+                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.GameRatingRoutes.GetRatingsByUser(userId));
 
             return response?.Data ?? new List<GameRating>();
         }

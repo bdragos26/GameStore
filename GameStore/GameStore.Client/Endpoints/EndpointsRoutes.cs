@@ -25,12 +25,15 @@
             public const string baseRoute = "/ratings";
             public const string baseWithUserAndGameIdRoute = "/{userId}/{gameId}";
             public const string baseWithGameIdRoute = "/{gameId}";
+            public const string baseWithUserIdRoute = "/user/{userId}";
             public static string GetRating(int userId, int gameId) =>
                 $"{baseRoute}?userId={userId}&gameId={gameId}";
             public static string UpdateRating(int userId, int gameId) =>
                 $"{baseRoute}/{userId}/{gameId}";
             public static string GetRatingsForGame(int gameId) =>
                 $"{baseRoute}/{gameId}";
+            public static string GetRatingsByUser(int userId) =>
+                $"{baseRoute}/user/{userId}";
         }
     }
 }
