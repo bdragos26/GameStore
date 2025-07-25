@@ -1,23 +1,29 @@
 ﻿@inject IGameRatingClient GameRatingClient
 @inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
-<div class="rating">
+<div class="rating" style="margin-left: 10px;">
 	@for (int i = 1; i <= 5; i++)
 	{
 		var index = i; 
-		<span style="margin-left:5px; cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
+		<span style="cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
 			<i class="bi bi-star-fill"></i>
 		</span>
 	}
+	@if (currentRating > 0)
+	{
+		<br/>
+		<button class="btn btn-danger" @onclick="DeleteRating">Delete rating</button>
+	}
 </div>
 
-<h4 class="text-muted" style="margin-left: 10px; margin-top: 5px;">
+<h4 class="text-muted" style="margin-left: 10px; margin-top: 50px;">
 	Average rating: <strong>@averageRating.ToString("0.0")</strong> / 5
 </h4>
 
 @if (ratings?.Any() == true)
 {
-	<div class="mt-4">
+	<div class="mt-4" style="margin-top: 30px;">
 		<h5 class="mb-3" style="margin-left: 10px;">Other users ratings</h5>
 		@foreach (var rating in ratings)
 		{
@@ -35,7 +41,7 @@
 }
 else
 {
-	<p class="text-muted">This game was not rated by other users</p>
+	<p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
 }
 
 @code {
@@ -57,7 +63,6 @@ else
 
 		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
 		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-
 		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
 	}
 
@@ -73,6 +78,21 @@ else
 
 		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
 		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-		NavigationManager.Refresh(true);
+		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+		StateHasChanged();
+	}
+
+	private async Task DeleteRating()
+	{
+		var result = await GameRatingClient.DeleteRatingAsync(UserId, GameId);
+
+		if (result)
+		{
+			currentRating = 0;
+			var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
+			ratings = allRatings.Where(r => r.UserId != UserId).ToList();
+			averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+			StateHasChanged();
+		}
 	}
 }

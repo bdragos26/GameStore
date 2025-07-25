@@ -37,6 +37,12 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
+            group.MapDelete(EndpointsRoutes.GameRatingRoutes.baseWithUserAndGameIdRoute, async (IGameRatingService service, int userId, int gameId) =>
+            {
+                var response = await service.DeleteRatingAsync(userId, gameId);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
+            });
+
             return group;
         }
     }

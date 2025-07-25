@@ -34,6 +34,8 @@
                 $"{baseRoute}/{gameId}";
             public static string GetRatingsByUser(int userId) =>
                 $"{baseRoute}/user/{userId}";
+            public static string DeleteRating(int userId, int gameId) => 
+                $"{baseRoute}/{userId}/{gameId}";
         }
     }
 }

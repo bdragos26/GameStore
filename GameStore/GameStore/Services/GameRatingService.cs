@@ -10,6 +10,7 @@ namespace GameStore.Services
         Task<ServiceResponse<GameRating>> UpdateRatingAsync(GameRating rating);
         Task<ServiceResponse<List<GameRating>>> GetRatingsForGameAsync(int gameId);
         Task<ServiceResponse<List<GameRating>>> GetRatingsByUserAsync(int userId);
+        Task<ServiceResponse<bool>> DeleteRatingAsync(int userId, int gameId);
     }
     public class GameRatingService : IGameRatingService
     {
@@ -124,6 +125,38 @@ namespace GameStore.Services
             {
                 response.Success = false;
                 response.Message = $"Error retrieving ratings by user: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> DeleteRatingAsync(int userId, int gameId)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                var rating = await _dbContext.Ratings
+                    .FirstOrDefaultAsync(r => r.UserId == userId && r.GameId == gameId);
+
+                if (rating == null)
+                {
+                    response.Success = false;
+                    response.Message = "Rating not found!";
+                    return response;
+                }
+
+                _dbContext.Ratings.Remove(rating);
+                await _dbContext.SaveChangesAsync();
+
+                response.Data = true;
+                response.Success = true;
+                response.Message = "Rating deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error deleting rating: {ex.Message}";
             }
 
             return response;

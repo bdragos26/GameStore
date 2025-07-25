@@ -12,6 +12,7 @@ namespace GameStore.Client.Clients
         Task<bool> UpdateGameRatingAsync(GameRating rating);
         Task<List<GameRating>> GetRatingsForGameAsync(int gameId);
         Task<List<GameRating>> GetRatingsByUserAsync(int userId);
+        Task<bool> DeleteRatingAsync(int userId, int gameId);
     }
     public class GameRatingClient : IGameRatingClient
     {
@@ -56,5 +57,12 @@ namespace GameStore.Client.Clients
 
             return response?.Data ?? new List<GameRating>();
         }
+
+        public async Task<bool> DeleteRatingAsync(int userId, int gameId)
+        {
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.GameRatingRoutes.DeleteRating(userId, gameId));
+            return response.IsSuccessStatusCode;
+        }
+
     }
 }
