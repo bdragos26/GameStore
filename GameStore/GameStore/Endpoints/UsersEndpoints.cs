@@ -59,7 +59,7 @@ namespace GameStore.Endpoints
                     resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
                 if (!response.Success)
                 {
-                    return Results.NotFound(response.Message);
+                    return Results.BadRequest(response);
                 }
 
                 await userService.UpdateUserAsync(response.Data!.UserId, response.Data);

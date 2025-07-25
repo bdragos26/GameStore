@@ -41,38 +41,39 @@
                 }
                 else
                 {
-                    <EditForm Model="editUser" OnValidSubmit="SaveChanges" Context="formContext">
-                        <DataAnnotationsValidator />
+	                <EditForm Model="editUser" OnValidSubmit="SaveChanges" Context="formContext">
+		                <DataAnnotationsValidator />
 
-                        <div class="mb-2">
-	                        <label class="form-label">First Name</label>
-	                        <InputText class="form-control" @bind-Value="editUser.FirstName" />
-	                        <ValidationMessage For="@(() => editUser.FirstName)" />
-                        </div>
+		                <div class="mb-2">
+			                <label class="form-label">First Name</label>
+			                <InputText class="form-control" @bind-Value="editUser.FirstName" />
+			                <ValidationMessage For="@(() => editUser.FirstName)" />
+		                </div>
 
-                        <div class="mb-2">
-	                        <label class="form-label">Last Name</label>
-	                        <InputText class="form-control" @bind-Value="editUser.LastName" />
-	                        <ValidationMessage For="@(() => editUser.LastName)" />
-                        </div>
+		                <div class="mb-2">
+			                <label class="form-label">Last Name</label>
+			                <InputText class="form-control" @bind-Value="editUser.LastName" />
+			                <ValidationMessage For="@(() => editUser.LastName)" />
+		                </div>
 
-                        <div class="mb-2">
-	                        <label class="form-label">Date of Birth</label>
-	                        <InputDate class="form-control" @bind-Value="editUser.DateOfBirth" />
-                        </div>
+		                <div class="mb-2">
+			                <label class="form-label">Date of Birth</label>
+			                <InputDate class="form-control" @bind-Value="editUser.DateOfBirth" />
+		                </div>
 
-                        <div class="mb-2">
-	                        <label class="form-label">Email</label>
-	                        <InputText class="form-control" @bind-Value="editUser.Email" />
-	                        <ValidationMessage For="@(() => editUser.Email)" />
-                        </div>
-						
+		                <div class="mb-2">
+			                <label class="form-label">Email</label>
+			                <InputText class="form-control" @bind-Value="editUser.Email" />
+			                <ValidationMessage For="@(() => editUser.Email)" />
+		                </div>
 
-                        <div class="d-flex gap-2 mt-3">
-                            <button class="btn btn-success" type="submit">Save</button>
-                            <button class="btn btn-secondary" @onclick="CancelEdit" type="button">Cancel</button>
-                        </div>
-                    </EditForm>
+		                <div class="d-flex gap-2 mt-3">
+			                <button class="btn btn-success" type="submit">Save</button>
+			                <button class="btn btn-secondary" @onclick="CancelEdit" type="button">Cancel</button>
+		                </div>
+	                </EditForm>
+	                <br/>
+                    <NavLink href="/ChangePassword" class="btn btn-warning">Change password</NavLink>
                 }
             </div>
         }

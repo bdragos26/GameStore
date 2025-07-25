@@ -1,4 +1,5 @@
 ﻿@inject IGameRatingClient GameRatingClient
+@inject NavigationManager NavigationManager
 
 <div class="rating">
 	@for (int i = 1; i <= 5; i++)
@@ -9,6 +10,10 @@
 		</span>
 	}
 </div>
+
+<h4 class="text-muted" style="margin-left: 10px; margin-top: 5px;">
+	Average rating: <strong>@averageRating.ToString("0.0")</strong> / 5
+</h4>
 
 @if (ratings?.Any() == true)
 {
@@ -40,6 +45,7 @@ else
 	public int UserId { get; set; }
 	private int currentRating = 0;
 	private List<GameRating> ratings = new();
+	private double averageRating = 0;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -51,6 +57,8 @@ else
 
 		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
 		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
+
+		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
 	}
 
 	private async Task SetRating(int score)
@@ -65,5 +73,6 @@ else
 
 		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
 		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
+		NavigationManager.Refresh(true);
 	}
 }
