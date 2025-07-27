@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net.Http.Json;
 using GameStore.Client.Endpoints;
+using GameStore.Shared.DTOs;
 
 namespace GameStore.Client.Clients
 {
@@ -13,6 +14,7 @@ namespace GameStore.Client.Clients
         Task<List<GameRating>> GetRatingsForGameAsync(int gameId);
         Task<List<GameRating>> GetRatingsByUserAsync(int userId);
         Task<bool> DeleteRatingAsync(int userId, int gameId);
+        Task<List<GameRatingDTO>> GetTopRatedGamesAsync(int count);
     }
     public class GameRatingClient : IGameRatingClient
     {
@@ -64,5 +66,12 @@ namespace GameStore.Client.Clients
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<List<GameRatingDTO>> GetTopRatedGamesAsync(int count)
+        {
+            var response = await _httpClient
+                .GetFromJsonAsync<ServiceResponse<List<GameRatingDTO>>>(EndpointsRoutes.GameRatingRoutes.TopRating(count));
+
+            return response?.Data ?? new List<GameRatingDTO>();
+        }
     }
 }

@@ -32,3 +32,21 @@
     z-index: 1;
     text-align: center;
 }
+
+.star-rating {
+    --star-size: 20px;
+    --star-color: #ccc;
+    --star-background: #fc0;
+    display: inline-block;
+    font-size: var(--star-size);
+    font-family: Times;
+    line-height: 1;
+}
+
+.star-rating::before {
+    content: '★★★★★';
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--star-background) calc(var(--rating) * 20%), var(--star-color) calc(var(--rating) * 20%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

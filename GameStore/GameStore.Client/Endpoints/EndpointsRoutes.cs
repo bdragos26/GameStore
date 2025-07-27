@@ -1,4 +1,6 @@
-﻿namespace GameStore.Client.Endpoints
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace GameStore.Client.Endpoints
 {
     public static class EndpointsRoutes
     {
@@ -26,6 +28,8 @@
             public const string baseWithUserAndGameIdRoute = "/{userId}/{gameId}";
             public const string baseWithGameIdRoute = "/{gameId}";
             public const string baseWithUserIdRoute = "/user/{userId}";
+            public const string topRatingRoute = "/top/{count:int}"; 
+
             public static string GetRating(int userId, int gameId) =>
                 $"{baseRoute}?userId={userId}&gameId={gameId}";
             public static string UpdateRating(int userId, int gameId) =>
@@ -36,6 +40,8 @@
                 $"{baseRoute}/user/{userId}";
             public static string DeleteRating(int userId, int gameId) => 
                 $"{baseRoute}/{userId}/{gameId}";
+            public static string TopRating(int count) =>
+                $"{baseRoute}/top/{count}";
         }
     }
 }

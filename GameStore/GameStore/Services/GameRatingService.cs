@@ -1,4 +1,5 @@
 ﻿using GameStore.Data;
+using GameStore.Shared.DTOs;
 using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace GameStore.Services
         Task<ServiceResponse<List<GameRating>>> GetRatingsForGameAsync(int gameId);
         Task<ServiceResponse<List<GameRating>>> GetRatingsByUserAsync(int userId);
         Task<ServiceResponse<bool>> DeleteRatingAsync(int userId, int gameId);
+        Task<ServiceResponse<List<GameRatingDTO>>> GetTopRatedGamesAsync(int count);
     }
     public class GameRatingService : IGameRatingService
     {
@@ -162,5 +164,33 @@ namespace GameStore.Services
             return response;
         }
 
+        public async Task<ServiceResponse<List<GameRatingDTO>>> GetTopRatedGamesAsync(int count)
+        {
+            var response = new ServiceResponse<List<GameRatingDTO>>();
+
+            try
+            {
+                var topGames = await _dbContext.Ratings.GroupBy(r => r.GameDetails)
+                    .Select(g => new GameRatingDTO
+                    {
+                        Game = g.Key,
+                        AverageScore = g.Average(r => r.Score),
+                        RatingCount = g.Count()
+                    })
+                    .OrderByDescending(g => g.AverageScore)
+                    .Take(count)
+                    .ToListAsync();
+
+                response.Success = true;
+                response.Data = topGames;
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.Message = e.Message;
+            }
+
+            return response;
+        }
     }
 }

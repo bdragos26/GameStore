@@ -43,6 +43,12 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
+            group.MapGet(EndpointsRoutes.GameRatingRoutes.topRatingRoute, async (IGameRatingService service, int count) =>
+            {
+                var response = await service.GetTopRatedGamesAsync(count);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
+            });
+
             return group;
         }
     }
