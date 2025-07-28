@@ -12,10 +12,11 @@ namespace GameStore.Client.Clients
         Task RegisterAsync(UserRegisterDto registerDto);
         Task<User?> LoginAsync(UserLoginDTO loginDto);
         Task LogoutAsync();
-        Task<User?> GetUserByIdAsync(int id);
+        Task<User?> GetUserByIdAsync(int userId);
         Task<List<User>> GetUsersAsync();
         Task UpdateUserAsync(User updatedUser);
         Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto);
+        Task DeleteUserAsync(int userId);
     }
 
     public class UserClient : IUserClient
@@ -57,8 +58,8 @@ namespace GameStore.Client.Clients
                 EndpointsRoutes.UserRoutes.logoutRoute, null);
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
-            => await _httpClient.GetFromJsonAsync<User>(EndpointsRoutes.UserRoutes.baseWithIdApi(id));
+        public async Task<User?> GetUserByIdAsync(int userId)
+            => await _httpClient.GetFromJsonAsync<User>(EndpointsRoutes.UserRoutes.baseWithIdApi(userId));
 
         public async Task<List<User>> GetUsersAsync()
         {
@@ -82,6 +83,16 @@ namespace GameStore.Client.Clients
                 EndpointsRoutes.UserRoutes.resetPassRoute, resetPasswordDto);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
 
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+            {
+                throw new Exception(result?.Message);
+            }
+        }
+
+        public async Task DeleteUserAsync(int userId)
+        {
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.UserRoutes.baseWithIdApi(userId));
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
             {
                 throw new Exception(result?.Message);

@@ -107,14 +107,7 @@ else
 		{
 			searchTerm = value;
 			currentPage = 1;
-			StateHasChanged();
 		}
-	}
-
-	private async Task SearchTermChanged(string value)
-	{
-		SearchTerm = value;
-		currentPage = 1;
 	}
 
 	private IEnumerable<Game> filteredGames =>

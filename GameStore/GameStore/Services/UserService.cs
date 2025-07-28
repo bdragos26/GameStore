@@ -15,6 +15,7 @@ namespace GameStore.Services
         Task<bool> UserExistsAsync(string username);
         Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser);
         Task<ServiceResponse<User>> ResetUserPasswordAsync(string email, string currentPassword, string newPassword);
+        Task<ServiceResponse<bool>> DeleteUserAsync(int UserId);
     }
     public class UserService : IUserService
     {
@@ -164,6 +165,25 @@ namespace GameStore.Services
                 response.Message = e.Message;
                 return response;
             }
+        }
+
+        public async Task<ServiceResponse<bool>> DeleteUserAsync(int userId)
+        {
+            var response = new ServiceResponse<bool>();
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found!";
+                return response;
+            }
+
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
+            response.Success = true;
+            response.Data = true;
+            return response;
         }
     }
 }

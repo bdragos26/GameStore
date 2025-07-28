@@ -1,0 +1,63 @@
+﻿@page "/Admin"
+@inject IUserClient UserClient
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<AuthorizeView Roles="Admin">
+	<Authorized>
+		<h3>Admin Page</h3>
+
+		@if (users == null)
+		{
+			<p><em>Loading...</em></p>
+		}
+		else
+		{
+			<table class="table">
+				<thead>
+				<tr>
+					<th>Username</th>
+					<th>Email</th>
+					<th>Role</th>
+					<th>Actions</th>
+				</tr>
+				</thead>
+				<tbody>
+				@foreach (var user in users)
+				{
+					<tr>
+						<td>@user.Username</td>
+						<td>@user.Email</td>
+						<td>@user.Role</td>
+						<td>
+							<button class="btn btn-danger" @onclick="() => DeleteUserAsync(user.UserId)">Delete</button>
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		}
+	</Authorized>
+</AuthorizeView>
+
+<AuthorizeView Roles="User">
+	<p class="alert alert-danger">You are not authorized here</p>
+	@{
+		NavigationManager.NavigateTo("/");
+	}
+</AuthorizeView>
+
+@code {
+	private List<User>? users;
+
+	protected override async Task OnInitializedAsync()
+	{
+		users = await UserClient.GetUsersAsync();
+	}
+
+	private async Task DeleteUserAsync(int userId)
+	{
+		await UserClient.DeleteUserAsync(userId);
+		users = await UserClient.GetUsersAsync();
+	}
+}

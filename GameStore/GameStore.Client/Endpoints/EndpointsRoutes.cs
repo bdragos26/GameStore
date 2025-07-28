@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using GameStore.Shared.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace GameStore.Client.Endpoints
 {
@@ -18,8 +19,8 @@ namespace GameStore.Client.Endpoints
             public const string loginRoute = "/login";
             public const string logoutRoute = "/logout";
             public const string resetPassRoute = "/resetPass";
-            public const string baseWithIdRoute = "/{id:int}";
-            public static string baseWithIdApi(int id) => $"{baseRoute}/{id}";
+            public const string baseWithIdRoute = "/{userId:int}";
+            public static string baseWithIdApi(int userId) => $"{baseRoute}/{userId}";
         }
 
         public static class GameRatingRoutes

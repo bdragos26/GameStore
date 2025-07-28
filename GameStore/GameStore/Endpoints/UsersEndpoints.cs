@@ -39,17 +39,12 @@ namespace GameStore.Endpoints
             group.MapGet("/", async (IUserService userService) =>
             {
                 var response = await userService.GetAllUsersAsync();
-                if (!response.Success)
-                {
-                    Results.BadRequest(response);
-                }
-
-                Results.Ok(response);
+                return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
             });
 
-            group.MapPut(EndpointsRoutes.UserRoutes.baseWithIdRoute, async (int id, User updatedUser, IUserService userService) =>
+            group.MapPut(EndpointsRoutes.UserRoutes.baseWithIdRoute, async (int userId, User updatedUser, IUserService userService) =>
             {
-                var existingUserResponse = await userService.UpdateUserAsync(id, updatedUser);
+                var existingUserResponse = await userService.UpdateUserAsync(userId, updatedUser);
                 return !existingUserResponse.Success ? Results.NotFound() : Results.NoContent();
             });
 
@@ -64,6 +59,12 @@ namespace GameStore.Endpoints
 
                 await userService.UpdateUserAsync(response.Data!.UserId, response.Data);
                 return Results.Ok(response);
+            });
+
+            group.MapDelete(EndpointsRoutes.UserRoutes.baseWithIdRoute, async (IUserService service, int userId) =>
+            {
+                var response = await service.DeleteUserAsync(userId);
+                return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
             });
 
             return group;

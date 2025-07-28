@@ -6,25 +6,32 @@
 	</NavLink>
 	<NavLink href="/gameList" Match="NavLinkMatch.All" class="nav-link custom-nav">
 		<i class="bi bi-list-ul me-2"></i> Game Catalog
-	</NavLink>
+	</NavLink>	
 	<AuthorizeView>
 		<Authorized>
-			<div class="dropdown me-2">
-				<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<i class="bi bi-person-fill"></i>
-					@context.User.Identity?.Name
-				</button>
-				<ul class="dropdown-menu dropdown-menu-end">
-					<li>
-						<a class="dropdown-item" href="/profile">Profile</a>
-					</li>
-					<li>
-						<hr class="dropdown-divider"/>
-					</li>
-					<li>
-						<a class="dropdown-item text-danger" href="/logout">Logout</a>
-					</li>
-				</ul>
+			<div class="d-flex align-items-center me-2">
+				<AuthorizeView Roles="Admin" Context="adminPanel">
+					<NavLink class="btn btn-outline-warning me-2" href="/Admin">
+						<i class="bi bi-shield-lock me-1"></i> Admin Panel
+					</NavLink>
+				</AuthorizeView>
+				<div class="dropdown me-2">
+					<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="bi bi-person-fill"></i>
+						@context.User.Identity?.Name
+					</button>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li>
+							<a class="dropdown-item" href="/profile">Profile</a>
+						</li>
+						<li>
+							<hr class="dropdown-divider"/>
+						</li>
+						<li>
+							<a class="dropdown-item text-danger" href="/logout">Logout</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</Authorized>
 		<NotAuthorized>
