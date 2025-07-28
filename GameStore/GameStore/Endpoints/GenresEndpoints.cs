@@ -1,6 +1,4 @@
-﻿using GameStore.Data;
-using GameStore.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using GameStore.Services;
 
 namespace GameStore.Endpoints
 {

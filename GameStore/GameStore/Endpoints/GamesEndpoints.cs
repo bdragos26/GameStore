@@ -1,8 +1,6 @@
 ﻿using GameStore.Client.Endpoints;
-using GameStore.Data;
 using GameStore.Services;
 using GameStore.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Endpoints
 {

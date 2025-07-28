@@ -58,7 +58,7 @@ namespace GameStore.Services
 
             return new ServiceResponse<Game>
             {
-                Data = newGame 
+                Data = newGame
             };
         }
 
@@ -91,7 +91,7 @@ namespace GameStore.Services
             {
                 return new ServiceResponse<bool>
                 {
-                    Success = false, 
+                    Success = false,
                     Message = "Game not found"
                 };
             }

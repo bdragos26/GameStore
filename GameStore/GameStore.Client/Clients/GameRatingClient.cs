@@ -1,9 +1,8 @@
-﻿using GameStore.Shared.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Net.Http.Json;
-using GameStore.Client.Endpoints;
+﻿using GameStore.Client.Endpoints;
 using GameStore.Shared.DTOs;
+using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace GameStore.Client.Clients
 {

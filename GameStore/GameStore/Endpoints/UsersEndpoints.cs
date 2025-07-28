@@ -2,7 +2,6 @@
 using GameStore.Services;
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.Endpoints
 {

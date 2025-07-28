@@ -1,6 +1,6 @@
-﻿using System.Net.Http.Json;
-using GameStore.Shared.Models;
+﻿using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace GameStore.Client.Clients
 {

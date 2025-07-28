@@ -28,7 +28,7 @@ namespace GameStore.Client.Endpoints
             public const string baseRoute = "/ratings";
             public const string baseWithUserAndGameIdRoute = "/{userId}/{gameId}";
             public const string baseWithGameIdRoute = "/{gameId}";
-            public const string baseWithUserIdRoute = "/user/{userId}";
+            public const string baseWithUserIdRoute = "/user/{userId}"; 
             public const string topRatingRoute = "/top/{count:int}"; 
 
             public static string GetRating(int userId, int gameId) =>

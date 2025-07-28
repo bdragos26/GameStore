@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using GameStore.Data;
+﻿using GameStore.Data;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -99,9 +98,9 @@ namespace GameStore.Services
             {
                 Data = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email)
             };
-            
+
             return response;
-           
+
         }
         public async Task<ServiceResponse<List<User>>> GetAllUsersAsync()
         {
@@ -120,7 +119,8 @@ namespace GameStore.Services
 
         public async Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser)
         {
-            var response = new ServiceResponse<User> {
+            var response = new ServiceResponse<User>
+            {
 
                 Data = await _dbContext.Users.FindAsync(id)
             };

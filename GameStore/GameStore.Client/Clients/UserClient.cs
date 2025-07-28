@@ -1,9 +1,8 @@
-using System.Formats.Asn1;
-using System.Net.Http.Json;
 using GameStore.Client.Endpoints;
-using GameStore.Shared.Models;
 using GameStore.Shared.DTOs;
+using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace GameStore.Client.Clients
 {
@@ -31,7 +30,7 @@ namespace GameStore.Client.Clients
 
         public async Task RegisterAsync(UserRegisterDto registerDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute + 
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
                 EndpointsRoutes.UserRoutes.registerRoute, registerDto);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -42,7 +41,7 @@ namespace GameStore.Client.Clients
 
         public async Task<User?> LoginAsync(UserLoginDTO loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute + 
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
                 EndpointsRoutes.UserRoutes.loginRoute, loginDto);
             if (response.IsSuccessStatusCode)
             {
@@ -79,7 +78,7 @@ namespace GameStore.Client.Clients
 
         public async Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute + 
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
                 EndpointsRoutes.UserRoutes.resetPassRoute, resetPasswordDto);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
 

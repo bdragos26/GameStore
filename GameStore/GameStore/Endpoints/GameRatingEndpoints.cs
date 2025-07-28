@@ -1,9 +1,7 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using GameStore.Client.Endpoints;
+﻿using GameStore.Client.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace GameStore.Endpoints
 {
