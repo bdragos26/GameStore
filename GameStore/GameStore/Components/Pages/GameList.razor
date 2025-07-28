@@ -18,6 +18,27 @@
 }  
 else  
 {  
+	<div class="search-container mb-4" style="margin-top: 20px;">
+		<div class="search-box">
+			<i class="bi bi-search search-icon"></i>
+			<InputText class="search-input form-control" placeholder="Search games..." 
+			           @bind-Value="SearchTerm" @oninput="(e) => SearchTerm = e.Value?.ToString() ?? string.Empty" />
+			@if (!string.IsNullOrEmpty(SearchTerm))
+			{
+				<button class="clear-search" @onclick="() => SearchTerm = string.Empty">
+					<i class="bi bi-x"></i>
+				</button>
+			}
+		</div>
+		<div class="search-results-info">
+			Showing @pagedGames.Count() of @filteredGames.Count() results
+			@if (!string.IsNullOrEmpty(SearchTerm))
+			{
+				<span>for "@SearchTerm"</span>
+			}
+		</div>
+	</div>
+
 	<div class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 30px;">
 		@foreach (var game in pagedGames)
 		{
@@ -71,12 +92,33 @@ else
 }  
 
 @code {
-	private List<Game> games;  
-	private List<Genre> genres;
+	private List<Game>? games;  
+	private List<Genre>? genres;
 	private int currentPage = 1;
 	private int pageSize = 3;
-	private IEnumerable<Game> pagedGames => games.Skip((currentPage - 1) * pageSize).Take(pageSize);
-	private int totalPages => (int)Math.Ceiling((double)games.Count / pageSize);
+	private IEnumerable<Game> pagedGames => filteredGames.Skip((currentPage - 1) * pageSize).Take(pageSize);
+	private int totalPages => (int)Math.Ceiling((double)filteredGames.Count() / pageSize);
+
+	private string searchTerm = string.Empty;
+	private string SearchTerm
+	{
+		get => searchTerm;
+		set
+		{
+			searchTerm = value;
+			currentPage = 1;
+			StateHasChanged();
+		}
+	}
+
+	private async Task SearchTermChanged(string value)
+	{
+		SearchTerm = value;
+		currentPage = 1;
+	}
+
+	private IEnumerable<Game> filteredGames =>
+		string.IsNullOrWhiteSpace(SearchTerm) ? games : games.Where(g => g.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
 
 	protected override async Task OnInitializedAsync()
 	{

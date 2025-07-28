@@ -1,7 +1,5 @@
 ﻿@page "/"
-@using GameStore.Shared.DTOs
 @inject NavigationManager NavigationManager
-@inject IGameRatingClient GameRatingClient
 @rendermode InteractiveServer
 
 <PageTitle>Welcome to GameStore</PageTitle>
@@ -17,91 +15,4 @@
 	</div>
 </div>
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0"><i class="bi bi-trophy me-2"></i>Top Rated Games</h3>
-                    <div class="d-flex align-items-center">
-                        <span class="me-2">Show:</span>
-                        <select class="form-select form-select-sm w-auto" @onchange="OnTopCountChanged" value="@topCount">
-                            <option value="5">Top 5</option>
-                            <option value="10">Top 10</option>
-                            <option value="20">Top 20</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="card-body">
-                    @if (topGames == null)
-                    {
-                        <div class="text-center">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
-                    }
-                    else if (!topGames.Any())
-                    {
-                        <p class="text-muted">No rated games yet.</p>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Rank</th>
-                                        <th>Game</th>
-                                        <th>Average Rating</th>
-                                        <th>Ratings Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int i = 0; i < topGames.Count; i++)
-                                    {
-                                        var game = topGames[i];
-                                        <tr @onclick="@(() => NavigationManager.NavigateTo($"/GameDetails/{game.Game?.GameId}"))" style="cursor: pointer;">
-                                            <td>@(i + 1)</td>
-                                            <td>@game.Game?.Name</td>
-                                            <td>
-                                                <div class="star-rating" style="--rating: @game.AverageScore.ToString("0.0");"></div>
-                                                (@game.AverageScore.ToString("0.0"))
-                                            </td>
-                                            <td>@game.RatingCount</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@code {
-	private List<GameRatingDTO> topGames = new();
-	private int topCount = 10;
-
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadGames();
-	}
-
-	private async Task OnTopCountChanged(ChangeEventArgs e)
-	{
-		if (int.TryParse(e.Value?.ToString(), out int newCount))
-		{
-			topCount = newCount;
-			await LoadGames();
-		}
-	}
-
-	private async Task LoadGames()
-	{
-		topGames = await GameRatingClient.GetTopRatedGamesAsync(topCount);
-	}
-}
+<TopGames/>
