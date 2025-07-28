@@ -1,9 +1,9 @@
-﻿using GameStore.Client.Endpoints;
+﻿using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace GameStore.Client.Clients
+namespace GameStore.Client.Services.ApiClients
 {
     public interface IGamesClient
     {
@@ -24,7 +24,7 @@ namespace GameStore.Client.Clients
         }
         public async Task<List<Game>> GetGamesAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Game>>>(EndpointsRoutes.GamesRoutes.baseRoute);
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Game>>>(EndpointsRoutes.Games._base);
             if (response == null || !response.Success)
                 throw new Exception(response?.Message ?? "Failed to load games");
 
@@ -33,7 +33,7 @@ namespace GameStore.Client.Clients
 
         public async Task AddGameAsync(Game game)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.GamesRoutes.baseRoute, game);
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.Games._base, game);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -42,7 +42,7 @@ namespace GameStore.Client.Clients
 
         public async Task UpdateGameAsync(Game updatedGame)
         {
-            var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.GamesRoutes.baseWithIdApi(updatedGame.GameId), updatedGame);
+            var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.Games.Update(updatedGame.GameId), updatedGame);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<Game>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -51,7 +51,7 @@ namespace GameStore.Client.Clients
 
         public async Task DeleteGameAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync(EndpointsRoutes.GamesRoutes.baseWithIdApi(id));
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.Games.Delete(id));
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -60,7 +60,7 @@ namespace GameStore.Client.Clients
 
         public async Task<Game> GetGameByIdAsync(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<Game>>(EndpointsRoutes.GamesRoutes.baseWithIdApi(id));
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<Game>>(EndpointsRoutes.Games.GetById(id));
             if (response == null || !response.Success)
                 throw new Exception(response?.Message ?? "Game not found");
 

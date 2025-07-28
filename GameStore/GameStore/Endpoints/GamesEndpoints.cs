@@ -1,5 +1,5 @@
-﻿using GameStore.Client.Endpoints;
-using GameStore.Services;
+﻿using GameStore.Services;
+using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 
 namespace GameStore.Endpoints
@@ -8,7 +8,7 @@ namespace GameStore.Endpoints
     {
         public static RouteGroupBuilder MapGamesEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup(EndpointsRoutes.GamesRoutes.baseRoute);
+            var group = app.MapGroup(EndpointsRoutes.Games._base);
 
             group.MapGet("/", async (IGameService gameService) =>
             {
@@ -16,7 +16,7 @@ namespace GameStore.Endpoints
                 return result.Success ? Results.Ok(result) : Results.BadRequest(result);
             });
 
-            group.MapGet(EndpointsRoutes.GamesRoutes.baseWithIdRoute, async (int gameId, IGameService gameService) =>
+            group.MapGet(EndpointsRoutes.Games.getById, async (int gameId, IGameService gameService) =>
             {
                 var result = await gameService.GetGameByIdAsync(gameId);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
@@ -25,16 +25,16 @@ namespace GameStore.Endpoints
             group.MapPost("/", async (Game newGame, IGameService gameService) =>
             {
                 var result = await gameService.AddGameAsync(newGame);
-                return result.Success ? Results.Created(EndpointsRoutes.GamesRoutes.baseWithIdApi(result.Data!.GameId), result) : Results.BadRequest(result);
+                return result.Success ? Results.Created(EndpointsRoutes.Games.Add(result.Data!.GameId), result) : Results.BadRequest(result);
             });
 
-            group.MapPut(EndpointsRoutes.GamesRoutes.baseWithIdRoute, async (int gameId, Game updatedGame, IGameService gameService) =>
+            group.MapPut(EndpointsRoutes.Games.update, async (int gameId, Game updatedGame, IGameService gameService) =>
             {
                 var result = await gameService.UpdateGameAsync(gameId, updatedGame);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
-            group.MapDelete(EndpointsRoutes.GamesRoutes.baseWithIdRoute, async (int gameId, IGameService gameService) =>
+            group.MapDelete(EndpointsRoutes.Games.delete, async (int gameId, IGameService gameService) =>
             {
                 var result = await gameService.DeleteGameAsync(gameId);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);

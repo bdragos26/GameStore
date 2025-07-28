@@ -1,10 +1,10 @@
-using GameStore.Client.Endpoints;
 using GameStore.Shared.DTOs;
+using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace GameStore.Client.Clients
+namespace GameStore.Client.Services.ApiClients
 {
     public interface IUserClient
     {
@@ -30,8 +30,8 @@ namespace GameStore.Client.Clients
 
         public async Task RegisterAsync(UserRegisterDto registerDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
-                EndpointsRoutes.UserRoutes.registerRoute, registerDto);
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.register, registerDto);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
             {
@@ -41,8 +41,8 @@ namespace GameStore.Client.Clients
 
         public async Task<User?> LoginAsync(UserLoginDTO loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
-                EndpointsRoutes.UserRoutes.loginRoute, loginDto);
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.login, loginDto);
             if (response.IsSuccessStatusCode)
             {
                 var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
@@ -53,22 +53,22 @@ namespace GameStore.Client.Clients
 
         public async Task LogoutAsync()
         {
-            await _httpClient.PostAsync(EndpointsRoutes.UserRoutes.baseRoute +
-                EndpointsRoutes.UserRoutes.logoutRoute, null);
+            await _httpClient.PostAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.logout, null);
         }
 
         public async Task<User?> GetUserByIdAsync(int userId)
-            => await _httpClient.GetFromJsonAsync<User>(EndpointsRoutes.UserRoutes.baseWithIdApi(userId));
+            => await _httpClient.GetFromJsonAsync<User>(EndpointsRoutes.User.GetById(userId));
 
         public async Task<List<User>> GetUsersAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<User>>>(EndpointsRoutes.UserRoutes.baseRoute);
+            var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<User>>>(EndpointsRoutes.User._base);
             return response?.Data ?? new List<User>();
         }
 
         public async Task UpdateUserAsync(User updatedUser)
         {
-            var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.UserRoutes.baseWithIdApi(updatedUser.UserId), updatedUser);
+            var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.User.Update(updatedUser.UserId), updatedUser);
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
@@ -78,8 +78,8 @@ namespace GameStore.Client.Clients
 
         public async Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.UserRoutes.baseRoute +
-                EndpointsRoutes.UserRoutes.resetPassRoute, resetPasswordDto);
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.resetPass, resetPasswordDto);
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
 
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
@@ -90,7 +90,7 @@ namespace GameStore.Client.Clients
 
         public async Task DeleteUserAsync(int userId)
         {
-            var response = await _httpClient.DeleteAsync(EndpointsRoutes.UserRoutes.baseWithIdApi(userId));
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.User.Delete(userId));
             var result = await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
             {

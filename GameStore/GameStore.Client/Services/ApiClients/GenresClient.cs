@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace GameStore.Client.Clients
+namespace GameStore.Client.Services.ApiClients
 {
     public interface IGenresClient
     {

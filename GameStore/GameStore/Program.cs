@@ -1,6 +1,6 @@
 using Blazored.LocalStorage;
 using GameStore.Client;
-using GameStore.Client.Clients;
+using GameStore.Client.Services.ApiClients;
 using GameStore.Components;
 using GameStore.Data;
 using GameStore.Endpoints;
@@ -24,15 +24,16 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddMudServices();
 
+builder.Services.AddScoped<PasswordHasher<User>>();
+
 builder.Services.AddScoped<IGamesClient, GamesClient>();
 builder.Services.AddScoped<IGenresClient, GenresClient>();
-builder.Services.AddScoped<IGameService, GameService>();
-
-builder.Services.AddScoped<PasswordHasher<User>>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserClient, UserClient>();
-builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IGameRatingClient, GameRatingClient>();
+
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IGameRatingService, GameRatingService>();
 
 var connString = builder.Configuration.GetConnectionString("GameStore");

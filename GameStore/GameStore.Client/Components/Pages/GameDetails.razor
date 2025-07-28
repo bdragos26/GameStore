@@ -1,5 +1,6 @@
 ﻿@page "/GameDetails/{GameId:int}"
 @using Blazored.LocalStorage
+@using GameStore.Client.Services.ApiClients
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
 @inject ILocalStorageService LocalStorage
