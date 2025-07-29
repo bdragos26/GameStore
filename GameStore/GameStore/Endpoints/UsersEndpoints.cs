@@ -20,7 +20,7 @@ namespace GameStore.Endpoints
                     FirstName = UserRegisterDto.FirstName,
                     LastName = UserRegisterDto.LastName,
                     DateOfBirth = UserRegisterDto.DateOfBirth,
-                    Role = "User"
+                    Role = Roles.User
                 };
 
                 var response = await userService.RegisterUserAsync(user, UserRegisterDto.Password);

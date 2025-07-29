@@ -36,7 +36,7 @@ namespace GameStore.Client
                     new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new(ClaimTypes.Name, user.Username),
                     new(ClaimTypes.Email, user.Email),
-                    new(ClaimTypes.Role, user.Role)
+                    new(ClaimTypes.Role, user.Role.ToString())
                 };
 
                 return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(
@@ -64,7 +64,7 @@ namespace GameStore.Client
                     new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new(ClaimTypes.Name, user.Username),
                     new(ClaimTypes.Email, user.Email),
-                    new(ClaimTypes.Role, user.Role)
+                    new(ClaimTypes.Role, user.Role.ToString())
                 };
 
                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "GameStoreAuth"));

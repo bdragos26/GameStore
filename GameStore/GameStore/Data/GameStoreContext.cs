@@ -38,6 +38,10 @@ namespace GameStore.Data
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasConversion<string>();
+
             modelBuilder.Entity<GameRating>()
                 .HasKey(r => new { r.UserId, r.GameId });
 

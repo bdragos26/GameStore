@@ -20,6 +20,6 @@ namespace GameStore.Shared.Models
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [Required, StringLength(20)]
-        public string Role { get; set; } = "User";
+        public Roles Role { get; set; } = Roles.User;
     }
 }
