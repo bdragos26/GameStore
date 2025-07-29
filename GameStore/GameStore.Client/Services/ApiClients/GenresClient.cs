@@ -15,7 +15,6 @@ namespace GameStore.Client.Services.ApiClients
         public GenresClient(HttpClient httpClient, NavigationManager navigationManager)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         }
 
         public async Task<List<Genre>> GetGenresAsync()

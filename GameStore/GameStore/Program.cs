@@ -1,36 +1,19 @@
-using Blazored.LocalStorage;
-using GameStore.Client;
-using GameStore.Client.Services.ApiClients;
-using GameStore.Components;
-using GameStore.Data;
+﻿using GameStore.Data;
 using GameStore.Endpoints;
 using GameStore.Services;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 
 builder.Services.AddHttpClient();
-
-builder.Services.AddMudServices();
-
 builder.Services.AddScoped<PasswordHasher<User>>();
-
-builder.Services.AddScoped<IGamesClient, GamesClient>();
-builder.Services.AddScoped<IGenresClient, GenresClient>();
-builder.Services.AddScoped<IUserClient, UserClient>();
-builder.Services.AddScoped<IGameRatingClient, GameRatingClient>();
-
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
@@ -53,41 +36,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthenticationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
 }
 else
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
+
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(GameStore.Client._Imports).Assembly);
 
 app.MapGamesEndpoints();
 app.MapGenreEndpoints();
 app.MapUsersEndpoints();
 app.MapGameRatingsEndpoints();
+
+app.MapControllers();
+app.MapRazorPages();
+
+app.MapFallbackToFile("index.html");
 
 await app.MigrateDbAsync();
 

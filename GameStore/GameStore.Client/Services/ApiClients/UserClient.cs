@@ -25,7 +25,6 @@ namespace GameStore.Client.Services.ApiClients
         public UserClient(HttpClient httpClient, NavigationManager navigationManager)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
         }
 
         public async Task RegisterAsync(UserRegisterDto registerDto)
