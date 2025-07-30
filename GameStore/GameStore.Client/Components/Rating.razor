@@ -4,14 +4,14 @@
 <div class="rating" style="margin-left: 10px;">
 	@for (int i = 1; i <= 5; i++)
 	{
-		var index = i; 
+		var index = i;
 		<span style="cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
 			<i class="bi bi-star-fill"></i>
 		</span>
 	}
 	@if (currentRating > 0)
 	{
-		<br/>
+		<br />
 		<button class="btn btn-danger" @onclick="DeleteRating">Delete rating</button>
 	}
 </div>
@@ -22,21 +22,38 @@
 
 @if (ratings?.Any() == true)
 {
-	<div class="mt-4" style="margin-top: 30px;">
-		<h5 class="mb-3" style="margin-left: 10px;">Other users ratings</h5>
-		@foreach (var rating in ratings)
+	<div style="display: flex; justify-content: flex-end; margin: 10px;">
+		<button class="btn btn-warning btn-sm btn-toggle" @onclick="ToggleRatings">
+			<i class="bi @(showOtherRatings ? "bi-eye-slash" : "bi-eye") me-1"></i>
+			@(showOtherRatings ? "Hide ratings" : "Show ratings")
+		</button>
+	</div>
+
+	@if (showOtherRatings)
+	{
+		if (ratings?.Any() == true)
 		{
-			<div class="user-rating-card">
-				<div><strong>@rating.User?.Username</strong></div>
-				<div class="rating-stars">
-					@for (int i = 1; i <= 5; i++)
-					{
-						<i style="color: @(i <= rating.Score ? "gold" : "gray")" class="bi @(i <= rating.Score ? "bi-star-fill" : "bi-star")"></i>
-					}
-				</div>
+			<div class="collapse @(showOtherRatings ? "show" : "")" id="ratingsCollapse">
+				@foreach (var rating in ratings)
+				{
+					<div class="user-rating-card" style="margin-left: 10px;">
+						<div><strong>@rating.User?.Username</strong></div>
+						<div class="rating-stars">
+							@for (int i = 1; i <= 5; i++)
+							{
+								<i style="color: @(i <= rating.Score ? "gold" : "gray")" class="bi @(i <= rating.Score ? "bi-star-fill" : "bi-star")"></i>
+							}
+						</div>
+					</div>
+				}
 			</div>
 		}
-	</div>
+		else
+		{
+			<p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
+		}
+	}
+
 }
 else
 {
@@ -44,13 +61,14 @@ else
 }
 
 @code {
-	[Parameter] 
+	[Parameter]
 	public int GameId { get; set; }
-	[Parameter] 
+	[Parameter]
 	public int UserId { get; set; }
 	private int currentRating = 0;
 	private List<GameRating> ratings = new();
 	private double averageRating = 0;
+	private bool showOtherRatings;
 
 	private async Task RefreshRatingsAsync()
 	{
@@ -94,5 +112,10 @@ else
 			await RefreshRatingsAsync();
 			StateHasChanged();
 		}
+	}
+
+	private void ToggleRatings()
+	{
+		showOtherRatings = !showOtherRatings;
 	}
 }
