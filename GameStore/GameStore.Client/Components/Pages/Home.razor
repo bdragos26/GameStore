@@ -4,15 +4,21 @@
 
 <PageTitle>Welcome to GameStore</PageTitle>
 
-<div class="home-container">
-	<div class="background-image"></div>
-	<div class="content-overlay">
-		<h1 class="display-4 fw-bold text-white text-shadow">Welcome to GameStore!</h1>
-		<p class="lead text-white text-shadow">Discover and manage your favorite games with ease.</p>
-		<button class="btn btn-primary btn-lg mt-4 shadow" @onclick="@(() => NavigationManager.NavigateTo("/gameList"))">
-			<i class="bi bi-controller me-2"></i> Browse All Games
-		</button>
+<div class="hero-section">
+	<div class="hero-background"></div>
+	<div class="hero-content">
+		<div class="container">
+			<h1 class="hero-title">Welcome to GameStore!</h1>
+			<p class="hero-subtitle">Discover and manage your favorite games with ease</p>
+			<button class="hero-button" @onclick="@(() => NavigationManager.NavigateTo("/gameList"))">
+				<i class="bi bi-controller me-2"></i> Browse All Games
+			</button>
+		</div>
 	</div>
 </div>
 
-<TopGames/>
+<div class="top-games-container">
+	<div class="container">
+		<TopGames/>
+	</div>
+</div>

@@ -52,6 +52,13 @@ else
 	private List<GameRating> ratings = new();
 	private double averageRating = 0;
 
+	private async Task RefreshRatingsAsync()
+	{
+		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
+		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
+		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		var rating = await GameRatingClient.GetGameRatingAsync(UserId, GameId);
@@ -60,9 +67,7 @@ else
 			currentRating = rating.Score;
 		}
 
-		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
-		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+		await RefreshRatingsAsync();
 	}
 
 	private async Task SetRating(int score)
@@ -75,9 +80,7 @@ else
 			Score = currentRating
 		});
 
-		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
-		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+		await RefreshRatingsAsync();
 		StateHasChanged();
 	}
 
@@ -88,9 +91,7 @@ else
 		if (result)
 		{
 			currentRating = 0;
-			var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
-			ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-			averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+			await RefreshRatingsAsync();
 			StateHasChanged();
 		}
 	}
