@@ -1,0 +1,114 @@
+﻿@page "/gameStats"
+@inject IGamesClient GamesClient
+@inject IGenresClient GenresClient
+
+<PageTitle>Game Stats</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudTabs Rounded="true" Elevation="6" RoundedCorners="MudBlazor.Corners.All" Class="pa-4">
+        <MudTabPanel Text="Genres Distribution">
+            <MudPaper Class="pa-6" Style="min-height: 370px;">
+                <MudText Typo="Typo.h5" Class="mb-4">Game Genres Distribution</MudText>
+                <MudChart ChartType="ChartType.Pie"
+                          InputLabels="@genreLabels"
+                          InputData="@genreData"
+                          Width="100%"
+                          Height="300px" />
+            </MudPaper>
+        </MudTabPanel>
+
+        <MudTabPanel Text="Price Ranges">
+            <MudPaper Class="pa-6" Style="min-height: 370px;">
+                <MudText Typo="Typo.h5" Class="mb-4">Games by Price Range</MudText>
+                <MudChart ChartType="ChartType.Bar"
+                          ChartSeries="@priceSeries"
+                          XAxisLabels="@priceLabels"
+                          Width="100%"
+                          Height="300px" />
+            </MudPaper>
+        </MudTabPanel>
+
+        <MudTabPanel Text="Releases by Year">
+            <MudPaper Class="pa-6" Style="min-height: 400px;">
+                <MudText Typo="Typo.h5" Class="mb-4">Game Releases by Year</MudText>
+                <MudChart ChartType="ChartType.Line"
+                          ChartSeries="@yearlyReleaseSeries"
+                          XAxisLabels="@yearLabels"
+                          Width="100%"
+                          Height="350px" />
+            </MudPaper>
+        </MudTabPanel>
+    </MudTabs>
+</MudContainer>
+
+@code {
+    private string[] genreLabels = [];
+    private double[] genreData = [];
+
+    private readonly string[] priceLabels = ["< $10", "$10-30", "$30-60", "> $60"];
+    private List<ChartSeries> priceSeries = new();
+
+    private string[] yearLabels = [];
+    private List<ChartSeries> yearlyReleaseSeries = new();
+
+    private List<Game>? games;
+    private List<Genre>? genres;
+
+    protected override async Task OnInitializedAsync()
+    {
+        games = await GamesClient.GetGamesAsync();
+        genres = await GenresClient.GetGenresAsync();
+
+        if (games != null && genres != null)
+        {
+            GenerateGenreStats();
+            GeneratePriceStats();
+            GenerateYearlyStats();
+        }
+    }
+
+    private void GenerateGenreStats()
+    {
+        genreLabels = genres!.Select(g => g.Name).ToArray();
+
+        genreData = genres
+            .Select(g => (double)games!.Count(game => game.GenreId == g.GenreId))
+            .ToArray();
+    }
+
+    private void GeneratePriceStats()
+    {
+        var low = games!.Count(g => g.Price < 10);
+        var mid = games.Count(g => g.Price >= 10 && g.Price < 30);
+        var high = games.Count(g => g.Price >= 30 && g.Price <= 60);
+        var ultra = games.Count(g => g.Price > 60);
+
+        priceSeries = new List<ChartSeries>
+        {
+            new ChartSeries
+            {
+                Name = "Number of Games",
+                Data = new double[] { low, mid, high, ultra }
+            }
+        };
+    }
+
+    private void GenerateYearlyStats()
+    {
+        var groupedByYear = games!
+            .GroupBy(g => g.ReleaseDate.Year)
+            .OrderBy(g => g.Key)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        yearLabels = groupedByYear.Keys.Select(y => y.ToString()).ToArray();
+
+        yearlyReleaseSeries = new List<ChartSeries>
+        {
+            new ChartSeries
+            {
+                Name = "Game Releases",
+                Data = groupedByYear.Values.Select(v => (double)v).ToArray()
+            }
+        };
+    }
+}

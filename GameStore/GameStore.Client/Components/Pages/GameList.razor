@@ -1,28 +1,27 @@
 ﻿@page "/gameList"
-@using GameStore.Client.Services.ApiClients
-@inject NavigationManager NavigationManager  
+@inject NavigationManager NavigationManager
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Game Catalog</PageTitle>  
+<PageTitle>Game Catalog</PageTitle>
 
 <AuthorizeView Roles="Admin">
-	<div class="mt-2">  
-		<NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>  
-	</div>  
+	<div class="mt-2">
+		<NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>
+	</div>
 </AuthorizeView>
 
-@if (games == null)  
-{  
-	<p><em>Loading...</em></p>  
-}  
-else  
-{  
+@if (games == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
 	<div class="search-container mb-4" style="margin-top: 20px;">
 		<div class="search-box">
 			<i class="bi bi-search search-icon"></i>
-			<InputText class="search-input form-control" placeholder="Search games..." 
+			<InputText class="search-input form-control" placeholder="Search games..."
 			           @bind-Value="SearchTerm" @oninput="(e) => SearchTerm = e.Value?.ToString() ?? string.Empty" />
 			@if (!string.IsNullOrEmpty(SearchTerm))
 			{
@@ -40,18 +39,47 @@ else
 		</div>
 	</div>
 
+	<div class="row mb-3">
+		<div class="col-md-4">
+			<label for="genreSelect" class="form-label">Genre</label>
+			<InputSelect @bind-Value="selectedGenreId" id="genreSelect" class="form-select" @onchange="OnFilterChanged">
+				<option value="">All</option>
+				@foreach (var genre in genres)
+				{
+					<option value="@genre.GenreId">@genre.Name</option>
+				}
+			</InputSelect>
+		</div>
+
+		<div class="col-md-4">
+			<label for="maxPrice" class="form-label">Max price</label>
+			<InputNumber @bind-Value="maxPrice" id="maxPrice" class="form-control" @oninput="OnFilterChanged" />
+		</div>
+
+		<div class="col-md-4">
+			<label for="minDate" class="form-label">Released after</label>
+			<InputDate @bind-Value="minReleaseDate" id="minDate" class="form-control" @onchange="OnFilterChanged" />
+		</div>
+	</div>
+
+	<div class="text-end mb-3">
+		<button class="btn btn-outline-secondary" @onclick="ResetFilters">
+			<i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+		</button>
+	</div>
+
 	<div class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 30px;">
 		@foreach (var game in pagedGames)
 		{
 			<div class="col">
 				<div class="card h-100 position-relative" style="cursor: pointer;">
-					<div @onclick="@(() => GoToDetails(game.GameId))" >
-						<img src="@game.ImageUrl" class="card-img-top" alt="@game.Name" style="height: 200px; object-fit: cover;"/>
+					<div @onclick="@(() => GoToDetails(game.GameId))">
+						<img src="@game.ImageUrl" class="card-img-top" alt="@game.Name" style="height: 200px; object-fit: cover;" />
 						<div class="card-body">
 							<h5 class="card-title">@game.Name</h5>
 							<p class="card-text">
-								Genre: @genres.FirstOrDefault(g => g.GenreId == game.GenreId)?.Name <br/>
-								Price: $@game.Price <br/>
+								Genre: @genres.FirstOrDefault(g => g.GenreId == game.GenreId)?.Name <br />
+								Price: $@game.Price <br />
 								Release: @game.ReleaseDate.ToShortDateString()
 							</p>
 						</div>
@@ -64,36 +92,20 @@ else
 							</button>
 							<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">Delete</button>
 						</div>
-						<DeleteGame Game="@game"/>
+						<DeleteGame Game="@game" />
 					</AuthorizeView>
 				</div>
 			</div>
 		}
 	</div>
 
-	@* <div class="d-flex justify-content-center mt-4">
-		<button class="btn @(!(currentPage > 1) ? "btn-secondary" : "btn-info") me-2" @onclick="PreviousPage" disabled="@(!(currentPage > 1))">Previous</button>
-		@foreach (var page in GetVisiblePages())
-		{
-			if (page == -1)
-			{
-				<span class="mx-2">...</span>
-			}
-			else
-			{
-				<button class="btn @(page == currentPage ? "btn-dark" : "btn-outline-secondary")" @onclick="@(() => ChangePage(page))">@Convert.ToString(page)</button>
-			}
-		}
-		<button class="btn @(!(currentPage < totalPages) ? " btn-secondary" : "btn-info" ) ms-2" @onclick="NextPage" disabled="@(!(currentPage < totalPages))">Next</button>
-	</div> *@
-
 	<div class="d-flex flex-column align-center">
 		<MudPagination BoundaryCount="1" MiddleCount="1" Count="totalPages" @bind-Selected="@currentPage" Class="mt-4" />
 	</div>
-}  
+}
 
 @code {
-	private List<Game>? games;  
+	private List<Game>? games;
 	private List<Genre>? genres;
 	private int currentPage = 1;
 	private int pageSize = 3;
@@ -111,23 +123,31 @@ else
 		}
 	}
 
+	private int? selectedGenreId;
+	private double? maxPrice;
+	private DateOnly? minReleaseDate;
+
 	private IEnumerable<Game> filteredGames =>
-		string.IsNullOrWhiteSpace(SearchTerm) ? games : games.Where(g => g.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
+		games
+			.Where(g => string.IsNullOrWhiteSpace(SearchTerm) || g.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+			.Where(g => !selectedGenreId.HasValue || g.GenreId == selectedGenreId)
+			.Where(g => !maxPrice.HasValue || g.Price <= maxPrice)
+			.Where(g => !minReleaseDate.HasValue || g.ReleaseDate >= minReleaseDate);
 
 	protected override async Task OnInitializedAsync()
 	{
 		games = await gamesClient.GetGamesAsync();
 		genres = await genresClient.GetGenresAsync();
-	}  
+	}
 
-	private string GetDeleteModalId(Game game)  
-	{  
-		return $"#{DeleteGame.GetModalId(game)}";  
-	}  
+	private string GetDeleteModalId(Game game)
+	{
+		return $"#{DeleteGame.GetModalId(game)}";
+	}
 
-	private void GoToEdit(int id)  
-	{  
-		NavigationManager.NavigateTo($"/EditGame/{id}");  
+	private void GoToEdit(int id)
+	{
+		NavigationManager.NavigateTo($"/EditGame/{id}");
 	}
 
 	private void GoToDetails(int id)
@@ -135,54 +155,18 @@ else
 		NavigationManager.NavigateTo($"/GameDetails/{id}");
 	}
 
-	private void PreviousPage()
+	private void OnFilterChanged()
 	{
-		if (currentPage > 1)
-		{
-			currentPage--;
-		}
+		currentPage = 1;
+		StateHasChanged();
 	}
 
-	private void NextPage()
+	private void ResetFilters()
 	{
-		if (currentPage < totalPages)
-		{
-			currentPage++;
-		}
-	}
-
-	private void ChangePage(int page)
-	{
-		if (page >= 1 && page <= totalPages)
-		{
-			currentPage = page;
-		}
-	}
-
-	private IEnumerable<int> GetVisiblePages()
-	{
-		const int maxVisibleRange = 1;
-		List<int> pages = new();
-		pages.Add(1);
-		if (currentPage - maxVisibleRange > 2)
-		{
-			pages.Add(-1);
-		}
-		for (int i = currentPage - maxVisibleRange; i <= currentPage + maxVisibleRange; i++)
-		{
-			if (i > 1 && i < totalPages)
-			{
-				pages.Add(i);
-			}
-		}
-		if (currentPage + maxVisibleRange < totalPages - 1)
-		{
-			pages.Add(-1);
-		}
-		if (totalPages > 1)
-		{
-			pages.Add(totalPages);
-		}
-		return pages.Distinct();
+		SearchTerm = string.Empty;
+		selectedGenreId = null;
+		maxPrice = null;
+		minReleaseDate = null;
+		currentPage = 1;
 	}
 }
