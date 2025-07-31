@@ -20,14 +20,7 @@ namespace GameStore.Client
             await Task.Delay(500);
             try
             {
-                //var userId = await _localStorage.GetItemAsync<int>("userId");
-                //var username = await _localStorage.GetItemAsync<string>("username");
-                //var email = await _localStorage.GetItemAsync<string>("email");
-
                 User? user = await _localStorage.GetItemAsync<User>("user");
-
-                //if (userId == 0 || string.IsNullOrEmpty(username))
-                //    return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));   
                 if (user == null)
                     return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));
 
@@ -54,9 +47,6 @@ namespace GameStore.Client
 
             if (user != null)
             {
-                //await _localStorage.SetItemAsync("userId", user.GameId);
-                //await _localStorage.SetItemAsync("username", user.Username);
-                //await _localStorage.SetItemAsync("email", user.Email);
                 await _localStorage.SetItemAsync("user", user);
 
                 var claims = new List<Claim>
@@ -71,9 +61,6 @@ namespace GameStore.Client
             }
             else
             {
-                //await _localStorage.RemoveItemAsync("userId");
-                //await _localStorage.RemoveItemAsync("username");
-                //await _localStorage.RemoveItemAsync("email");
                 await _localStorage.RemoveItemAsync("user");
                 claimsPrincipal = defaultClaimsPrincipal;
             }

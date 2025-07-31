@@ -1,6 +1,8 @@
 ﻿@page "/gameStats"
+@using Microsoft.AspNetCore.Authorization
 @inject IGamesClient GamesClient
 @inject IGenresClient GenresClient
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Game Stats</PageTitle>
 
