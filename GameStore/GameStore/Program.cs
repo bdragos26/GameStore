@@ -49,6 +49,7 @@ app.MapGamesEndpoints();
 app.MapGenreEndpoints();
 app.MapUsersEndpoints();
 app.MapGameRatingsEndpoints();
+app.MapCartEndpoints();
 
 app.MapControllers();
 app.MapRazorPages();
