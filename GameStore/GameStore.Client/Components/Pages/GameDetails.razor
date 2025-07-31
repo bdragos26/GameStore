@@ -3,6 +3,7 @@
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
 @inject ILocalStorageService LocalStorage
+@inject ICartClient CartClient
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Game Details</PageTitle>
@@ -29,6 +30,17 @@ else
 					</div>
 				</div>
 			</div>
+			<div class="mt-4">
+				<button class="btn btn-success" @onclick="AddToCart">
+					<i class="bi bi-cart-plus me-2"></i> Add to Cart
+				</button>
+				@if (showAddedMessage)
+				{
+					<span class="ms-3 text-success">
+						<i class="bi bi-check-circle"></i> Added to cart!
+					</span>
+				}
+			</div>
 			<AuthorizeView>
 				<Authorized>
 					@if (userId > 0)
@@ -54,6 +66,7 @@ else
 	private Game? game;
 	private Genre? genre;
 	private int userId;
+	private bool showAddedMessage = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -68,6 +81,28 @@ else
 		if (user != null)
 		{
 			userId = user.UserId;
+		}
+	}
+
+	private async Task AddToCart()
+	{
+		if (game != null)
+		{
+			var cartItem = new CartItem
+			{
+				GameId = game.GameId,
+				GameName = game.Name,
+				Price = game.Price,
+				Quantity = 1
+			};
+
+			await CartClient.AddToCart(cartItem);
+			showAddedMessage = true;
+			StateHasChanged();
+
+			await Task.Delay(2000);
+			showAddedMessage = false;
+			StateHasChanged();
 		}
 	}
 }

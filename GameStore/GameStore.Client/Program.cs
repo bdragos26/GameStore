@@ -22,6 +22,7 @@ builder.Services.AddScoped<IGamesClient, GamesClient>();
 builder.Services.AddScoped<IGenresClient, GenresClient>();
 builder.Services.AddScoped<IUserClient, UserClient>();
 builder.Services.AddScoped<IGameRatingClient, GameRatingClient>();
+builder.Services.AddScoped<ICartClient, CartClient>();
 
 builder.Services.AddMudServices();
 

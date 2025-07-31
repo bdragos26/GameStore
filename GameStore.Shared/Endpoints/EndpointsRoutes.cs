@@ -50,5 +50,10 @@
             public static string TopRating(int count) =>
                 $"{_base}/top/{count}";
         }
+
+        public static class Cart
+        {
+            public const string getCartGames = "/cart/games";
+        }
     }
 }

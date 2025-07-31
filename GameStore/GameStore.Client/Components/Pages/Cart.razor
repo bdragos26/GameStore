@@ -1,0 +1,104 @@
+﻿@page "/cart"
+@inject ICartClient CartClient
+@implements IDisposable
+
+<h3>My Cart</h3>
+
+@if (cartProducts is null)
+{
+    <p>Loading Cart...</p>
+}
+else if (cartProducts.Count == 0)
+{
+    <p>Cart empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Game</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in cartProducts)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>$@item.Price</td>
+                    <td>
+                        <input type="number" min="1" value="@item.Quantity"
+                               @onchange="@((e) => UpdateQuantity(item, int.Parse(e.Value?.ToString() ?? "1")))"
+                               style="width: 60px;" />
+                    </td>
+                    <td>$@(item.Price * item.Quantity)</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => RemoveFromCart(item.GameId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h5>Total: $@cartProducts.Sum(x => x.Price * x.Quantity)</h5>
+}
+
+@code {
+	private List<CartGameResponseDTO> cartProducts = new();
+	private bool isLoading = true;
+	private string? errorMessage;
+
+	protected override async Task OnInitializedAsync()
+	{
+		CartClient.OnChange += StateHasChanged;
+		await LoadCart();
+	}
+
+	private async Task LoadCart()
+	{
+		isLoading = true;
+		errorMessage = null;
+		StateHasChanged();
+        
+		try
+		{
+			var result = await CartClient.GetCartGames();
+			cartProducts = result ?? new List<CartGameResponseDTO>();
+		}
+		catch (Exception ex)
+		{
+			errorMessage = "Failed to load cart items. Please try again.";
+			Console.WriteLine($"Error loading cart: {ex.Message}");
+		}
+		finally
+		{
+			isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+    private async Task RemoveFromCart(int gameId)
+    {
+        await CartClient.RemoveGameFromCart(gameId);
+        await LoadCart();
+    }
+
+    private async Task UpdateQuantity(CartGameResponseDTO item, int newQuantity)
+    {
+        if (newQuantity < 1)
+            return;
+
+        item.Quantity = newQuantity;
+        await CartClient.UpdateQuantity(item);
+        await LoadCart();
+    }
+
+    public void Dispose()
+    {
+	    CartClient.OnChange -= StateHasChanged;
+    }
+}
