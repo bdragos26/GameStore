@@ -26,7 +26,7 @@ namespace GameStore.Tests
                 GenreId = 1,
                 Price = 50,
                 ReleaseDate = DateOnly.FromDateTime(DateTime.Today),
-                ImageUrl = "https://example.com/image.jpg"
+                ImageUrl = "https://image.jpg"
             };
 
             // Act
@@ -44,7 +44,7 @@ namespace GameStore.Tests
                 GenreId = 1,
                 Price = 50,
                 ReleaseDate = DateOnly.FromDateTime(DateTime.Today),
-                ImageUrl = "https://example.com/image.jpg"
+                ImageUrl = "https://image.jpg"
             };
 
             var results = ValidateModel(game);
@@ -61,7 +61,7 @@ namespace GameStore.Tests
                 GenreId = 1,
                 Price = 150, // peste limita [Range(1, 100)]
                 ReleaseDate = DateOnly.FromDateTime(DateTime.Today),
-                ImageUrl = "https://example.com/image.jpg"
+                ImageUrl = "https://image.jpg"
             };
 
             var results = ValidateModel(game);
@@ -77,7 +77,7 @@ namespace GameStore.Tests
                 Name = "Another Game",
                 Price = 30,
                 ReleaseDate = DateOnly.FromDateTime(DateTime.Today),
-                ImageUrl = "https://example.com/image.jpg"
+                ImageUrl = "https://image.jpg"
             };
 
             var results = ValidateModel(game);

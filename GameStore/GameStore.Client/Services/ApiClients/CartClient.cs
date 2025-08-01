@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using GameStore.Shared.DTOs;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 using System.Net.Http.Json;

@@ -1,4 +1,5 @@
 ﻿using GameStore.Data;
+using GameStore.Shared.DTOs;
 using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,8 @@ public class CartService : ICartService
         if (cartItems == null || !cartItems.Any())
         {
             response.Data = new List<CartGameResponseDTO?>();
+            response.Success = true;
+
             return response;
         }
 
@@ -52,11 +55,9 @@ public class CartService : ICartService
         }
         catch (Exception ex)
         {
-            return new ServiceResponse<List<CartGameResponseDTO?>>
-            {
-                Success = false,
-                Message = ex.Message
-            };
+            response.Success = false;
+            response.Message = ex.Message;
+            return response;
         }
     }
 }

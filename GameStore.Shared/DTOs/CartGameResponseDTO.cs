@@ -1,4 +1,4 @@
-﻿namespace GameStore.Shared.Models
+﻿namespace GameStore.Shared.DTOs
 {
     public class CartGameResponseDTO
     {
