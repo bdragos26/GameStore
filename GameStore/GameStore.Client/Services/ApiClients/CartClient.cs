@@ -9,6 +9,7 @@ namespace GameStore.Client.Services.ApiClients
     public interface ICartClient
     {
         event Action OnChange;
+        Task NotifyCartChanged();
         Task AddToCart(CartItem cartItem);
         Task<List<CartItem>> GetCartItems();
         Task<List<CartGameResponseDTO>> GetCartGames();
@@ -21,19 +22,30 @@ namespace GameStore.Client.Services.ApiClients
         private readonly ILocalStorageService _localStorage;
         private readonly HttpClient _http;
 
-        private const string CartKey = "cart";
-
         public CartClient(ILocalStorageService localStorage, HttpClient http)
         {
             _localStorage = localStorage;
             _http = http;
         }
 
+        private async Task<string> GetCartKey()
+        {
+            var user = await _localStorage.GetItemAsync<User>("user");
+            return $"cart-{user?.UserId.ToString() ?? "guest"}";
+        }
+
         public event Action OnChange;
+
+        public Task NotifyCartChanged()
+        {
+            OnChange?.Invoke();
+            return Task.CompletedTask;
+        }
 
         public async Task AddToCart(CartItem cartItem)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>(CartKey) ?? new List<CartItem>();
+            var cartKey = await GetCartKey();
+            var cart = await _localStorage.GetItemAsync<List<CartItem>>(cartKey) ?? new List<CartItem>();
 
             var sameItem = cart.Find(x => x.GameId == cartItem.GameId);
             if (sameItem == null)
@@ -45,13 +57,14 @@ namespace GameStore.Client.Services.ApiClients
                 sameItem.Quantity += cartItem.Quantity;
             }
 
-            await _localStorage.SetItemAsync(CartKey, cart);
+            await _localStorage.SetItemAsync(cartKey, cart);
             OnChange?.Invoke();
         }
 
         public async Task<List<CartItem>> GetCartItems()
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>(CartKey) ?? new List<CartItem>();
+            var cartKey = await GetCartKey();
+            var cart = await _localStorage.GetItemAsync<List<CartItem>>(cartKey) ?? new List<CartItem>();
             return cart;
         }
 
@@ -59,7 +72,8 @@ namespace GameStore.Client.Services.ApiClients
         {
             try
             {
-                var cartItems = await _localStorage.GetItemAsync<List<CartItem>>(CartKey) ?? new List<CartItem>();
+                var cartKey = await GetCartKey();
+                var cartItems = await _localStorage.GetItemAsync<List<CartItem>>(cartKey) ?? new List<CartItem>();
 
                 if (!cartItems.Any())
                     return new List<CartGameResponseDTO>();
@@ -81,35 +95,38 @@ namespace GameStore.Client.Services.ApiClients
 
         public async Task RemoveGameFromCart(int gameId)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>(CartKey);
+            var cartKey = await GetCartKey();
+            var cart = await _localStorage.GetItemAsync<List<CartItem>>(cartKey);
             if (cart == null) return;
 
             var cartItem = cart.Find(x => x.GameId == gameId);
             if (cartItem != null)
             {
                 cart.Remove(cartItem);
-                await _localStorage.SetItemAsync(CartKey, cart);
+                await _localStorage.SetItemAsync(cartKey, cart);
                 OnChange?.Invoke();
             }
         }
 
         public async Task UpdateQuantity(CartGameResponseDTO game)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>(CartKey);
+            var cartKey = await GetCartKey();
+            var cart = await _localStorage.GetItemAsync<List<CartItem>>(cartKey);
             if (cart == null) return;
 
             var cartItem = cart.Find(x => x.GameId == game.GameId);
             if (cartItem != null)
             {
                 cartItem.Quantity = game.Quantity;
-                await _localStorage.SetItemAsync(CartKey, cart);
+                await _localStorage.SetItemAsync(cartKey, cart);
                 OnChange?.Invoke();
             }
         }
 
         public async Task ClearCart()
         {
-            await _localStorage.RemoveItemAsync(CartKey);
+            var cartKey = await GetCartKey();
+            await _localStorage.RemoveItemAsync(cartKey);
             OnChange?.Invoke();
         }
     }
