@@ -1,5 +1,6 @@
 ﻿@page "/GameDetails/{GameId:int}"
 @using Blazored.LocalStorage
+@using CartItem = GameStore.Shared.Models.CartItem
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
 @inject ILocalStorageService LocalStorage
@@ -31,7 +32,7 @@ else
 				</div>
 			</div>
 			
-			<div class="mt-4" style="margin-left: 10px;">
+			<div class="mt-4" style="margin-left: 10px; margin-bottom: 10px;">
 				<button class="btn btn-success" @onclick="AddToCart">
 					<i class="bi bi-cart-plus me-2"></i> Add to Cart
 				</button>

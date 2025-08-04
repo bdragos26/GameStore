@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using GameStore.Shared.DTOs;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 using System.Net.Http.Json;
@@ -12,9 +11,9 @@ namespace GameStore.Client.Services.ApiClients
         Task NotifyCartChanged();
         Task AddToCart(CartItem cartItem);
         Task<List<CartItem>> GetCartItems();
-        Task<List<CartGameResponseDTO>> GetCartGames();
+        Task<List<CartItem>> GetCartGames();
         Task RemoveGameFromCart(int gameId);
-        Task UpdateQuantity(CartGameResponseDTO game);
+        Task UpdateQuantity(CartItem game);
         Task ClearCart();
     }
     public class CartClient : ICartClient
@@ -68,7 +67,7 @@ namespace GameStore.Client.Services.ApiClients
             return cart;
         }
 
-        public async Task<List<CartGameResponseDTO>> GetCartGames()
+        public async Task<List<CartItem>> GetCartGames()
         {
             try
             {
@@ -76,20 +75,20 @@ namespace GameStore.Client.Services.ApiClients
                 var cartItems = await _localStorage.GetItemAsync<List<CartItem>>(cartKey) ?? new List<CartItem>();
 
                 if (!cartItems.Any())
-                    return new List<CartGameResponseDTO>();
+                    return new List<CartItem>();
 
                 var response = await _http.PostAsJsonAsync(EndpointsRoutes.Cart.getCartGames, cartItems);
 
                 if (!response.IsSuccessStatusCode)
-                    return new List<CartGameResponseDTO>();
+                    return new List<CartItem>();
 
-                var result = await response.Content.ReadFromJsonAsync<ServiceResponse<List<CartGameResponseDTO>>>();
+                var result = await response.Content.ReadFromJsonAsync<ServiceResponse<List<CartItem>>>();
 
-                return result?.Data ?? new List<CartGameResponseDTO>();
+                return result?.Data ?? new List<CartItem>();
             }
             catch
             {
-                return new List<CartGameResponseDTO>();
+                return new List<CartItem>();
             }
         }
 
@@ -108,7 +107,7 @@ namespace GameStore.Client.Services.ApiClients
             }
         }
 
-        public async Task UpdateQuantity(CartGameResponseDTO game)
+        public async Task UpdateQuantity(CartItem game)
         {
             var cartKey = await GetCartKey();
             var cart = await _localStorage.GetItemAsync<List<CartItem>>(cartKey);
