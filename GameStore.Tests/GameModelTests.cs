@@ -59,7 +59,7 @@ namespace GameStore.Tests
             {
                 Name = "Invalid Game",
                 GenreId = 1,
-                Price = 150, // peste limita [Range(1, 100)]
+                Price = 150,
                 ReleaseDate = DateOnly.FromDateTime(DateTime.Today),
                 ImageUrl = "https://image.jpg"
             };
