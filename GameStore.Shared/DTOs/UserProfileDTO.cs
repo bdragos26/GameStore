@@ -1,4 +1,6 @@
-﻿namespace GameStore.Shared.DTOs
+﻿using GameStore.Shared.Models;
+
+namespace GameStore.Shared.DTOs
 {
     public class UserProfileDto
     {
@@ -9,5 +11,6 @@
         public string LastName { get; set; } = string.Empty;
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Roles Role { get; set; } = Roles.User;
     }
 }

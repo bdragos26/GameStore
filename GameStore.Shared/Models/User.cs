@@ -19,7 +19,7 @@ namespace GameStore.Shared.Models
         public string LastName { get; set; } = string.Empty;
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        [Required, StringLength(20)]
+        [Required]
         public Roles Role { get; set; } = Roles.User;
     }
 }

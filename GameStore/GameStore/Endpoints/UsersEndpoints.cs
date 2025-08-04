@@ -11,19 +11,9 @@ namespace GameStore.Endpoints
         {
             var group = app.MapGroup(EndpointsRoutes.User._base);
 
-            group.MapPost(EndpointsRoutes.User.register, async (UserRegisterDto UserRegisterDto, IUserService userService) =>
+            group.MapPost(EndpointsRoutes.User.register, async (UserRegisterDto registerDto, IUserService userService) =>
             {
-                var user = new User()
-                {
-                    Username = UserRegisterDto.Username,
-                    Email = UserRegisterDto.Email,
-                    FirstName = UserRegisterDto.FirstName,
-                    LastName = UserRegisterDto.LastName,
-                    DateOfBirth = UserRegisterDto.DateOfBirth,
-                    Role = Roles.User
-                };
-
-                var response = await userService.RegisterUserAsync(user, UserRegisterDto.Password);
+                var response = await userService.RegisterUserAsync(registerDto, registerDto.Password);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 

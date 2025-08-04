@@ -9,7 +9,7 @@ namespace GameStore.Client.Services.ApiClients
     public interface IUserClient
     {
         Task RegisterAsync(UserRegisterDto registerDto);
-        Task<User?> LoginAsync(UserLoginDTO loginDto);
+        Task<UserProfileDto?> LoginAsync(UserLoginDTO loginDto);
         Task LogoutAsync();
         Task<User?> GetUserByIdAsync(int userId);
         Task<List<User>> GetUsersAsync();
@@ -38,13 +38,13 @@ namespace GameStore.Client.Services.ApiClients
             }
         }
 
-        public async Task<User?> LoginAsync(UserLoginDTO loginDto)
+        public async Task<UserProfileDto?> LoginAsync(UserLoginDTO loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
                 EndpointsRoutes.User.login, loginDto);
             if (response.IsSuccessStatusCode)
             {
-                var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+                var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<UserProfileDto>>();
                 return serviceResponse?.Data;
             }
             return null;

@@ -28,11 +28,20 @@
 				<ValidationMessage For="@(() => userRegister.Email)" />
 			</div>
 
-			<div class="mb-3">
+			<div class="mb-3 position-relative">
 				<label for="password" class="form-label">Password:</label>
-				<InputText type="password" id="password" class="form-control" @bind-Value="userRegister.Password" />
+				<InputText id="password" class="form-control pe-5"
+				           type="@(showPassword ? "text" : "password")"
+				           @bind-Value="userRegister.Password" />
 				<ValidationMessage For="@(() => userRegister.Password)" />
+				<button type="button"
+				        class="btn btn-outline-secondary btn-sm position-absolute top-50 end-0 translate-middle-y me-2"
+				        style="z-index: 2;"
+				        @onclick="TogglePassword">
+					<i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
+				</button>
 			</div>
+
 
 			<div class="row">
 				<div class="col-md-6 mb-3">
@@ -65,6 +74,7 @@
 @code {
 	private UserRegisterDto userRegister = new();
 	private string? errorMessage;
+	private bool showPassword = false;
 
 	private async Task HandleRegisterAsync()
 	{
@@ -77,5 +87,10 @@
 		{
 			errorMessage = e.Message;
 		}
+	}
+
+	private void TogglePassword()
+	{
+		showPassword = !showPassword;
 	}
 }

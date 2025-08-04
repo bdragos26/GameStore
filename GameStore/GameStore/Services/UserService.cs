@@ -1,4 +1,6 @@
 ﻿using GameStore.Data;
+using GameStore.Shared.DTOs;
+using GameStore.Shared.Mappers;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +9,8 @@ namespace GameStore.Services
 {
     public interface IUserService
     {
-        Task<ServiceResponse<User>> RegisterUserAsync(User user, string password);
-        Task<ServiceResponse<User?>> AuthenticateUserAsync(string username, string password);
+        Task<ServiceResponse<User>> RegisterUserAsync(UserRegisterDto user, string password);
+        Task<ServiceResponse<UserProfileDto?>> AuthenticateUserAsync(string username, string password);
         Task<ServiceResponse<User?>> GetUserByEmailAsync(string email);
         Task<ServiceResponse<List<User>>> GetAllUsersAsync();
         Task<bool> UserExistsAsync(string username);
@@ -27,19 +29,20 @@ namespace GameStore.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<ServiceResponse<User>> RegisterUserAsync(User user, string password)
+        public async Task<ServiceResponse<User>> RegisterUserAsync(UserRegisterDto registerDto, string password)
         {
             var response = new ServiceResponse<User>();
 
             try
             {
-                if (await UserExistsAsync(user.Username))
+                if (await UserExistsAsync(registerDto.Username))
                 {
                     response.Success = false;
                     response.Message = "Username already exists";
                     return response;
                 }
 
+                var user = UserMapper.ToEntity(registerDto);
                 user.PasswordHash = _passwordHasher.HashPassword(user, password);
                 _dbContext.Users.Add(user);
                 await _dbContext.SaveChangesAsync();
@@ -57,9 +60,9 @@ namespace GameStore.Services
             }
         }
 
-        public async Task<ServiceResponse<User?>> AuthenticateUserAsync(string username, string password)
+        public async Task<ServiceResponse<UserProfileDto?>> AuthenticateUserAsync(string username, string password)
         {
-            var response = new ServiceResponse<User?>();
+            var response = new ServiceResponse<UserProfileDto?>();
 
             try
             {
@@ -75,7 +78,8 @@ namespace GameStore.Services
                 var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
                 if (result == PasswordVerificationResult.Success)
                 {
-                    response.Data = user;
+                    var userDto = UserMapper.ToProfileDto(user);
+                    response.Data = userDto;
                     response.Success = true;
                     response.Message = "Authentication successful";
                     return response;

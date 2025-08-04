@@ -3,6 +3,7 @@ using GameStore.Client.Services.ApiClients;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using GameStore.Shared.DTOs;
 
 namespace GameStore.Client
 {
@@ -23,7 +24,7 @@ namespace GameStore.Client
             await Task.Delay(500);
             try
             {
-                User? user = await _localStorage.GetItemAsync<User>("user");
+                UserProfileDto? user = await _localStorage.GetItemAsync<UserProfileDto>("user");
                 if (user == null)
                     return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));
 
@@ -44,7 +45,7 @@ namespace GameStore.Client
             }
         }
 
-        public async Task UpdateAuthenticationState(User? user)
+        public async Task UpdateAuthenticationState(UserProfileDto? user)
         {
             ClaimsPrincipal claimsPrincipal;
 
