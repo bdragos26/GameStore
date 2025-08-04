@@ -33,14 +33,20 @@ namespace GameStore.Endpoints
 
             group.MapPut(EndpointsRoutes.User.update, async (int userId, User updatedUser, IUserService userService) =>
             {
+                var existingUser = await userService.GetUserByEmailAsync(updatedUser.Email);
+                if (existingUser == null)
+                {
+                    return Results.NotFound();
+                }
+                updatedUser.PasswordHash = existingUser.Data.PasswordHash;
+
                 var existingUserResponse = await userService.UpdateUserAsync(userId, updatedUser);
                 return !existingUserResponse.Success ? Results.NotFound() : Results.NoContent();
             });
 
             group.MapPost(EndpointsRoutes.User.resetPass, async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
             {
-                var response = await userService.ResetUserPasswordAsync(resetPasswordDto.Email,
-                    resetPasswordDto.CurrentPassword, resetPasswordDto.NewPassword);
+                var response = await userService.ResetUserPasswordAsync(resetPasswordDto);
                 if (!response.Success)
                 {
                     return Results.BadRequest(response);

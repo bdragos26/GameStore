@@ -15,7 +15,7 @@ namespace GameStore.Services
         Task<ServiceResponse<List<User>>> GetAllUsersAsync();
         Task<bool> UserExistsAsync(string username);
         Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser);
-        Task<ServiceResponse<User>> ResetUserPasswordAsync(string email, string currentPassword, string newPassword);
+        Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto);
         Task<ServiceResponse<bool>> DeleteUserAsync(int UserId);
     }
     public class UserService : IUserService
@@ -125,7 +125,6 @@ namespace GameStore.Services
         {
             var response = new ServiceResponse<User>
             {
-
                 Data = await _dbContext.Users.FindAsync(id)
             };
 
@@ -136,21 +135,21 @@ namespace GameStore.Services
             await _dbContext.SaveChangesAsync();
             return response;
         }
-        public async Task<ServiceResponse<User>> ResetUserPasswordAsync(string email, string currentPassword, string newPassword)
+        public async Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {
             var response = new ServiceResponse<User>();
 
             try
             {
-                var userResponse = await GetUserByEmailAsync(email);
+                var userResponse = await GetUserByEmailAsync(resetPasswordDto.Email);
                 if (userResponse.Data == null)
                 {
                     response.Success = false;
-                    response.Message = $"User with email {email} not found!";
+                    response.Message = $"User with email {resetPasswordDto.Email} not found!";
                     return response;
                 }
 
-                var result = _passwordHasher.VerifyHashedPassword(userResponse.Data, userResponse.Data.PasswordHash, currentPassword);
+                var result = _passwordHasher.VerifyHashedPassword(userResponse.Data, userResponse.Data.PasswordHash, resetPasswordDto.CurrentPassword);
                 if (result != PasswordVerificationResult.Success)
                 {
                     response.Success = false;
@@ -158,7 +157,7 @@ namespace GameStore.Services
                     return response;
                 }
 
-                userResponse.Data.PasswordHash = _passwordHasher.HashPassword(userResponse.Data, newPassword);
+                userResponse.Data.PasswordHash = _passwordHasher.HashPassword(userResponse.Data, resetPasswordDto.NewPassword);
 
                 userResponse.Success = true;
                 return userResponse;

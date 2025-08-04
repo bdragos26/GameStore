@@ -29,6 +29,8 @@
                     <dl class="row mb-0">
 	                    <dt class="col-sm-4 text-secondary">Email:</dt>
 	                    <dd class="col-sm-8">@user.Email</dd>
+	                    <dt class="col-sm-4 text-secondary">Username:</dt>
+	                    <dd class="col-sm-8">@user.Username</dd>
 	                    <dt class="col-sm-4 text-secondary">First Name:</dt>
 	                    <dd class="col-sm-8">@user.FirstName</dd>
 	                    <dt class="col-sm-4 text-secondary">Last Name:</dt>
@@ -85,25 +87,31 @@
 		                <DataAnnotationsValidator />
 
 		                <div class="mb-2">
-			                <label class="form-label">First Name</label>
-			                <InputText class="form-control" @bind-Value="editUser.FirstName" />
+			                <label for="username" class="form-label">Username</label>
+			                <InputText id="username" class="form-control" @bind-Value="editUser.Username" />
+			                <ValidationMessage For="@(() => editUser.Username)" />
+		                </div>
+
+		                <div class="mb-2">
+			                <label for="firstName" class="form-label">First Name</label>
+                            <InputText id="firstName" class="form-control" @bind-Value="editUser.FirstName" />
 			                <ValidationMessage For="@(() => editUser.FirstName)" />
 		                </div>
 
 		                <div class="mb-2">
-			                <label class="form-label">Last Name</label>
-			                <InputText class="form-control" @bind-Value="editUser.LastName" />
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <InputText id="lastName" class="form-control" @bind-Value="editUser.LastName" />
 			                <ValidationMessage For="@(() => editUser.LastName)" />
 		                </div>
 
 		                <div class="mb-2">
-			                <label class="form-label">Date of Birth</label>
-			                <InputDate class="form-control" @bind-Value="editUser.DateOfBirth" />
+			                <label for="dateOfBirth" class="form-label">Date of Birth</label>
+			                <InputDate id="dateOfBirth" class="form-control" @bind-Value="editUser.DateOfBirth" />
 		                </div>
 
 		                <div class="mb-2">
-			                <label class="form-label">Email</label>
-			                <InputText class="form-control" @bind-Value="editUser.Email" />
+			                <label for="email" class="form-label">Email</label>
+			                <InputText id="email" class="form-control" @bind-Value="editUser.Email" />
 			                <ValidationMessage For="@(() => editUser.Email)" />
 		                </div>
 
