@@ -157,18 +157,7 @@
     {
         if (user != null)
         {
-            editUser = new User
-            {
-                UserId = user.UserId,
-                Username = user.Username,
-                Email = user.Email,
-                PasswordHash = user.PasswordHash,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                DateOfBirth = user.DateOfBirth,
-                CreatedAt = user.CreatedAt,
-                Role = user.Role
-            };
+	        editUser = user;
             isEditing = true;
         }
     }
