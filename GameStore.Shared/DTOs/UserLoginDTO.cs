@@ -4,10 +4,9 @@ namespace GameStore.Shared.DTOs
 {
     public class UserLoginDTO
     {
+        [Required, StringLength(50)]
+        public string Username { get; set; } = string.Empty;
         [Required]
-        [StringLength(50)]
-        public string? Username { get; set; }
-        [Required]
-        public string? Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }
