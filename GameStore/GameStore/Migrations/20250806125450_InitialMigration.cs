@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GameStore.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,9 +17,9 @@ namespace GameStore.Migrations
                 name: "Genres",
                 columns: table => new
                 {
-                    GenreId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    GenreId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,16 +30,16 @@ namespace GameStore.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Username = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
-                    FirstName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Role = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,12 +50,13 @@ namespace GameStore.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    GameId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    GenreId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    ReleaseDate = table.Column<DateOnly>(type: "TEXT", nullable: false)
+                    GameId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    ReleaseDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,12 +70,34 @@ namespace GameStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PasswordResetTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordResetTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ratings",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    GameId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Score = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    Score = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -116,6 +139,17 @@ namespace GameStore.Migrations
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_Token",
+                table: "PasswordResetTokens",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordResetTokens_UserId",
+                table: "PasswordResetTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ratings_GameId",
                 table: "Ratings",
                 column: "GameId");
@@ -136,6 +170,9 @@ namespace GameStore.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "PasswordResetTokens");
+
             migrationBuilder.DropTable(
                 name: "Ratings");
 

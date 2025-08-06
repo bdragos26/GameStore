@@ -21,8 +21,21 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
-var connString = builder.Configuration.GetConnectionString("GameStore");
-builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
+//var connString = builder.Configuration.GetConnectionString("GameStore");
+//builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
+
+builder.Services.AddDbContext<GameStoreContext>(options =>
+{
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        });
+});
 
 builder.Services.AddAuthorization();
 
