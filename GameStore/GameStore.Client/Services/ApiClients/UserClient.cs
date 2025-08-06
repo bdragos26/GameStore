@@ -70,10 +70,11 @@ namespace GameStore.Client.Services.ApiClients
         public async Task UpdateUserAsync(User updatedUser)
         {
             var response = await _httpClient.PutAsJsonAsync(EndpointsRoutes.User.Update(updatedUser.UserId), updatedUser);
+
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
+                var errorResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+                throw new Exception(errorResponse?.Message ?? "Failed to update user");
             }
         }
 

@@ -15,6 +15,7 @@ namespace GameStore.Services
         Task<ServiceResponse<List<User>>> GetAllUsersAsync();
         Task<bool> UserExistsAsync(string username);
         Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser);
+        Task<ServiceResponse<User?>> GetUserByIdAsync(int userId);
         Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto);
         Task<ServiceResponse<bool>> DeleteUserAsync(int UserId);
         Task InitiatePasswordReset(string email);
@@ -127,18 +128,55 @@ namespace GameStore.Services
 
         public async Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser)
         {
-            var response = new ServiceResponse<User>
+            var response = new ServiceResponse<User>();
+
+            try
             {
-                Data = await _dbContext.Users.FindAsync(id)
-            };
+                var existingUser = await _dbContext.Users.FindAsync(id);
+                if (existingUser == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found";
+                    return response;
+                }
 
-            _dbContext.Entry(response.Data)
-                .CurrentValues
-                .SetValues(updatedUser);
+                existingUser.Username = updatedUser.Username;
+                existingUser.FirstName = updatedUser.FirstName;
+                existingUser.LastName = updatedUser.LastName;
+                existingUser.DateOfBirth = updatedUser.DateOfBirth;
 
-            await _dbContext.SaveChangesAsync();
+                if (existingUser.Email != updatedUser.Email)
+                {
+                    if (await _dbContext.Users.AnyAsync(u => u.Email == updatedUser.Email && u.UserId != id))
+                    {
+                        response.Success = false;
+                        response.Message = "Email is already in use";
+                        return response;
+                    }
+                    existingUser.Email = updatedUser.Email;
+                }
+
+                await _dbContext.SaveChangesAsync();
+                response.Data = existingUser;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
             return response;
         }
+
+        public async Task<ServiceResponse<User?>> GetUserByIdAsync(int userId)
+        {
+            return new ServiceResponse<User?>
+            {
+                Data = await _dbContext.Users.FindAsync(userId)
+            };
+        }
+
         public async Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto)
         {
             var response = new ServiceResponse<User>();

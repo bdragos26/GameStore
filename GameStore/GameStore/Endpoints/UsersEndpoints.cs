@@ -33,15 +33,25 @@ namespace GameStore.Endpoints
 
             group.MapPut(EndpointsRoutes.User.update, async (int userId, User updatedUser, IUserService userService) =>
             {
-                var existingUser = await userService.GetUserByEmailAsync(updatedUser.Email);
-                if (existingUser == null)
+                var existingUserResponse = await userService.GetUserByIdAsync(userId);
+                if (existingUserResponse == null || !existingUserResponse.Success)
                 {
-                    return Results.NotFound();
+                    return Results.NotFound("User not found");
                 }
-                updatedUser.PasswordHash = existingUser.Data.PasswordHash;
 
-                var existingUserResponse = await userService.UpdateUserAsync(userId, updatedUser);
-                return !existingUserResponse.Success ? Results.NotFound() : Results.NoContent();
+                if (!string.IsNullOrEmpty(updatedUser.Email))
+                {
+                    var emailUserResponse = await userService.GetUserByEmailAsync(updatedUser.Email);
+                    if (emailUserResponse.Success && emailUserResponse.Data != null && emailUserResponse.Data.UserId != userId)
+                    {
+                        return Results.BadRequest("Email is already in use by another account");
+                    }
+                }
+
+                updatedUser.PasswordHash = existingUserResponse.Data.PasswordHash;
+
+                var updateResponse = await userService.UpdateUserAsync(userId, updatedUser);
+                return updateResponse.Success ? Results.Ok(updateResponse) : Results.BadRequest(updateResponse);
             });
 
             group.MapPost(EndpointsRoutes.User.resetPass, async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
