@@ -9,6 +9,7 @@ namespace GameStore.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<GameRating> Ratings { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,10 @@ namespace GameStore.Data
                 .HasOne(r => r.GameDetails)
                 .WithMany()
                 .HasForeignKey(r => r.GameId);
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(t => t.Token)
+                .IsUnique();
         }
     }
 }

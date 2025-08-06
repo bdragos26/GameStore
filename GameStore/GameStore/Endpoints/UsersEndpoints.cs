@@ -62,6 +62,18 @@ namespace GameStore.Endpoints
                 return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
             });
 
+            group.MapPost(EndpointsRoutes.User.forgotPass, async (ForgotPasswordDto dto, IUserService userService) =>
+            {
+                await userService.InitiatePasswordReset(dto.Email);
+                return Results.Ok();
+            });
+
+            group.MapPost(EndpointsRoutes.User.reset, async (ResetPasswordWithTokenDto dto, IUserService userService) =>
+            {
+                var success = await userService.ResetPasswordWithToken(dto);
+                return success ? Results.Ok() : Results.BadRequest("Invalid or expired token");
+            });
+
             return group;
         }
     }

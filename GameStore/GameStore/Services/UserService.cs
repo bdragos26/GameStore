@@ -17,16 +17,20 @@ namespace GameStore.Services
         Task<ServiceResponse<User>> UpdateUserAsync(int id, User updatedUser);
         Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto);
         Task<ServiceResponse<bool>> DeleteUserAsync(int UserId);
+        Task InitiatePasswordReset(string email);
+        Task<bool> ResetPasswordWithToken(ResetPasswordWithTokenDto dto);
     }
     public class UserService : IUserService
     {
-        public readonly GameStoreContext _dbContext;
-        public readonly PasswordHasher<User> _passwordHasher;
+        private readonly GameStoreContext _dbContext;
+        private readonly PasswordHasher<User> _passwordHasher;
+        private readonly IEmailService _emailService;
 
-        public UserService(GameStoreContext dbContext, PasswordHasher<User> passwordHasher)
+        public UserService(GameStoreContext dbContext, PasswordHasher<User> passwordHasher, IEmailService emailService)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
+            _emailService = emailService;
         }
 
         public async Task<ServiceResponse<User>> RegisterUserAsync(UserRegisterDto registerDto, string password)
@@ -187,6 +191,45 @@ namespace GameStore.Services
             response.Success = true;
             response.Data = true;
             return response;
+        }
+
+        public async Task InitiatePasswordReset(string email)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                return;
+
+            var token = new PasswordResetToken
+            {
+                Token = Guid.NewGuid().ToString(),
+                UserId = user.UserId,
+                ExpiresAt = DateTime.UtcNow.AddHours(24),
+                IsUsed = false
+            };
+
+            _dbContext.PasswordResetTokens.Add(token);
+            await _dbContext.SaveChangesAsync();
+
+            await _emailService.SendPasswordResetEmailAsync(user.Email, token.Token);
+        }
+
+        public async Task<bool> ResetPasswordWithToken(ResetPasswordWithTokenDto dto)
+        {
+            var tokenRecord = await _dbContext.PasswordResetTokens
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t =>
+                    t.Token == dto.Token &&
+                    !t.IsUsed &&
+                    t.ExpiresAt > DateTime.UtcNow);
+
+            if (tokenRecord == null)
+                return false;
+
+            tokenRecord.User.PasswordHash = _passwordHasher.HashPassword(tokenRecord.User, dto.NewPassword);
+            tokenRecord.IsUsed = true;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
     }
 }

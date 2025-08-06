@@ -16,6 +16,8 @@ namespace GameStore.Client.Services.ApiClients
         Task UpdateUserAsync(User updatedUser);
         Task ResetPasswordAsync(ResetPasswordDTO resetPasswordDto);
         Task DeleteUserAsync(int userId);
+        Task RequestPasswordReset(ForgotPasswordDto dto);
+        Task ResetPasswordWithToken(ResetPasswordWithTokenDto dto);
     }
 
     public class UserClient : IUserClient
@@ -94,6 +96,27 @@ namespace GameStore.Client.Services.ApiClients
             if (!response.IsSuccessStatusCode || result == null || !result.Success)
             {
                 throw new Exception(result?.Message);
+            }
+        }
+
+        public async Task RequestPasswordReset(ForgotPasswordDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.forgotPass, dto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to request password reset");
+            }
+        }
+
+        public async Task ResetPasswordWithToken(ResetPasswordWithTokenDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
+                EndpointsRoutes.User.reset, dto);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
             }
         }
     }
