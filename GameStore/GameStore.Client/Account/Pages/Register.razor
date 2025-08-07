@@ -28,19 +28,22 @@
 				<ValidationMessage For="@(() => userRegister.Email)" />
 			</div>
 
-			<div class="mb-3 position-relative">
-				<label for="password" class="form-label">Password:</label>
-				<InputText id="password" class="form-control pe-5"
-				           type="@(showPassword ? "text" : "password")"
-				           @bind-Value="userRegister.Password" />
-				<ValidationMessage For="@(() => userRegister.Password)" />
-				<button type="button"
-				        class="btn btn-outline-secondary btn-sm position-absolute top-50 end-0 translate-middle-y me-2"
-				        style="z-index: 2;"
-				        @onclick="TogglePassword">
-					<i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
-				</button>
-			</div>
+			<div class="mb-3">
+    <label for="password" class="form-label">Password:</label>
+    <div class="input-group">
+        <InputText id="password"
+                   class="form-control"
+                   type="@(showPassword ? "text" : "password")"
+                   @bind-Value="userRegister.Password" />
+        <button type="button"
+                class="btn btn-outline-secondary"
+                @onclick="TogglePassword"
+                title="Show/hide password">
+            <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
+        </button>
+    </div>
+    <ValidationMessage For="@(() => userRegister.Password)" />
+</div>
 
 
 			<div class="row">

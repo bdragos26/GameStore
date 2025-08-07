@@ -144,6 +144,7 @@ namespace GameStore.Services
                 existingUser.FirstName = updatedUser.FirstName;
                 existingUser.LastName = updatedUser.LastName;
                 existingUser.DateOfBirth = updatedUser.DateOfBirth;
+                existingUser.Role = updatedUser.Role;
 
                 if (existingUser.Email != updatedUser.Email)
                 {
@@ -202,7 +203,7 @@ namespace GameStore.Services
                 userResponse.Data.PasswordHash = _passwordHasher.HashPassword(userResponse.Data, resetPasswordDto.NewPassword);
 
                 userResponse.Success = true;
-                return userResponse;
+                return userResponse!;
             }
             catch (Exception e)
             {

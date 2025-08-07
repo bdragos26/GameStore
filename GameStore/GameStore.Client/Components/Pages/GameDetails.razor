@@ -1,6 +1,5 @@
 ﻿@page "/GameDetails/{GameId:int}"
 @using Blazored.LocalStorage
-@using CartItem = GameStore.Shared.Models.CartItem
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
 @inject ILocalStorageService LocalStorage
@@ -43,19 +42,9 @@ else
 					</span>
 				}
 			</div>
+			
+			<Rating GameId="@game.GameId" UserId="@userId"></Rating>
 
-			<AuthorizeView>
-				<Authorized>
-					@if (userId > 0)
-					{
-						<h4 style="margin-left: 10px; margin-top: 30px;">Rate this game:</h4>
-						<Rating GameId="@game.GameId" UserId="@userId"></Rating>
-					}
-				</Authorized>
-				<NotAuthorized>
-					<span class="alert alert-danger" style="max-width: 300px; margin-left: 10px;">Log in to rate this game</span>
-				</NotAuthorized>
-			</AuthorizeView>
 			<span>
 				<a href="/gameList" class="btn btn-outline-primary" style="margin-top: 10px; margin-left: 10px;">Back to games menu</a>
 			</span>

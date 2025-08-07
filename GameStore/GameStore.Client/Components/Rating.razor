@@ -1,121 +1,120 @@
 ﻿@inject IGameRatingClient GameRatingClient
 @rendermode InteractiveWebAssembly
 
-<div class="rating" style="margin-left: 10px;">
-	@for (int i = 1; i <= 5; i++)
-	{
-		var index = i;
-		<span style="cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
-			<i class="bi bi-star-fill"></i>
-		</span>
-	}
-	@if (currentRating > 0)
-	{
-		<br />
-		<button class="btn btn-danger" @onclick="DeleteRating">Delete rating</button>
-	}
+<AuthorizeView>
+    <Authorized>
+        <h4 style="margin-left: 10px; margin-top: 30px;">Rate this game:</h4>
+        <div class="rating" style="margin-left: 10px;">
+            @for (int i = 1; i <= 5; i++)
+            {
+                var index = i;
+                <span style="cursor: pointer; color: @(index <= currentRating ? "gold" : "gray")" @onclick="@(() => SetRating(index))">
+                    <i class="bi bi-star-fill"></i>
+                </span>
+            }
+            @if (currentRating > 0)
+            {
+                <br />
+                <button class="btn btn-danger" @onclick="DeleteRating">Delete rating</button>
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <span class="alert alert-danger" style="max-width: 300px; margin-left: 10px;">Log in to rate this game</span>
+    </NotAuthorized>
+</AuthorizeView>
+
+<div style="margin-left: 10px; margin-top: 30px; display: flex; align-items: center; gap: 10px;">
+    <h4 class="text-muted" style="margin: 0;">
+        Average rating: <strong>@averageRating.ToString("0.0")</strong> / 5
+    </h4>
+    @if (ratings?.Any() == true)
+    {
+        <button class="btn btn-warning btn-sm btn-toggle" @onclick="ToggleRatings">
+            <i class="bi @(showOtherRatings ? "bi-eye-slash" : "bi-eye") me-1"></i>
+            @(showOtherRatings ? "Hide ratings" : "Show ratings")
+        </button>
+    }
 </div>
 
-<h4 class="text-muted" style="margin-left: 10px; margin-top: 50px;">
-	Average rating: <strong>@averageRating.ToString("0.0")</strong> / 5
-</h4>
-
-@if (ratings?.Any() == true)
+@if (showOtherRatings && ratings?.Any() == true)
 {
-	<div style="display: flex; justify-content: flex-end; margin: 10px;">
-		<button class="btn btn-warning btn-sm btn-toggle" @onclick="ToggleRatings">
-			<i class="bi @(showOtherRatings ? "bi-eye-slash" : "bi-eye") me-1"></i>
-			@(showOtherRatings ? "Hide ratings" : "Show ratings")
-		</button>
-	</div>
-
-	@if (showOtherRatings)
-	{
-		if (ratings?.Any() == true)
-		{
-			<div class="collapse @(showOtherRatings ? "show" : "")" id="ratingsCollapse">
-				@foreach (var rating in ratings)
-				{
-					<div class="user-rating-card" style="margin-left: 10px;">
-						<div><strong>@rating.User?.Username</strong></div>
-						<div class="rating-stars">
-							@for (int i = 1; i <= 5; i++)
-							{
-								<i style="color: @(i <= rating.Score ? "gold" : "gray")" class="bi @(i <= rating.Score ? "bi-star-fill" : "bi-star")"></i>
-							}
-						</div>
-					</div>
-				}
-			</div>
-		}
-		else
-		{
-			<p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
-		}
-	}
-
+    <div class="collapse @(showOtherRatings ? "show" : "")" id="ratingsCollapse" style="margin-left: 10px;">
+        @foreach (var rating in ratings)
+        {
+            <div class="user-rating-card">
+                <div><strong>@rating.User?.Username</strong></div>
+                <div class="rating-stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i style="color: @(i <= rating.Score ? "gold" : "gray")" class="bi @(i <= rating.Score ? "bi-star-fill" : "bi-star")"></i>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 }
-else
+else if (!ratings?.Any() == true)
 {
-	<p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
+    <p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
 }
 
 @code {
-	[Parameter]
-	public int GameId { get; set; }
-	[Parameter]
-	public int UserId { get; set; }
-	private int currentRating = 0;
-	private List<GameRating> ratings = new();
-	private double averageRating = 0;
-	private bool showOtherRatings;
+    [Parameter]
+    public int GameId { get; set; }
+    [Parameter]
+    public int UserId { get; set; }
+    private int currentRating = 0;
+    private List<GameRating> ratings = new();
+    private double averageRating = 0;
+    private bool showOtherRatings;
 
-	private async Task RefreshRatingsAsync()
-	{
-		var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
-		ratings = allRatings.Where(r => r.UserId != UserId).ToList();
-		averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
-	}
+    private async Task RefreshRatingsAsync()
+    {
+        var allRatings = await GameRatingClient.GetRatingsForGameAsync(GameId);
+        ratings = allRatings.Where(r => r.UserId != UserId).ToList();
+        averageRating = allRatings.Any() ? allRatings.Average(r => r.Score) : 0;
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		var rating = await GameRatingClient.GetGameRatingAsync(UserId, GameId);
-		if (rating != null)
-		{
-			currentRating = rating.Score;
-		}
+    protected override async Task OnInitializedAsync()
+    {
+        var rating = await GameRatingClient.GetGameRatingAsync(UserId, GameId);
+        if (rating != null)
+        {
+            currentRating = rating.Score;
+        }
 
-		await RefreshRatingsAsync();
-	}
+        await RefreshRatingsAsync();
+    }
 
-	private async Task SetRating(int score)
-	{
-		currentRating = score;
-		await GameRatingClient.UpdateGameRatingAsync(new GameRating()
-		{
-			UserId = UserId,
-			GameId = GameId,
-			Score = currentRating
-		});
+    private async Task SetRating(int score)
+    {
+        currentRating = score;
+        await GameRatingClient.UpdateGameRatingAsync(new GameRating()
+        {
+            UserId = UserId,
+            GameId = GameId,
+            Score = currentRating
+        });
 
-		await RefreshRatingsAsync();
-		StateHasChanged();
-	}
+        await RefreshRatingsAsync();
+        StateHasChanged();
+    }
 
-	private async Task DeleteRating()
-	{
-		var result = await GameRatingClient.DeleteRatingAsync(UserId, GameId);
+    private async Task DeleteRating()
+    {
+        var result = await GameRatingClient.DeleteRatingAsync(UserId, GameId);
 
-		if (result)
-		{
-			currentRating = 0;
-			await RefreshRatingsAsync();
-			StateHasChanged();
-		}
-	}
+        if (result)
+        {
+            currentRating = 0;
+            await RefreshRatingsAsync();
+            StateHasChanged();
+        }
+    }
 
-	private void ToggleRatings()
-	{
-		showOtherRatings = !showOtherRatings;
-	}
+    private void ToggleRatings()
+    {
+        showOtherRatings = !showOtherRatings;
+    }
 }
