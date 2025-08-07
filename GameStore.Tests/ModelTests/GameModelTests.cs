@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace GameStore.Tests
+namespace GameStore.Tests.ModelTests
 {
     public class GameModelTests
     {
