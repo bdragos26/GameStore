@@ -8,6 +8,7 @@
             public const string getById = "/{gameId:int}";
             public const string update = "/{gameId:int}";
             public const string delete = "/{gameId:int}";
+            public const string getFiltered = "/filter";
             public static string Update(int id) => $"{_base}/{id}";
             public static string Delete(int id) => $"{_base}/{id}";
             public static string GetById(int id) => $"{_base}/{id}";

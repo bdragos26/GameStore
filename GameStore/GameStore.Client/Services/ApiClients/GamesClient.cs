@@ -1,4 +1,5 @@
-﻿using GameStore.Shared.Endpoints;
+﻿using GameStore.Shared.DTOs;
+using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
@@ -12,6 +13,7 @@ namespace GameStore.Client.Services.ApiClients
         Task UpdateGameAsync(Game updatedGame);
         Task DeleteGameAsync(int id);
         Task<Game> GetGameByIdAsync(int id);
+        Task<PagedResult<Game>> GetFilteredGamesAsync(GameFilterDto filter);
     }
     public class GamesClient : IGamesClient
     {
@@ -65,5 +67,18 @@ namespace GameStore.Client.Services.ApiClients
 
             return response.Data!;
         }
+
+        public async Task<PagedResult<Game>> GetFilteredGamesAsync(GameFilterDto filter)
+        {
+            var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.Games._base +
+                EndpointsRoutes.Games.getFiltered, filter);
+            var result = await response.Content.ReadFromJsonAsync<ServiceResponse<PagedResult<Game>>>();
+
+            if (!response.IsSuccessStatusCode || result == null || !result.Success)
+                throw new Exception(result?.Message ?? "Failed to load filtered games");
+
+            return result.Data!;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GameStore.Services;
+using GameStore.Shared.DTOs;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
 
@@ -13,6 +14,12 @@ namespace GameStore.Endpoints
             group.MapGet("/", async (IGameService gameService) =>
             {
                 var result = await gameService.GetAllGamesAsync();
+                return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+            });
+
+            group.MapPost(EndpointsRoutes.Games.getFiltered, async (GameFilterDto filter, IGameService gameService) =>
+            {
+                var result = await gameService.GetFilteredGamesAsync(filter);
                 return result.Success ? Results.Ok(result) : Results.BadRequest(result);
             });
 
