@@ -1,6 +1,7 @@
 ﻿@page "/register"
 @inject NavigationManager NavigationManager
 @inject IUserClient UserClient
+@inject AuthenticationStateProvider AuthProvider
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Register Account</PageTitle>
@@ -84,7 +85,21 @@
 		try
 		{
 			await UserClient.RegisterAsync(userRegister);
-			NavigationManager.NavigateTo("/");
+
+			UserLoginDTO loginDto = new UserLoginDTO()
+			{
+				Username = userRegister.Username,
+				Password = userRegister.Password!
+			};
+			var user = await UserClient.LoginAsync(loginDto);
+
+			if (user != null)
+			{
+				var customAuthProvider = (CustomAuthStateProvider)AuthProvider;
+				await customAuthProvider.UpdateAuthenticationState(user);
+
+				NavigationManager.NavigateTo("/");
+			}
 		}
 		catch (Exception e)
 		{
