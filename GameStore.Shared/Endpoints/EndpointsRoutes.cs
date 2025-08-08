@@ -30,7 +30,7 @@
             public static string Delete(int userId) => $"{_base}/{userId}";
         }
 
-        public static class Game
+        public static class GameRating
         {
             public const string _base = "/ratings";
             public const string update = "/{userId}/{gameId}";

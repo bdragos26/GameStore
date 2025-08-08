@@ -26,7 +26,7 @@ namespace GameStore.Client.Services.ApiClients
 
         public async Task<GameRating?> GetGameRatingAsync(int userId, int gameId)
         {
-            var response = await _httpClient.GetAsync(EndpointsRoutes.Game.GetGameRating(userId, gameId));
+            var response = await _httpClient.GetAsync(EndpointsRoutes.GameRating.GetGameRating(userId, gameId));
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null;
 
@@ -38,7 +38,7 @@ namespace GameStore.Client.Services.ApiClients
         public async Task<bool> UpdateGameRatingAsync(GameRating rating)
         {
             var response = await _httpClient
-                .PostAsJsonAsync(EndpointsRoutes.Game.UpdateRating(rating.UserId, rating.GameId), rating);
+                .PostAsJsonAsync(EndpointsRoutes.GameRating.UpdateRating(rating.UserId, rating.GameId), rating);
 
             return response.IsSuccessStatusCode;
         }
@@ -46,28 +46,28 @@ namespace GameStore.Client.Services.ApiClients
         public async Task<List<GameRating>> GetRatingsForGameAsync(int gameId)
         {
             var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.Game.GetRatingsForGame(gameId));
+                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.GameRating.GetRatingsForGame(gameId));
 
             return response?.Data ?? new List<GameRating>();
         }
         public async Task<List<GameRating>> GetRatingsByUserAsync(int userId)
         {
             var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.Game.GetRatingsByUser(userId));
+                .GetFromJsonAsync<ServiceResponse<List<GameRating>>>(EndpointsRoutes.GameRating.GetRatingsByUser(userId));
 
             return response?.Data ?? new List<GameRating>();
         }
 
         public async Task<bool> DeleteRatingAsync(int userId, int gameId)
         {
-            var response = await _httpClient.DeleteAsync(EndpointsRoutes.Game.DeleteRating(userId, gameId));
+            var response = await _httpClient.DeleteAsync(EndpointsRoutes.GameRating.DeleteRating(userId, gameId));
             return response.IsSuccessStatusCode;
         }
 
         public async Task<List<GameRatingDTO>> GetTopRatedGamesAsync(int count)
         {
             var response = await _httpClient
-                .GetFromJsonAsync<ServiceResponse<List<GameRatingDTO>>>(EndpointsRoutes.Game.TopRating(count));
+                .GetFromJsonAsync<ServiceResponse<List<GameRatingDTO>>>(EndpointsRoutes.GameRating.TopRating(count));
 
             return response?.Data ?? new List<GameRatingDTO>();
         }
