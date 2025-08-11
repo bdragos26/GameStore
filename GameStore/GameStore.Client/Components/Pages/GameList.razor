@@ -115,14 +115,7 @@ else
     private int currentPage = 1;
     private int pageSize = 5;
     private Timer? searchTimer;
-
-    private string searchTerm = string.Empty;
-    private string SearchTerm
-    {
-        get => searchTerm;
-        set => searchTerm = value;
-    }
-
+    private string SearchTerm { get; set; } = string.Empty;
     private int? selectedGenreId;
     private double? maxPrice;
     private DateTime? minReleaseDate;

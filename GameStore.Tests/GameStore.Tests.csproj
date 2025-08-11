@@ -16,6 +16,7 @@
 	<ItemGroup>
 		<PackageReference Include="bunit" Version="1.40.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.19" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
 		<PackageReference Include="coverlet.collector" Version="6.0.0">
@@ -37,6 +38,10 @@
 	  <ProjectReference Include="..\GameStore.Shared\GameStore.Shared.csproj" />
 	  <ProjectReference Include="..\GameStore\GameStore.Client\GameStore.Client.csproj" />
 	  <ProjectReference Include="..\GameStore\GameStore\GameStore.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="EndpointTests\" />
 	</ItemGroup>
 
 
