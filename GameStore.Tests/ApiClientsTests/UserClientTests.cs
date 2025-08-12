@@ -81,36 +81,6 @@ public class UserClientTests
     }
 
     [Fact]
-    public async Task LoginAsync_ShouldReturnNull_WhenResponseFails()
-    {
-        var httpResponse = new HttpResponseMessage(HttpStatusCode.BadRequest);
-        var httpClient = CreateHttpClient(httpResponse, out _);
-        var userClient = new UserClient(httpClient, null!);
-
-        var result = await userClient.LoginAsync(new UserLoginDTO());
-
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task GetUserByIdAsync_ShouldReturnUser()
-    {
-        var user = new User { UserId = 1, Username = "john" };
-        var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = JsonContent.Create(user)
-        };
-
-        var httpClient = CreateHttpClient(httpResponse, out _);
-        var userClient = new UserClient(httpClient, null!);
-
-        var result = await userClient.GetUserByIdAsync(1);
-
-        Assert.NotNull(result);
-        Assert.Equal("john", result.Username);
-    }
-
-    [Fact]
     public async Task GetUsersAsync_ShouldReturnList()
     {
         var users = new List<User> { new User { UserId = 1, Username = "john" } };

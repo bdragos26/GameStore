@@ -2,6 +2,7 @@
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameStore.Endpoints
 {
@@ -27,9 +28,9 @@ namespace GameStore.Endpoints
                     return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
             });
 
-            group.MapPost(EndpointsRoutes.User.logout, () => Results.Ok());
+            group.MapPost(EndpointsRoutes.User.logout, [Authorize] () => Results.Ok());
 
-            group.MapGet("/", async (IUserService userService) =>
+            group.MapGet("/", [Authorize(Roles = "Admin")] async (IUserService userService) =>
             {
                 var response = await userService.GetAllUsersAsync();
                 return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
@@ -88,7 +89,7 @@ namespace GameStore.Endpoints
                 return success ? Results.Ok() : Results.BadRequest("Invalid or expired token");
             });
 
-            group.MapGet(EndpointsRoutes.User.getById, async (int userId, IUserService userService) =>
+            group.MapGet(EndpointsRoutes.User.getById, [Authorize] async (int userId, IUserService userService) =>
             {
                 var url = EndpointsRoutes.User._base + EndpointsRoutes.User.getById;
                 Console.WriteLine("Endpoints: " + url);

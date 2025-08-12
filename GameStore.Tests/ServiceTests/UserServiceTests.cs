@@ -1,194 +1,194 @@
-﻿//using GameStore.Data;
-//using GameStore.Services;
-//using GameStore.Shared.DTOs;
-//using GameStore.Shared.Models;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.EntityFrameworkCore;
-//using Moq;
-//using System;
-//using System.Threading.Tasks;
+﻿using GameStore.Data;
+using GameStore.Services;
+using GameStore.Shared.DTOs;
+using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
-//namespace GameStore.Tests.ServiceTests
-//{
-//    public class UserServiceTests
-//    {
-//        private readonly GameStoreContext _context;
-//        private readonly PasswordHasher<User> _passwordHasher;
-//        private readonly Mock<IEmailService> _emailServiceMock;
-//        private readonly UserService _userService;
+namespace GameStore.Tests.ServiceTests
+{
+    public class UserServiceTests
+    {
+        private readonly GameStoreContext _context;
+        private readonly PasswordHasher<User> _passwordHasher;
+        private readonly Mock<IEmailService> _emailServiceMock;
+        private readonly IConfiguration _configuration;
+        private readonly UserService _userService;
 
-//        public UserServiceTests()
-//        {
-//            var options = new DbContextOptionsBuilder<GameStoreContext>()
-//                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-//                .Options;
+        public UserServiceTests()
+        {
+            var options = new DbContextOptionsBuilder<GameStoreContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
 
-//            _context = new GameStoreContext(options);
-//            _passwordHasher = new PasswordHasher<User>();
-//            _emailServiceMock = new Mock<IEmailService>();
-//            _userService = new UserService(_context, _passwordHasher, _emailServiceMock.Object);
-//        }
+            _context = new GameStoreContext(options);
+            _passwordHasher = new PasswordHasher<User>();
+            _emailServiceMock = new Mock<IEmailService>();
+            var configDict = new Dictionary<string, string>
+            {
+                { "AppSettings:Token", "this-is-a-very-long-secret-key-for-testing-1234567890" }
+            };
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(configDict)
+                .Build();
 
-//        [Fact]
-//        public async Task RegisterUserAsync_ShouldRegisterSuccessfully()
-//        {
-//            var registerDto = new UserRegisterDto
-//            {
-//                Username = "testuser",
-//                Email = "test@example.com",
-//                FirstName = "Test",
-//                LastName = "User",
-//                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
-//            };
+            _userService = new UserService(_context, _passwordHasher, _emailServiceMock.Object, _configuration);
+        }
 
-//            var response = await _userService.RegisterUserAsync(registerDto, "Password123");
+        [Fact]
+        public async Task RegisterUserAsync_ShouldRegisterSuccessfully()
+        {
+            var registerDto = new UserRegisterDto
+            {
+                Username = "testuser",
+                Email = "test@example.com",
+                FirstName = "Test",
+                LastName = "User",
+                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
+            };
 
-//            Assert.True(response.Success);
-//            Assert.NotNull(response.Data);
-//            Assert.Equal(registerDto.Username, response.Data.Username);
-//        }
+            var response = await _userService.RegisterUserAsync(registerDto, "Password123");
 
-//        [Fact]
-//        public async Task RegisterUserAsync_ShouldFail_WhenUsernameExists()
-//        {
-//            await RegisterUserAsync();
+            Assert.True(response.Success);
+            Assert.NotNull(response.Data);
+            Assert.Equal(registerDto.Username, response.Data.Username);
+        }
 
-//            var duplicate = new UserRegisterDto
-//            {
-//                Username = "testuser",
-//                Email = "duplicate@example.com",
-//                FirstName = "Another",
-//                LastName = "User",
-//                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
-//            };
+        [Fact]
+        public async Task RegisterUserAsync_ShouldFail_WhenUsernameExists()
+        {
+            await RegisterUserAsync();
 
-//            var result = await _userService.RegisterUserAsync(duplicate, "Pass");
+            var duplicate = new UserRegisterDto
+            {
+                Username = "testuser",
+                Email = "duplicate@example.com",
+                FirstName = "Another",
+                LastName = "User",
+                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
+            };
 
-//            Assert.False(result.Success);
-//            Assert.Equal("Username already exists", result.Message);
-//        }
+            var result = await _userService.RegisterUserAsync(duplicate, "Pass");
 
-//        [Fact]
-//        public async Task AuthenticateUserAsync_ShouldSucceed_WithCorrectPassword()
-//        {
-//            await RegisterUserAsync();
+            Assert.False(result.Success);
+            Assert.Equal("Username already exists", result.Message);
+        }
 
-//            var result = await _userService.AuthenticateUserAsync("testuser", "Password123");
+        [Fact]
+        public async Task AuthenticateUserAsync_ShouldFail_WithWrongPassword()
+        {
+            await RegisterUserAsync();
 
-//            Assert.True(result.Success);
-//            Assert.Equal("Authentication successful", result.Message);
-//            Assert.NotNull(result.Data);
-//        }
+            var result = await _userService.AuthenticateUserAsync("testuser", "WrongPassword");
 
-//        [Fact]
-//        public async Task AuthenticateUserAsync_ShouldFail_WithWrongPassword()
-//        {
-//            await RegisterUserAsync();
+            Assert.False(result.Success);
+            Assert.Equal("Invalid password", result.Message);
+        }
 
-//            var result = await _userService.AuthenticateUserAsync("testuser", "WrongPassword");
+        [Fact]
+        public async Task GetUserByEmailAsync_ShouldReturnUser()
+        {
+            await RegisterUserAsync();
+            var result = await _userService.GetUserByEmailAsync("test@example.com");
 
-//            Assert.False(result.Success);
-//            Assert.Equal("Invalid password", result.Message);
-//        }
+            Assert.NotNull(result.Data);
+            Assert.Equal("test@example.com", result.Data.Email);
+        }
 
-//        [Fact]
-//        public async Task GetUserByEmailAsync_ShouldReturnUser()
-//        {
-//            await RegisterUserAsync();
-//            var result = await _userService.GetUserByEmailAsync("test@example.com");
+        [Fact]
+        public async Task GetUserByIdAsync_ShouldReturnCorrectUser()
+        {
+            var user = await RegisterUserAsync();
+            var result = await _userService.GetUserByIdAsync(user.UserId);
 
-//            Assert.NotNull(result.Data);
-//            Assert.Equal("test@example.com", result.Data.Email);
-//        }
+            Assert.NotNull(result.Data);
+            Assert.Equal(user.UserId, result.Data.UserId);
+        }
 
-//        [Fact]
-//        public async Task GetUserByIdAsync_ShouldReturnCorrectUser()
-//        {
-//            var user = await RegisterUserAsync();
-//            var result = await _userService.GetUserByIdAsync(user.UserId);
+        [Fact]
+        public async Task UserExistsAsync_ShouldReturnTrue_IfExists()
+        {
+            await RegisterUserAsync();
+            var exists = await _userService.UserExistsAsync("testuser");
 
-//            Assert.NotNull(result.Data);
-//            Assert.Equal(user.UserId, result.Data.UserId);
-//        }
+            Assert.True(exists);
+        }
 
-//        [Fact]
-//        public async Task UserExistsAsync_ShouldReturnTrue_IfExists()
-//        {
-//            await RegisterUserAsync();
-//            var exists = await _userService.UserExistsAsync("testuser");
+        [Fact]
+        public async Task GetAllUsersAsync_ShouldReturnAll()
+        {
+            await RegisterUserAsync();
+            await RegisterUserAsync("anotheruser", "another@example.com");
 
-//            Assert.True(exists);
-//        }
+            var result = await _userService.GetAllUsersAsync();
 
-//        [Fact]
-//        public async Task GetAllUsersAsync_ShouldReturnAll()
-//        {
-//            await RegisterUserAsync();
-//            await RegisterUserAsync("anotheruser", "another@example.com");
+            Assert.NotNull(result.Data);
+            Assert.Equal(2, result.Data.Count);
+        }
 
-//            var result = await _userService.GetAllUsersAsync();
+        [Fact]
+        public async Task DeleteUserAsync_ShouldRemoveUser()
+        {
+            var user = await RegisterUserAsync();
+            var result = await _userService.DeleteUserAsync(user.UserId);
 
-//            Assert.NotNull(result.Data);
-//            Assert.Equal(2, result.Data.Count);
-//        }
+            Assert.True(result.Success);
+            Assert.True(result.Data);
+        }
 
-//        [Fact]
-//        public async Task DeleteUserAsync_ShouldRemoveUser()
-//        {
-//            var user = await RegisterUserAsync();
-//            var result = await _userService.DeleteUserAsync(user.UserId);
+        [Fact]
+        public async Task ResetUserPasswordAsync_ShouldUpdatePassword_WhenCorrectCurrentPassword()
+        {
+            await RegisterUserAsync();
 
-//            Assert.True(result.Success);
-//            Assert.True(result.Data);
-//        }
+            var dto = new ResetPasswordDTO
+            {
+                Email = "test@example.com",
+                CurrentPassword = "Password123",
+                NewPassword = "NewPass123"
+            };
 
-//        [Fact]
-//        public async Task ResetUserPasswordAsync_ShouldUpdatePassword_WhenCorrectCurrentPassword()
-//        {
-//            await RegisterUserAsync();
+            var result = await _userService.ResetUserPasswordAsync(dto);
 
-//            var dto = new ResetPasswordDTO
-//            {
-//                Email = "test@example.com",
-//                CurrentPassword = "Password123",
-//                NewPassword = "NewPass123"
-//            };
+            Assert.True(result.Success);
+        }
 
-//            var result = await _userService.ResetUserPasswordAsync(dto);
+        [Fact]
+        public async Task ResetUserPasswordAsync_ShouldFail_WhenWrongPassword()
+        {
+            await RegisterUserAsync();
 
-//            Assert.True(result.Success);
-//        }
+            var dto = new ResetPasswordDTO
+            {
+                Email = "test@example.com",
+                CurrentPassword = "WrongPass",
+                NewPassword = "NewPass123"
+            };
 
-//        [Fact]
-//        public async Task ResetUserPasswordAsync_ShouldFail_WhenWrongPassword()
-//        {
-//            await RegisterUserAsync();
+            var result = await _userService.ResetUserPasswordAsync(dto);
 
-//            var dto = new ResetPasswordDTO
-//            {
-//                Email = "test@example.com",
-//                CurrentPassword = "WrongPass",
-//                NewPassword = "NewPass123"
-//            };
+            Assert.False(result.Success);
+            Assert.Equal("Password is incorrect", result.Message);
+        }
 
-//            var result = await _userService.ResetUserPasswordAsync(dto);
-
-//            Assert.False(result.Success);
-//            Assert.Equal("Password is incorrect", result.Message);
-//        }
-
-//        private async Task<User> RegisterUserAsync(string username = "testuser", string email = "test@example.com")
-//        {
-//            var dto = new UserRegisterDto
-//            {
-//                Username = username,
-//                Email = email,
-//                FirstName = "Test",
-//                LastName = "User",
-//                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
-//            };
-//            var result = await _userService.RegisterUserAsync(dto, "Password123");
-//            return result.Data!;
-//        }
-//    }
-//}
+        private async Task<User> RegisterUserAsync(string username = "testuser", string email = "test@example.com")
+        {
+            var dto = new UserRegisterDto
+            {
+                Username = username,
+                Email = email,
+                FirstName = "Test",
+                LastName = "User",
+                DateOfBirth = DateOnly.FromDateTime(DateTime.Now)
+            };
+            var result = await _userService.RegisterUserAsync(dto, "Password123");
+            return result.Data!;
+        }
+    }
+}

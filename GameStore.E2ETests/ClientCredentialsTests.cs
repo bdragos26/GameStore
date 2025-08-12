@@ -98,7 +98,7 @@ namespace GameStore.E2ETests
 
             Thread.Sleep(1000);
 
-            var errorMessage = _driver.FindElement(By.XPath("//*[contains(text(), 'Invalid username or password')]"));
+            var errorMessage = _driver.FindElement(By.XPath("//*[contains(text(), 'User with username WrongUser not found!')]"));
             Assert.NotNull(errorMessage);
         }
 
