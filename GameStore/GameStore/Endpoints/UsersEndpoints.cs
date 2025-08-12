@@ -20,7 +20,11 @@ namespace GameStore.Endpoints
             group.MapPost(EndpointsRoutes.User.login, async (UserLoginDTO loginDto, IUserService userService) =>
             {
                 var response = await userService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
-                return response.Success ? Results.Ok(response) : Results.Unauthorized();
+
+                if (response.Success)
+                    return Results.Ok(response);
+                else
+                    return Results.Json(response, statusCode: StatusCodes.Status401Unauthorized);
             });
 
             group.MapPost(EndpointsRoutes.User.logout, () => Results.Ok());
@@ -82,6 +86,14 @@ namespace GameStore.Endpoints
             {
                 var success = await userService.ResetPasswordWithToken(dto);
                 return success ? Results.Ok() : Results.BadRequest("Invalid or expired token");
+            });
+
+            group.MapGet(EndpointsRoutes.User.getById, async (int userId, IUserService userService) =>
+            {
+                var url = EndpointsRoutes.User._base + EndpointsRoutes.User.getById;
+                Console.WriteLine("Endpoints: " + url);
+                var response = await userService.GetUserByIdAsync(userId);
+                return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
             return group;

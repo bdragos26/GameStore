@@ -1,9 +1,13 @@
-﻿using GameStore.Data;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using GameStore.Data;
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Mappers;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GameStore.Services
 {
@@ -26,12 +30,15 @@ namespace GameStore.Services
         private readonly GameStoreContext _dbContext;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public UserService(GameStoreContext dbContext, PasswordHasher<User> passwordHasher, IEmailService emailService)
+        public UserService(GameStoreContext dbContext, PasswordHasher<User> passwordHasher, IEmailService emailService,
+            IConfiguration configuration)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
         public async Task<ServiceResponse<User>> RegisterUserAsync(UserRegisterDto registerDto, string password)
@@ -84,6 +91,7 @@ namespace GameStore.Services
                 if (result == PasswordVerificationResult.Success)
                 {
                     var userDto = UserMapper.ToProfileDto(user);
+                    userDto.Token = CreateToken(user);
                     response.Data = userDto;
                     response.Success = true;
                     response.Message = "Authentication successful";
@@ -172,10 +180,19 @@ namespace GameStore.Services
 
         public async Task<ServiceResponse<User?>> GetUserByIdAsync(int userId)
         {
-            return new ServiceResponse<User?>
+            var response = new ServiceResponse<User?>();
+
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user != null)
             {
-                Data = await _dbContext.Users.FindAsync(userId)
-            };
+                response.Data = user;
+                response.Success = true;
+                return response;
+            }
+
+            response.Success = false;
+            response.Message = "User not found";
+            return response;
         }
 
         public async Task<ServiceResponse<User>> ResetUserPasswordAsync(ResetPasswordDTO resetPasswordDto)
@@ -269,6 +286,30 @@ namespace GameStore.Services
 
             await _dbContext.SaveChangesAsync();
             return true;
+        }
+
+        private string CreateToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
         }
     }
 }

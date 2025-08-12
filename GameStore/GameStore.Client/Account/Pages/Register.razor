@@ -82,28 +82,34 @@
 
 	private async Task HandleRegisterAsync()
 	{
+		errorMessage = null;
+    
 		try
 		{
 			await UserClient.RegisterAsync(userRegister);
 
-			UserLoginDTO loginDto = new UserLoginDTO()
+			var loginDto = new UserLoginDTO()
 			{
 				Username = userRegister.Username,
 				Password = userRegister.Password!
 			};
-			var user = await UserClient.LoginAsync(loginDto);
 
-			if (user != null)
+			var loginResponse = await UserClient.LoginAsync(loginDto);
+            
+			if (loginResponse?.Token != null)
 			{
 				var customAuthProvider = (CustomAuthStateProvider)AuthProvider;
-				await customAuthProvider.UpdateAuthenticationState(user);
-
+				await customAuthProvider.UpdateAuthenticationState(loginResponse.Token);
 				NavigationManager.NavigateTo("/");
 			}
+			else
+			{
+				throw new Exception("Automatic login after registration failed");
+			}
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			errorMessage = e.Message;
+			errorMessage = ex.Message;
 		}
 	}
 

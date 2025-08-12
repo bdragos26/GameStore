@@ -26,7 +26,8 @@
             public const string delete = "/{userId:int}";
             public const string forgotPass = "/forgotPass";
             public const string reset = "/reset";
-            public static string GetById(int userId) => $"{_base}/{userId}";
+            public const string getById = "/api/{userId:int}";
+            public static string GetById(int userId) => $"{_base}/api/{userId}";
             public static string Update(int userId) => $"{_base}/{userId}";
             public static string Delete(int userId) => $"{_base}/{userId}";
         }

@@ -43,13 +43,15 @@ namespace GameStore.Client.Services.ApiClients
         public async Task<UserProfileDto?> LoginAsync(UserLoginDTO loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync(EndpointsRoutes.User._base +
-                EndpointsRoutes.User.login, loginDto);
-            if (response.IsSuccessStatusCode)
+                                                             EndpointsRoutes.User.login, loginDto);
+            var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<UserProfileDto>>();
+
+            if (!response.IsSuccessStatusCode || serviceResponse == null || !serviceResponse.Success)
             {
-                var serviceResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<UserProfileDto>>();
-                return serviceResponse?.Data;
+                throw new Exception(serviceResponse?.Message ?? "Login failed");
             }
-            return null;
+
+            return serviceResponse.Data;
         }
 
         public async Task LogoutAsync()
@@ -59,7 +61,31 @@ namespace GameStore.Client.Services.ApiClients
         }
 
         public async Task<User?> GetUserByIdAsync(int userId)
-            => await _httpClient.GetFromJsonAsync<User>(EndpointsRoutes.User.GetById(userId));
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(EndpointsRoutes.User.GetById(userId));
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to get user. Status: {response.StatusCode}, Content: {content}");
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+                if (result?.Success != true)
+                {
+                    throw new Exception(result?.Message ?? "Failed to get user data");
+                }
+
+                return result.Data;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting user: {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<List<User>> GetUsersAsync()
         {

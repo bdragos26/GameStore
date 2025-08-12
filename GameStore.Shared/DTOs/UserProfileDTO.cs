@@ -12,5 +12,6 @@ namespace GameStore.Shared.DTOs
         public DateOnly? DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; }
         public Roles Role { get; set; } = Roles.User;
+        public string Token { get; set; } = string.Empty;
     }
 }

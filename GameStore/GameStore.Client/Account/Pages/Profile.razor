@@ -1,6 +1,6 @@
 ﻿@page "/profile"
-@using Blazored.LocalStorage
-@inject ILocalStorageService LocalStorage
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthProvider
 @inject IUserClient UserClient
 @inject IGameRatingClient GameRatingClient
 @inject NavigationManager NavigationManager
@@ -116,8 +116,20 @@
 		                </div>
 
 		                <div class="d-flex gap-2 mt-3">
-			                <button class="btn btn-success" type="submit">Save</button>
-			                <button class="btn btn-secondary" @onclick="CancelEdit" type="button">Cancel</button>
+			                <button class="btn btn-success btn-sm" type="submit" disabled="@isSaving">
+				                @if (isSaving)
+				                {
+					                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+					                <span>Saving...</span>
+				                }
+				                else
+				                {
+					                <span>Save</span>
+				                }
+			                </button>
+			                <button class="btn btn-secondary btn-sm" @onclick="CancelEdit" type="button" disabled="@isSaving">
+				                Cancel
+			                </button>
 		                </div>
 	                </EditForm>
 	                <br/>
@@ -138,49 +150,70 @@
     private User? user;
     private User? editUser;
     private bool isEditing = false;
-    private List<GameRating> userRatings;
+    private List<GameRating> userRatings = new();
+    private bool isSaving = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            user = await LocalStorage.GetItemAsync<User>("user");
-            if (user != null)
-            {
-	            userRatings = await GameRatingClient.GetRatingsByUserAsync(user.UserId);
-            }
-            StateHasChanged();
-        }
+	    var authState = await AuthProvider.GetAuthenticationStateAsync();
+	    var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        
+	    if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+	    {
+		    user = await UserClient.GetUserByIdAsync(userId);
+            
+		    if (user != null)
+		    {
+			    userRatings = await GameRatingClient.GetRatingsByUserAsync(user.UserId);
+		    }
+	    }
     }
 
     private void EnableEdit()
     {
-        if (user != null)
-        {
-	        editUser = user;
-            isEditing = true;
-        }
+	    if (user != null)
+	    {
+		    editUser = new User
+		    {
+			    UserId = user.UserId,
+			    Username = user.Username,
+			    Email = user.Email,
+			    FirstName = user.FirstName,
+			    LastName = user.LastName,
+			    DateOfBirth = user.DateOfBirth,
+			    Role = user.Role
+		    };
+		    isEditing = true;
+	    }
     }
 
     private async Task SaveChanges()
     {
-        if (editUser != null)
-        {
-            await UserClient.UpdateUserAsync(editUser);
-            user = editUser;
-            await LocalStorage.SetItemAsync("user", user);
-            isEditing = false;
-        }
+	    if (editUser == null) 
+		    return;
+
+	    isSaving = true;
+	    
+	    try
+	    {
+		    await UserClient.UpdateUserAsync(editUser);
+		    user = await UserClient.GetUserByIdAsync(editUser.UserId);
+		    isEditing = false;
+	    }
+	    finally
+	    {
+		    isSaving = false;
+	    }
     }
 
     private void CancelEdit()
     {
-        isEditing = false;
-        editUser = null;
+	    isEditing = false;
+	    editUser = null;
     }
 
     private void GoToGameDetail(int gameId)
     {
-        NavigationManager.NavigateTo($"/GameDetails/{gameId}");
+	    NavigationManager.NavigateTo($"/GameDetails/{gameId}");
     }
 }

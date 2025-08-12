@@ -1,9 +1,9 @@
 ﻿@page "/GameDetails/{GameId:int}"
-@using Blazored.LocalStorage
+@using System.Security.Claims
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
-@inject ILocalStorageService LocalStorage
 @inject ICartClient CartClient
+@inject AuthenticationStateProvider AuthProvider
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Game Details</PageTitle>
@@ -65,14 +65,12 @@ else
 		game = await gamesClient.GetGameByIdAsync(GameId);
 		var genres = await genresClient.GetGenresAsync();
 		genre = genres.FirstOrDefault(g => g.GenreId == game.GenreId);
-	}
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		var user = await LocalStorage.GetItemAsync<User>("user");
-		if (user != null)
+		var authState = await AuthProvider.GetAuthenticationStateAsync();
+		var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+		if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var parsedUserId))
 		{
-			userId = user.UserId;
+			userId = parsedUserId;
 		}
 	}
 

@@ -1,7 +1,9 @@
 ﻿using Blazored.LocalStorage;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
+using System.Security.Claims;
 
 namespace GameStore.Client.Services.ApiClients
 {
@@ -29,8 +31,15 @@ namespace GameStore.Client.Services.ApiClients
 
         private async Task<string> GetCartKey()
         {
-            var user = await _localStorage.GetItemAsync<User>("user");
-            return $"cart-{user?.UserId.ToString() ?? "guest"}";
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(authToken) as JwtSecurityToken;
+                var userId = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+                return $"cart-{userId}";
+            }
+            return "cart-guest";
         }
 
         public event Action OnChange;

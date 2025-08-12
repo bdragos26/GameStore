@@ -2,79 +2,98 @@
 using GameStore.Client.Services.ApiClients;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
 using System.Security.Claims;
-using GameStore.Shared.DTOs;
+using System.Text.Json;
 
 namespace GameStore.Client
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private readonly ClaimsPrincipal defaultClaimsPrincipal = new(new ClaimsIdentity());
         private readonly ICartClient _cartClient;
+        private readonly HttpClient _http;
 
-        public CustomAuthStateProvider(ILocalStorageService localStorage, ICartClient cartClient)
+        public CustomAuthStateProvider(ILocalStorageService localStorage, ICartClient cartClient, HttpClient http)
         {
             _localStorage = localStorage;
             _cartClient = cartClient;
+            _http = http;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            await Task.Delay(500);
-            try
-            {
-                UserProfileDto? user = await _localStorage.GetItemAsync<UserProfileDto>("user");
-                if (user == null)
-                    return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            var identity = new ClaimsIdentity();
+            _http.DefaultRequestHeaders.Authorization = null;
 
-                var claims = new List<Claim>
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                try
                 {
-                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new(ClaimTypes.Name, user.Username),
-                    new(ClaimTypes.Email, user.Email),
-                    new(ClaimTypes.Role, user.Role.ToString())
-                };
+                    identity = new ClaimsIdentity(ParseClaimsFromJwt(authToken), "jwt");
+                    _http.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", authToken);
+                }
+                catch
+                {
+                    await _localStorage.RemoveItemAsync("authToken");
+                    identity = new ClaimsIdentity();
+                }
+            }
 
-                return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(
-                    new ClaimsIdentity(claims, "GameStoreAuth"))));
-            }
-            catch
-            {
-                return await Task.FromResult(new AuthenticationState(defaultClaimsPrincipal));
-            }
+            var user = new ClaimsPrincipal(identity);
+            var state = new AuthenticationState(user);
+
+            NotifyAuthenticationStateChanged(Task.FromResult(state));
+            return state;
         }
 
-        public async Task UpdateAuthenticationState(UserProfileDto? user)
+        public async Task UpdateAuthenticationState(string? token)
         {
             ClaimsPrincipal claimsPrincipal;
 
-            if (user != null)
+            if (!string.IsNullOrEmpty(token))
             {
-                await _localStorage.SetItemAsync("user", user);
+                await _localStorage.SetItemAsync("authToken", token);
+                var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
+                claimsPrincipal = new ClaimsPrincipal(identity);
+                _http.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
 
-                var claims = new List<Claim>
-                {
-                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new(ClaimTypes.Name, user.Username),
-                    new(ClaimTypes.Email, user.Email),
-                    new(ClaimTypes.Role, user.Role.ToString())
-                };
-
-                claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims, "GameStoreAuth"));
-
-                await MigrateGuestCartToUserCart(user.UserId);
+                var userId = int.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                await MigrateGuestCartToUserCart(userId);
             }
             else
             {
-                await _localStorage.RemoveItemAsync("user");
-                claimsPrincipal = defaultClaimsPrincipal;
+                await _localStorage.RemoveItemAsync("authToken");
+                claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
+                _http.DefaultRequestHeaders.Authorization = null;
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
             await _cartClient.NotifyCartChanged();
         }
 
+        private byte[] ParseBase64WithoutPadding(string base64)
+        {
+            switch (base64.Length % 4)
+            {
+                case 2: base64 += "=="; break;
+                case 3: base64 += "="; break;
+            }
+            return Convert.FromBase64String(base64);
+        }
+
+        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        {
+            var payload = jwt.Split('.')[1];
+            var jsonBytes = ParseBase64WithoutPadding(payload);
+            var keyValuePairs = JsonSerializer
+                .Deserialize<Dictionary<string, object>>(jsonBytes);
+
+            return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
+        }
         private async Task MigrateGuestCartToUserCart(int userId)
         {
             var guestCardKey = "cart-guest";
