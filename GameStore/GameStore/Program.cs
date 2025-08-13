@@ -1,5 +1,6 @@
 ﻿using GameStore.Data;
 using GameStore.Endpoints;
+using GameStore.Hubs;
 using GameStore.Services;
 using GameStore.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -55,6 +56,7 @@ builder.Services.AddDbContext<GameStoreContext>(options =>
 });
 
 builder.Services.AddAuthorization();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -83,6 +85,8 @@ app.MapGenreEndpoints();
 app.MapUsersEndpoints();
 app.MapGameRatingsEndpoints();
 app.MapCartEndpoints();
+
+app.MapHub<CartHub>("/cartHub");
 
 app.MapControllers();
 app.MapRazorPages();

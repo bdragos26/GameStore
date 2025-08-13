@@ -62,6 +62,8 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		await CartClient.InitializeSignalR();
+
 		game = await gamesClient.GetGameByIdAsync(GameId);
 		var genres = await genresClient.GetGenresAsync();
 		genre = genres.FirstOrDefault(g => g.GenreId == game.GenreId);

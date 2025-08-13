@@ -50,28 +50,35 @@ else
 @code {
     private List<CartItem> cartProducts = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-		CartClient.OnChange += StateHasChanged;
-		await LoadCart();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+	    CartClient.OnChange += HandleCartChange;
+	    await CartClient.InitializeSignalR();
+	    await LoadCart();
+    }
 
-	private async Task LoadCart()
-	{
-		try
-		{
+    private async void HandleCartChange()
+    {
+	    await LoadCart();
+	    StateHasChanged();
+    }
+
+    private async Task LoadCart()
+    {
+        try
+        {
             cartProducts = await CartClient.GetCartGames();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Error loading cart: {ex.Message}");
-		}
-	}
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading cart: {ex.Message}");
+        }
+    }
 
     private async Task RemoveFromCart(int gameId)
     {
         await CartClient.RemoveGameFromCart(gameId);
-        await LoadCart();
     }
 
     private async Task UpdateQuantity(CartItem item, int newQuantity)
@@ -81,11 +88,10 @@ else
 
         item.Quantity = newQuantity;
         await CartClient.UpdateQuantity(item);
-        await LoadCart();
     }
 
     public void Dispose()
     {
-	    CartClient.OnChange -= StateHasChanged;
+        CartClient.OnChange -= HandleCartChange;
     }
 }

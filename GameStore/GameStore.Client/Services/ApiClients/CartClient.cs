@@ -1,6 +1,8 @@
 ﻿using Blazored.LocalStorage;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -10,6 +12,7 @@ namespace GameStore.Client.Services.ApiClients
     public interface ICartClient
     {
         event Action OnChange;
+        Task InitializeSignalR();
         Task NotifyCartChanged();
         Task AddToCart(CartItem cartItem);
         Task<List<CartItem>> GetCartItems();
@@ -18,15 +21,52 @@ namespace GameStore.Client.Services.ApiClients
         Task UpdateQuantity(CartItem game);
         Task ClearCart();
     }
-    public class CartClient : ICartClient
+    public class CartClient : ICartClient, IDisposable
     {
         private readonly ILocalStorageService _localStorage;
         private readonly HttpClient _http;
+        private readonly HubConnection _hubConnection;
+        private string _userId;
+        private bool _isInitialized;
 
-        public CartClient(ILocalStorageService localStorage, HttpClient http)
+        public CartClient(ILocalStorageService localStorage, HttpClient http, NavigationManager navigationManager)
         {
             _localStorage = localStorage;
             _http = http;
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(navigationManager.ToAbsoluteUri("/cartHub"))
+                .Build();
+        }
+
+        public async Task InitializeSignalR()
+        {
+            if (_isInitialized)
+                return;
+
+            try
+            {
+                var authToken = await _localStorage.GetItemAsync<string>("authToken");
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(authToken) as JwtSecurityToken;
+                _userId = jsonToken?.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ?? "guest";
+
+                if (_hubConnection.State == HubConnectionState.Disconnected)
+                {
+                    _hubConnection.On("CartUpdated", () =>
+                    {
+                        OnChange?.Invoke();
+                        return Task.CompletedTask;
+                    });
+
+                    await _hubConnection.StartAsync();
+                    await _hubConnection.InvokeAsync("JoinCartGroup", _userId);
+                    _isInitialized = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initializing SignalR: {ex.Message}");
+            }
         }
 
         private async Task<string> GetCartKey()
@@ -66,6 +106,7 @@ namespace GameStore.Client.Services.ApiClients
             }
 
             await _localStorage.SetItemAsync(cartKey, cart);
+            await _hubConnection.InvokeAsync("NotifyCartChanged", _userId);
             OnChange?.Invoke();
         }
 
@@ -112,6 +153,7 @@ namespace GameStore.Client.Services.ApiClients
             {
                 cart.Remove(cartItem);
                 await _localStorage.SetItemAsync(cartKey, cart);
+                await _hubConnection.InvokeAsync("NotifyCartChanged", _userId);
                 OnChange?.Invoke();
             }
         }
@@ -127,6 +169,7 @@ namespace GameStore.Client.Services.ApiClients
             {
                 cartItem.Quantity = game.Quantity;
                 await _localStorage.SetItemAsync(cartKey, cart);
+                await _hubConnection.InvokeAsync("NotifyCartChanged", _userId);
                 OnChange?.Invoke();
             }
         }
@@ -135,7 +178,14 @@ namespace GameStore.Client.Services.ApiClients
         {
             var cartKey = await GetCartKey();
             await _localStorage.RemoveItemAsync(cartKey);
+            await _hubConnection.InvokeAsync("NotifyCartChanged", _userId);
             OnChange?.Invoke();
+        }
+
+        public void Dispose()
+        {
+            _hubConnection.DisposeAsync().AsTask().Wait();
+            _http.Dispose();
         }
     }
 }

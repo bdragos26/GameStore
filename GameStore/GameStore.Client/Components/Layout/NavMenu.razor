@@ -122,6 +122,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		await CartClient.InitializeSignalR();
 		await LoadCartCount();
 		CartClient.OnChange += OnCartChanged;
 	}

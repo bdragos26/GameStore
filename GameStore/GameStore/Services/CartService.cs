@@ -1,20 +1,30 @@
 ﻿using GameStore.Data;
+using GameStore.Hubs;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
 
 public interface ICartService
 {
-    Task<ServiceResponse<List<CartItem>>> GetCartGamesAsync(List<CartItem>? cartItems);
+    Task<ServiceResponse<List<CartItem?>>> GetCartGamesAsync(List<CartItem>? cartItems);
+    Task NotifyCartChanged(string userId);
 }
 public class CartService : ICartService
 {
     private readonly GameStoreContext _context;
+    private readonly IHubContext<CartHub> _hubContext;
 
-    public CartService(GameStoreContext context)
+    public CartService(GameStoreContext context, IHubContext<CartHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
+    }
+
+    public async Task NotifyCartChanged(string userId)
+    {
+        await _hubContext.Clients.Group($"cart-{userId}").SendAsync("CartUpdated");
     }
 
     public async Task<ServiceResponse<List<CartItem?>>> GetCartGamesAsync(List<CartItem>? cartItems)

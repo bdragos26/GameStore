@@ -31,6 +31,12 @@ namespace GameStore.Data
                 .WithMany()
                 .HasForeignKey(g => g.GenreId);
 
+            modelBuilder.Entity<Game>()
+                .HasIndex(g => g.Name);
+
+            modelBuilder.Entity<Game>()
+                .HasIndex(g => g.ReleaseDate);
+
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
@@ -47,18 +53,30 @@ namespace GameStore.Data
                 .HasKey(r => new { r.UserId, r.GameId });
 
             modelBuilder.Entity<GameRating>()
+                .HasIndex(r => r.Score);
+
+            modelBuilder.Entity<GameRating>()
                 .HasOne(r => r.User)
                 .WithMany()
-                .HasForeignKey(r => r.UserId);
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GameRating>()
                 .HasOne(r => r.GameDetails)
                 .WithMany()
-                .HasForeignKey(r => r.GameId);
+                .HasForeignKey(r => r.GameId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PasswordResetToken>()
                 .HasIndex(t => t.Token)
                 .IsUnique();
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(t => t.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(t => t.ExpiresAt);
         }
     }
 }
