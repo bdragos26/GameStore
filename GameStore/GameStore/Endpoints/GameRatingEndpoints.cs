@@ -1,6 +1,7 @@
 ﻿using GameStore.Services;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.Endpoints
@@ -17,7 +18,7 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.NotFound(response);
             });
 
-            group.MapPost(EndpointsRoutes.GameRating.update, async (IGameRatingService service, GameRating gameRating) =>
+            group.MapPost(EndpointsRoutes.GameRating.update, [Authorize] async (IGameRatingService service, GameRating gameRating) =>
             {
                 var response = await service.UpdateRatingAsync(gameRating);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
@@ -35,7 +36,7 @@ namespace GameStore.Endpoints
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
 
-            group.MapDelete(EndpointsRoutes.GameRating.delete, async (IGameRatingService service, int userId, int gameId) =>
+            group.MapDelete(EndpointsRoutes.GameRating.delete, [Authorize] async (IGameRatingService service, int userId, int gameId) =>
             {
                 var response = await service.DeleteRatingAsync(userId, gameId);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);

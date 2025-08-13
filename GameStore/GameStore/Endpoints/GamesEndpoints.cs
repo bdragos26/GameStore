@@ -2,6 +2,7 @@
 using GameStore.Shared.DTOs;
 using GameStore.Shared.Endpoints;
 using GameStore.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameStore.Endpoints
 {
@@ -29,19 +30,19 @@ namespace GameStore.Endpoints
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
-            group.MapPost("/", async (Game newGame, IGameService gameService) =>
+            group.MapPost("/", [Authorize] async (Game newGame, IGameService gameService) =>
             {
                 var result = await gameService.AddGameAsync(newGame);
                 return result.Success ? Results.Created(EndpointsRoutes.Games.Add(result.Data!.GameId), result) : Results.BadRequest(result);
             });
 
-            group.MapPut(EndpointsRoutes.Games.update, async (int gameId, Game updatedGame, IGameService gameService) =>
+            group.MapPut(EndpointsRoutes.Games.update, [Authorize] async (int gameId, Game updatedGame, IGameService gameService) =>
             {
                 var result = await gameService.UpdateGameAsync(gameId, updatedGame);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
 
-            group.MapDelete(EndpointsRoutes.Games.delete, async (int gameId, IGameService gameService) =>
+            group.MapDelete(EndpointsRoutes.Games.delete, [Authorize] async (int gameId, IGameService gameService) =>
             {
                 var result = await gameService.DeleteGameAsync(gameId);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);

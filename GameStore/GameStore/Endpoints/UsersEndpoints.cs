@@ -36,7 +36,7 @@ namespace GameStore.Endpoints
                 return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
             });
 
-            group.MapPut(EndpointsRoutes.User.update, async (int userId, User updatedUser, IUserService userService) =>
+            group.MapPut(EndpointsRoutes.User.update, [Authorize] async (int userId, User updatedUser, IUserService userService) =>
             {
                 var existingUserResponse = await userService.GetUserByIdAsync(userId);
                 if (existingUserResponse == null || !existingUserResponse.Success)
@@ -59,7 +59,7 @@ namespace GameStore.Endpoints
                 return updateResponse.Success ? Results.Ok(updateResponse) : Results.BadRequest(updateResponse);
             });
 
-            group.MapPost(EndpointsRoutes.User.resetPass, async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
+            group.MapPost(EndpointsRoutes.User.resetPass, [Authorize] async (ResetPasswordDTO resetPasswordDto, IUserService userService) =>
             {
                 var response = await userService.ResetUserPasswordAsync(resetPasswordDto);
                 if (!response.Success)
@@ -71,7 +71,7 @@ namespace GameStore.Endpoints
                 return Results.Ok(response);
             });
 
-            group.MapDelete(EndpointsRoutes.User.delete, async (IUserService service, int userId) =>
+            group.MapDelete(EndpointsRoutes.User.delete, [Authorize(Roles = "Admin")] async (IUserService service, int userId) =>
             {
                 var response = await service.DeleteUserAsync(userId);
                 return !response.Success ? Results.BadRequest(response) : Results.Ok(response);
@@ -91,8 +91,6 @@ namespace GameStore.Endpoints
 
             group.MapGet(EndpointsRoutes.User.getById, [Authorize] async (int userId, IUserService userService) =>
             {
-                var url = EndpointsRoutes.User._base + EndpointsRoutes.User.getById;
-                Console.WriteLine("Endpoints: " + url);
                 var response = await userService.GetUserByIdAsync(userId);
                 return response.Success ? Results.Ok(response) : Results.BadRequest(response);
             });
