@@ -4,13 +4,14 @@
 @inject IGenresClient genresClient
 @inject ICartClient CartClient
 @inject AuthenticationStateProvider AuthProvider
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Game Details</PageTitle>
+<PageTitle>@L["GameDetails"]</PageTitle>
 
 @if (game == null)
 {
-	<p><em>Loading...</em></p>
+	<p><em>@L["Loading"]</em></p>
 }
 else
 {
@@ -24,21 +25,21 @@ else
 				<div class="col-md-7 d-flex align-items-center">
 					<div class="card-body">
 						<h3 class="card-title">@game.Name</h3>
-						<p class="card-text"><strong>Genre:</strong> @genre?.Name</p>
-						<p class="card-text"><strong>Price:</strong> $@game.Price</p>
-						<p class="card-text"><strong>Release Date:</strong> @game.ReleaseDate.ToShortDateString()</p>
+						<p class="card-text"><strong>@L["Genre"]:</strong> @genre?.Name</p>
+						<p class="card-text"><strong>@L["Price"]:</strong> $@game.Price</p>
+						<p class="card-text"><strong>@L["Release"]:</strong> @game.ReleaseDate.ToShortDateString()</p>
 					</div>
 				</div>
 			</div>
 			
 			<div class="mt-4" style="margin-left: 10px; margin-bottom: 10px;">
 				<button class="btn btn-success" @onclick="AddToCart">
-					<i class="bi bi-cart-plus me-2"></i> Add to Cart
+					<i class="bi bi-cart-plus me-2"></i> @L["AddToCart"]
 				</button>
 				@if (showAddedMessage)
 				{
 					<span class="ms-3 text-success">
-						<i class="bi bi-check-circle"></i> Added to cart!
+						<i class="bi bi-check-circle"></i> @L["AddedToCart"]
 					</span>
 				}
 			</div>
@@ -46,7 +47,7 @@ else
 			<Rating GameId="@game.GameId" UserId="@userId"></Rating>
 
 			<span>
-				<a href="/gameList" class="btn btn-outline-primary" style="margin-top: 20px; margin-left: 10px; margin-bottom: 20px;">Back to games menu</a>
+				<a href="/gameList" class="btn btn-outline-primary" style="margin-top: 20px; margin-left: 10px; margin-bottom: 20px;">@L["BackToMenu"]</a>
 			</span>
 		</div>
 	</div>

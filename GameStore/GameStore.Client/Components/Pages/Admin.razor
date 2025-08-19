@@ -1,24 +1,25 @@
 ﻿@page "/Admin"
 @using Microsoft.AspNetCore.Authorization
 @inject IUserClient UserClient
+@inject IStringLocalizer<SharedResources> L
 @attribute [Authorize(Roles = "Admin")]
 @rendermode InteractiveWebAssembly
 
-<h3>Admin Page</h3>
+<h3>@L["Admin Page"]</h3>
 
 @if (users == null)
 {
-	<p><em>Loading...</em></p>
+	<p><em>@L["Loading"]</em></p>
 }
 else
 {
 	<table class="table">
 		<thead>
 		<tr>
-			<th>Username</th>
+			<th>@L["Username"]</th>
 			<th>Email</th>
-			<th>Role</th>
-			<th>Actions</th>
+			<th>@L["Role"]</th>
+			<th>@L["Actions"]</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -36,8 +37,8 @@ else
 					</InputSelect>
 				</td>
 				<td>
-					<button class="btn btn-primary me-2" @onclick="@(() => UpdateUserAsync(user))">Update</button>
-					<button class="btn btn-danger" @onclick="@(() => DeleteUserAsync(user.UserId))">Delete</button>
+					<button class="btn btn-primary me-2" @onclick="@(() => UpdateUserAsync(user))">@L["Update"]</button>
+					<button class="btn btn-danger" @onclick="@(() => DeleteUserAsync(user.UserId))">@L["Delete"]</button>
 				</td>
 			</tr>
 		}

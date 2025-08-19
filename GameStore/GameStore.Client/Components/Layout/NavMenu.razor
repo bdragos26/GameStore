@@ -1,6 +1,5 @@
 ﻿@inject ICartClient CartClient
 @using GameStore.Client.Services
-@using Microsoft.Extensions.Localization
 @implements IDisposable
 @inject LanguageService LanguageService
 @inject IStringLocalizer<SharedResources> L
@@ -54,7 +53,7 @@
 					<div class="d-flex align-items-center me-2">
 						<AuthorizeView Roles="Admin" Context="adminPanel">
 							<NavLink class="btn btn-outline-warning me-2" href="/Admin">
-								<i class="bi bi-shield-lock me-1"></i> Admin Panel
+								<i class="bi bi-shield-lock me-1"></i> @L["AdminPanel"]
 							</NavLink>
 						</AuthorizeView>
 						<div class="dropdown me-2">
@@ -64,13 +63,13 @@
 							</button>
 							<ul class="dropdown-menu dropdown-menu-end">
 								<li>
-									<a class="dropdown-item" href="/profile">Profile</a>
+									<a class="dropdown-item" href="/profile">@L["Profile"]</a>
 								</li>
 								<li>
 									<hr class="dropdown-divider"/>
 								</li>
 								<li>
-									<a class="dropdown-item text-danger" href="/logout">Logout</a>
+									<a class="dropdown-item text-danger" href="/logout">@L["Logout"]</a>
 								</li>
 							</ul>
 						</div>

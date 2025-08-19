@@ -1,9 +1,10 @@
 ﻿@inject IGameRatingClient GameRatingClient
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveWebAssembly
 
 <AuthorizeView>
     <Authorized>
-        <h4 style="margin-left: 10px; margin-top: 30px;">Rate this game:</h4>
+        <h4 style="margin-left: 10px; margin-top: 30px;">@L["Rate"]:</h4>
         <div class="rating" style="margin-left: 10px;">
             @for (int i = 1; i <= 5; i++)
             {
@@ -15,24 +16,24 @@
             @if (currentRating > 0)
             {
                 <br />
-                <button class="btn btn-danger" style="margin-top: 20px;" @onclick="DeleteRating">Delete rating</button>
+                <button class="btn btn-danger" style="margin-top: 20px;" @onclick="DeleteRating">@L["DeleteRating"]</button>
             }
         </div>
     </Authorized>
     <NotAuthorized>
-        <span class="alert alert-danger" style="max-width: 300px; margin-left: 10px;">Log in to rate this game</span>
+        <span class="alert alert-danger" style="max-width: 300px; margin-left: 10px;">@L["LogInToRate"]</span>
     </NotAuthorized>
 </AuthorizeView>
 
 <div style="margin-left: 10px; margin-top: 30px; display: flex; align-items: center; gap: 10px;">
     <h4 class="text-muted" style="margin: 0;">
-        Average rating: <strong>@averageRating.ToString("0.0")</strong> / 5
+        @L["AverageRating"]: <strong>@averageRating.ToString("0.0")</strong> / 5
     </h4>
     @if (ratings?.Any() == true)
     {
         <button class="btn btn-warning btn-sm btn-toggle" @onclick="ToggleRatings">
             <i class="bi @(showOtherRatings ? "bi-eye-slash" : "bi-eye") me-1"></i>
-            @(showOtherRatings ? "Hide ratings" : "Show ratings")
+            @(showOtherRatings ? L["HideRatings"] : L["ShowRatings"])
         </button>
     }
 </div>
@@ -56,7 +57,7 @@
 }
 else if (!ratings?.Any() == true)
 {
-    <p class="text-muted" style="margin-left: 10px;">This game was not rated by other users</p>
+    <p class="text-muted" style="margin-left: 10px;">@L["NotRated"]</p>
 }
 
 @code {

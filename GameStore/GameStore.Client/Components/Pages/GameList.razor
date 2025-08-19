@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject IGamesClient gamesClient
 @inject IGenresClient genresClient
+@inject IStringLocalizer<SharedResources> L
 @implements IDisposable
 @rendermode InteractiveWebAssembly
 
@@ -9,20 +10,20 @@
 
 <AuthorizeView Roles="Admin">
     <div class="mt-2">
-        <NavLink class="btn btn-primary" href="/EditGame">New Game</NavLink>
+        <NavLink class="btn btn-primary" href="/EditGame">@L["NewGame"]</NavLink>
     </div>
 </AuthorizeView>
 
 @if (pagedResult == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@L["Loading"]</em></p>
 }
 else
 {
     <div class="search-container mb-4" style="margin-top: 20px;">
         <div class="search-box">
             <i class="bi bi-search search-icon"></i>
-            <InputText class="search-input form-control" placeholder="Search games..."
+            <InputText class="search-input form-control" placeholder="@L["SearchGames"]"
                        @bind-Value="SearchTerm" @oninput="OnSearchInput" />
             @if (!string.IsNullOrEmpty(SearchTerm))
             {
@@ -42,7 +43,7 @@ else
 
     <div class="row mb-3">
         <div class="col-md-4">
-            <label for="genreSelect" class="form-label">Genre</label>
+            <label for="genreSelect" class="form-label">@L["Genre"]</label>
             <InputSelect @bind-Value="selectedGenreId" id="genreSelect" class="form-select" @bind-Value:after="OnFilterChanged">
                 <option value="">All</option>
                 @foreach (var genre in genres)
@@ -53,19 +54,19 @@ else
         </div>
 
         <div class="col-md-4">
-            <label for="maxPrice" class="form-label">Max price</label>
+            <label for="maxPrice" class="form-label">@L["MaxPrice"]</label>
             <InputNumber @bind-Value="maxPrice" id="maxPrice" class="form-control" @bind-Value:after="OnFilterChanged" />
         </div>
 
         <div class="col-md-4">
-            <label for="minDate" class="form-label">Released after</label>
+            <label for="minDate" class="form-label">@L["ReleasedAfter"]</label>
             <InputDate @bind-Value="minReleaseDate" id="minDate" class="form-control" @bind-Value:after="OnFilterChanged" />
         </div>
     </div>
 
     <div class="text-end mb-3">
         <button class="btn btn-outline-secondary" @onclick="ResetFilters">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+            <i class="bi bi-arrow-counterclockwise"></i> @L["ResetFilters"]
         </button>
     </div>
 
@@ -79,9 +80,9 @@ else
                         <div class="card-body">
                             <h5 class="card-title">@game.Name</h5>
                             <p class="card-text">
-                                Genre: @genres.FirstOrDefault(g => g.GenreId == game.GenreId)?.Name <br />
-                                Price: $@game.Price <br />
-                                Release: @game.ReleaseDate.ToShortDateString()
+                                @L["Genre"]: @genres.FirstOrDefault(g => g.GenreId == game.GenreId)?.Name <br />
+                                @L["Price"]: $@game.Price <br />
+                                @L["Release"]: @game.ReleaseDate.ToShortDateString()
                             </p>
                         </div>
                     </div>
@@ -91,7 +92,7 @@ else
                             <button class="btn btn-primary me-2" @onclick="@(() => GoToEdit(game.GameId))">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">Delete</button>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">@L["Delete"]</button>
                         </div>
                         <DeleteGame Game="@game" />
                     </AuthorizeView>

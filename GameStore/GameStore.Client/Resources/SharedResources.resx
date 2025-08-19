@@ -138,4 +138,145 @@
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Welcome to GameStore!</value>
   </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Admin Panel</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome to GameStore</value>
+  </data>
+  <data name="Subtitle" xml:space="preserve">
+    <value>Discover and manage your favorite games with ease</value>
+  </data>
+  <data name="TopRated" xml:space="preserve">
+    <value>Top Rated Games</value>
+  </data>
+  <data name="TopRatedDescription" xml:space="preserve">
+    <value>Discover the highest rated games in our collection</value>
+  </data>
+  <data name="NewGame" xml:space="preserve">
+    <value>New Game</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="SearchGames" xml:space="preserve">
+    <value>Search Games...</value>
+  </data>
+  <data name="Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="MaxPrice" xml:space="preserve">
+    <value>Max Price</value>
+  </data>
+  <data name="ReleasedAfter" xml:space="preserve">
+    <value>Released after</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Release</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="GameDetails" xml:space="preserve">
+    <value>Game details</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Add to cart</value>
+  </data>
+  <data name="AddedToCart" xml:space="preserve">
+    <value>Added to cart!</value>
+  </data>
+  <data name="BackToMenu" xml:space="preserve">
+    <value>Back to games menu</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>Rate this game</value>
+  </data>
+  <data name="LogInToRate" xml:space="preserve">
+    <value>Log in to rate this game</value>
+  </data>
+  <data name="DeleteRating" xml:space="preserve">
+    <value>Delete rating</value>
+  </data>
+  <data name="AverageRating" xml:space="preserve">
+    <value>Average rating</value>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>This game was not rated by other users</value>
+  </data>
+  <data name="HideRatings" xml:space="preserve">
+    <value>Hide ratings</value>
+  </data>
+  <data name="ShowRatings" xml:space="preserve">
+    <value>Show ratings</value>
+  </data>
+  <data name="Distribution" xml:space="preserve">
+    <value>Game Genres Distribution</value>
+  </data>
+  <data name="GamesByPrice" xml:space="preserve">
+    <value>Games by Price Range</value>
+  </data>
+  <data name="ReleasesByYear" xml:space="preserve">
+    <value>Game Releases by Year</value>
+  </data>
+  <data name="GenresDistribution" xml:space="preserve">
+    <value>Genres distribution</value>
+  </data>
+  <data name="Price Ranges" xml:space="preserve">
+    <value>Price Ranges</value>
+  </data>
+  <data name="Releases by Year" xml:space="preserve">
+    <value>Releases by Year</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="showConfirm" xml:space="preserve">
+    <value>Are you sure you want to cancel?</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="My Cart" xml:space="preserve">
+    <value>My Cart</value>
+  </data>
+  <data name="Cart empty" xml:space="preserve">
+    <value>Cart empty</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Game</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Admin Page" xml:space="preserve">
+    <value>Admin Page</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
 </root>

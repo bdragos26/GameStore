@@ -39,7 +39,6 @@ builder.Services.AddScoped<LanguageService>();
 
 var host = builder.Build();
 
-// Set culture from local storage before running app
 var localStorage = host.Services.GetRequiredService<ILocalStorageService>();
 var lang = await localStorage.GetItemAsync<string>("selectedLanguage") ?? "en";
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(lang);

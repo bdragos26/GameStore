@@ -2,15 +2,16 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IGamesClient GamesClient
 @inject IGenresClient GenresClient
+@inject IStringLocalizer<SharedResources> L
 @attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Game Stats</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
     <MudTabs Rounded="true" Elevation="6" RoundedCorners="MudBlazor.Corners.All" Class="pa-4">
-        <MudTabPanel Text="Genres Distribution">
+        <MudTabPanel Text="@L["GenresDistribution"]">
             <MudPaper Class="pa-6" Style="min-height: 370px;">
-                <MudText Typo="Typo.h5" Class="mb-4">Game Genres Distribution</MudText>
+                <MudText Typo="Typo.h5" Class="mb-4">@L["Distribution"]</MudText>
                 <MudChart ChartType="ChartType.Pie"
                           InputLabels="@genreLabels"
                           InputData="@genreData"
@@ -19,9 +20,9 @@
             </MudPaper>
         </MudTabPanel>
 
-        <MudTabPanel Text="Price Ranges">
+        <MudTabPanel Text="@L["Price Ranges"]">
             <MudPaper Class="pa-6" Style="min-height: 370px;">
-                <MudText Typo="Typo.h5" Class="mb-4">Games by Price Range</MudText>
+                <MudText Typo="Typo.h5" Class="mb-4">@L["GamesByPrice"]</MudText>
                 <MudChart ChartType="ChartType.Bar"
                           ChartSeries="@priceSeries"
                           XAxisLabels="@priceLabels"
@@ -30,9 +31,9 @@
             </MudPaper>
         </MudTabPanel>
 
-        <MudTabPanel Text="Releases by Year">
+        <MudTabPanel Text="@L["Releases by Year"]">
             <MudPaper Class="pa-6" Style="min-height: 400px;">
-                <MudText Typo="Typo.h5" Class="mb-4">Game Releases by Year</MudText>
+                <MudText Typo="Typo.h5" Class="mb-4">@L["ReleasesByYear"]</MudText>
                 <MudChart ChartType="ChartType.Line"
                           ChartSeries="@yearlyReleaseSeries"
                           XAxisLabels="@yearLabels"

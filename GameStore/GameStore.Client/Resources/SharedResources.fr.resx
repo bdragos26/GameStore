@@ -138,4 +138,145 @@
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Bienvenue sur GameStore !</value>
   </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Panneau d'administration</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Bienvenue sur GameStore</value>
+  </data>
+  <data name="Subtitle" xml:space="preserve">
+    <value>Découvrez et gérez vos jeux préférés en toute simplicité</value>
+  </data>
+  <data name="TopRated" xml:space="preserve">
+    <value>Jeux les mieux notés</value>
+  </data>
+  <data name="TopRatedDescription" xml:space="preserve">
+    <value>Découvrez les jeux les mieux notés de notre collection</value>
+  </data>
+  <data name="NewGame" xml:space="preserve">
+    <value>Nouveau jeu</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="SearchGames" xml:space="preserve">
+    <value>RechercheJeux...</value>
+  </data>
+  <data name="Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="MaxPrice" xml:space="preserve">
+    <value>Prix maximum</value>
+  </data>
+  <data name="ReleasedAfter" xml:space="preserve">
+    <value>Libéré après</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prix</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Libérer</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="GameDetails" xml:space="preserve">
+    <value>Détails du jeu</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Ajouter au panier</value>
+  </data>
+  <data name="AddedToCart" xml:space="preserve">
+    <value>Ajouté au panier!</value>
+  </data>
+  <data name="BackToMenu" xml:space="preserve">
+    <value>Retour au menu</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>Notez ce jeu</value>
+  </data>
+  <data name="LogInToRate" xml:space="preserve">
+    <value>Connectez-vous pour noter ce jeu</value>
+  </data>
+  <data name="DeleteRating" xml:space="preserve">
+    <value>Supprimer la note</value>
+  </data>
+  <data name="AverageRating" xml:space="preserve">
+    <value>Note moyenne</value>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Ce jeu n'a pas été noté par d'autres utilisateurs</value>
+  </data>
+  <data name="HideRatings" xml:space="preserve">
+    <value>Masquer les notes</value>
+  </data>
+  <data name="ShowRatings" xml:space="preserve">
+    <value>Afficher les notes</value>
+  </data>
+  <data name="Distribution" xml:space="preserve">
+    <value>Répartition des genres de jeux</value>
+  </data>
+  <data name="GamesByPrice" xml:space="preserve">
+    <value>Jeux par gamme de prix</value>
+  </data>
+  <data name="ReleasesByYear" xml:space="preserve">
+    <value>Sorties de jeux par année</value>
+  </data>
+  <data name="GenresDistribution" xml:space="preserve">
+    <value>Répartition des genres</value>
+  </data>
+  <data name="Price Ranges" xml:space="preserve">
+    <value>Gammes de prix</value>
+  </data>
+  <data name="Releases by Year" xml:space="preserve">
+    <value>Sorties par année</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuller</value>
+  </data>
+  <data name="showConfirm" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir annuler?</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="My Cart" xml:space="preserve">
+    <value>Mon panier</value>
+  </data>
+  <data name="Cart empty" xml:space="preserve">
+    <value>Panier vide</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Gamme</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantité</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Admin Page" xml:space="preserve">
+    <value>Page d'administration</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nom d'utilisateur</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>rouleau</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actes</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Mise à jour</value>
+  </data>
 </root>

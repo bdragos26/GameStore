@@ -138,4 +138,145 @@
   <data name="WelcomeTitle" xml:space="preserve">
     <value>Bun venit la GameStore!</value>
   </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Panou admin</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Delogare</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Bun venit la GameStore</value>
+  </data>
+  <data name="Subtitle" xml:space="preserve">
+    <value>Descopera jocurile tale favorite</value>
+  </data>
+  <data name="TopRated" xml:space="preserve">
+    <value>Jocuri de top</value>
+  </data>
+  <data name="TopRatedDescription" xml:space="preserve">
+    <value>Descopera cele mai de top jocuri</value>
+  </data>
+  <data name="NewGame" xml:space="preserve">
+    <value>Joc nou</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Se incarca...</value>
+  </data>
+  <data name="SearchGames" xml:space="preserve">
+    <value>Cauta jocuri...</value>
+  </data>
+  <data name="Genre" xml:space="preserve">
+    <value>Gen</value>
+  </data>
+  <data name="MaxPrice" xml:space="preserve">
+    <value>Pret maxim</value>
+  </data>
+  <data name="ReleasedAfter" xml:space="preserve">
+    <value>Lansat dupa</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Pret</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Lansat</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Sterge</value>
+  </data>
+  <data name="GameDetails" xml:space="preserve">
+    <value>Detalii jocuri</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Adauga in cos</value>
+  </data>
+  <data name="AddedToCart" xml:space="preserve">
+    <value>Adaugat in cos!</value>
+  </data>
+  <data name="BackToMenu" xml:space="preserve">
+    <value>Inapoi la meniul principal</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>Evalueaza acest joc</value>
+  </data>
+  <data name="LogInToRate" xml:space="preserve">
+    <value>Conectati-va pentru a evalua acest joc</value>
+  </data>
+  <data name="DeleteRating" xml:space="preserve">
+    <value>Sterge rating</value>
+  </data>
+  <data name="AverageRating" xml:space="preserve">
+    <value>Rating mediu</value>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Acest joc nu are evaluari</value>
+  </data>
+  <data name="HideRatings" xml:space="preserve">
+    <value>Ascunde evaluari</value>
+  </data>
+  <data name="ShowRatings" xml:space="preserve">
+    <value>Arata evaluari</value>
+  </data>
+  <data name="Distribution" xml:space="preserve">
+    <value>Distributie jocuri dupa gen</value>
+  </data>
+  <data name="GamesByPrice" xml:space="preserve">
+    <value>Jocuri dupa pret</value>
+  </data>
+  <data name="ReleasesByYear" xml:space="preserve">
+    <value>Jocuri lansate dupa an</value>
+  </data>
+  <data name="GenresDistribution" xml:space="preserve">
+    <value>Distributie gen</value>
+  </data>
+  <data name="Price Ranges" xml:space="preserve">
+    <value>Intervale de preturi</value>
+  </data>
+  <data name="Releases by Year" xml:space="preserve">
+    <value>Lansari dupa an</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nume</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anulare</value>
+  </data>
+  <data name="showConfirm" xml:space="preserve">
+    <value>Esti sigur ca vrei sa anulezi?</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Inchide</value>
+  </data>
+  <data name="My Cart" xml:space="preserve">
+    <value>Cosul meu </value>
+  </data>
+  <data name="Cart empty" xml:space="preserve">
+    <value>Cos gol</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Joc</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Cantitate</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Admin Page" xml:space="preserve">
+    <value>Pagina admin</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nume utilizator</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actiuni</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Actualizeaza</value>
+  </data>
 </root>

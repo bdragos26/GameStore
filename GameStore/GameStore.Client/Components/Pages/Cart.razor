@@ -1,26 +1,27 @@
 ﻿@page "/cart"
 @inject ICartClient CartClient
+@inject IStringLocalizer<SharedResources> L
 @implements IDisposable
 
-<h3>My Cart</h3>
+<h3>@L["My Cart"]</h3>
 
 @if (cartProducts == null)
 {
-    <p>Loading Cart...</p>
+    <p>@L["Loading"]</p>
 }
 else if (cartProducts.Count == 0)
 {
-    <p>Cart empty.</p>
+    <p>@L["Cart empty"].</p>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>Game</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
+                <th>@L["Game"]</th>
+                <th>@L["Price"]</th>
+                <th>@L["Quantity"]</th>
+                <th>@L["Total"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -37,14 +38,14 @@ else
                     </td>
                     <td>$@(item.Price * item.Quantity)</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" @onclick="() => RemoveFromCart(item.GameId)">Delete</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => RemoveFromCart(item.GameId)">@L["Delete"]</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <h5>Total: $@cartProducts.Sum(x => x.Price * x.Quantity)</h5>
+    <h5>@L["Total"]: $@cartProducts.Sum(x => x.Price * x.Quantity)</h5>
 }
 
 @code {

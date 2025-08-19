@@ -1,17 +1,18 @@
 ﻿@page "/"
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Welcome to GameStore</PageTitle>
+<PageTitle>@L["Welcome"]</PageTitle>
 
 <div class="hero-section">
 	<div class="hero-background"></div>
 	<div class="hero-content">
 		<div class="container">
-			<h1 class="hero-title">Welcome to GameStore!</h1>
-			<p class="hero-subtitle">Discover and manage your favorite games with ease</p>
+			<h1 class="hero-title">@L["WelcomeTitle"]</h1>
+			<p class="hero-subtitle">@L["Subtitle"]</p>
 			<button class="hero-button" @onclick="@(() => NavigationManager.NavigateTo("/gameList"))">
-				<i class="bi bi-controller me-2"></i> Browse All Games
+				<i class="bi bi-controller me-2"></i> @L["BrowseGames"]
 			</button>
 		</div>
 	</div>
@@ -23,9 +24,9 @@
 		<div class="section-header">
 			<h2 class="section-title">
 				<i class="bi bi-trophy-fill trophy-icon"></i>
-				Top Rated Games
+				@L["TopRated"]
 			</h2>
-			<p class="section-subtitle">Discover the highest rated games in our collection</p>
+			<p class="section-subtitle">@L["TopRatedDescription"]</p>
 		</div>
 		<TopGames />
 	</div>
