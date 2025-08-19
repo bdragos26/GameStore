@@ -2,11 +2,12 @@
 @inject NavigationManager NavigationManager
 @inject IUserClient UserClient
 @inject AuthenticationStateProvider AuthProvider
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Register Account</PageTitle>
+<PageTitle>@L["Register Account"]</PageTitle>
 
-<h3 style="margin-top: 30px;">Register new account</h3>
+<h3 style="margin-top: 30px;">@L["Register Account"]</h3>
 
 <div class="row" style="margin-top: 30px;">
 	<div class="col-md-6">
@@ -18,7 +19,7 @@
 				<div class="alert-danger">@errorMessage</div>
 			}
 			<div class="mb-3">
-				<label for="username" class="form-label">Username:</label>
+				<label for="username" class="form-label">@L["Username"]:</label>
 				<InputText id="username" class="form-control" @bind-Value="userRegister.Username" />
 				<ValidationMessage For="@(() => userRegister.Username)" />
 			</div>
@@ -30,45 +31,45 @@
 			</div>
 
 			<div class="mb-3">
-    <label for="password" class="form-label">Password:</label>
-    <div class="input-group">
-        <InputText id="password"
-                   class="form-control"
-                   type="@(showPassword ? "text" : "password")"
-                   @bind-Value="userRegister.Password" />
-        <button type="button"
-                class="btn btn-outline-secondary"
-                @onclick="TogglePassword"
-                title="Show/hide password">
-            <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
-        </button>
-    </div>
-    <ValidationMessage For="@(() => userRegister.Password)" />
-</div>
+				<label for="password" class="form-label">@L["Password"]:</label>
+				<div class="input-group">
+					<InputText id="password"
+					           class="form-control"
+					           type="@(showPassword ? "text" : "password")"
+					           @bind-Value="userRegister.Password" />
+					<button type="button"
+					        class="btn btn-outline-secondary"
+					        @onclick="TogglePassword"
+					        title="Show/hide password">
+					    <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
+					</button>
+				</div>
+				<ValidationMessage For="@(() => userRegister.Password)" />
+			</div>
 
 
 			<div class="row">
 				<div class="col-md-6 mb-3">
-					<label for="firstName" class="form-label">First Name:</label>
+					<label for="firstName" class="form-label">@L["First Name"]:</label>
 					<InputText id="firstName" class="form-control" @bind-Value="userRegister.FirstName" />
 					<ValidationMessage For="@(() => userRegister.FirstName)" />
 				</div>
 
 				<div class="col-md-6 mb-3">
-					<label for="lastName" class="form-label">Last Name:</label>
+					<label for="lastName" class="form-label">@L["Last Name"]:</label>
 					<InputText id="lastName" class="form-control" @bind-Value="userRegister.LastName" />
 					<ValidationMessage For="@(() => userRegister.LastName)" />
 				</div>
 			</div>
 
 			<div class="mb-3">
-				<label for="dateOfBirth" class="form-label">Date of Birth:</label>
+				<label for="dateOfBirth" class="form-label">@L["Date of Birth"]:</label>
 				<InputDate id="dateOfBirth" class="form-control" @bind-Value="userRegister.DateOfBirth" />
 			</div>
 
 			<div class="mb-3 d-flex justify-content-between align-items-center">
-				<button class="btn btn-primary" type="submit">Register</button>
-				<NavLink class="btn btn-link" href="/login">Already have an account? Login</NavLink>
+				<button class="btn btn-primary" type="submit">@L["Register"]</button>
+				<NavLink class="btn btn-link" href="/login">@L["Already have an account? Login"]</NavLink>
 			</div>
 
 		</EditForm>

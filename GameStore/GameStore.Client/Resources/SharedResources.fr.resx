@@ -279,4 +279,94 @@
   <data name="Update" xml:space="preserve">
     <value>Mise à jour</value>
   </data>
+  <data name="No rated games yet" xml:space="preserve">
+    <value>Aucun jeu classé pour le moment</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rang</value>
+  </data>
+  <data name="Ratings Count" xml:space="preserve">
+    <value>Les notes comptent</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Montrer</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Soumettre</value>
+  </data>
+  <data name="Forgot Password?" xml:space="preserve">
+    <value>Mot de passe oublié?</value>
+  </data>
+  <data name="Your Profile" xml:space="preserve">
+    <value>Votre profil</value>
+  </data>
+  <data name="Member since" xml:space="preserve">
+    <value>Membre depuis</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>Prénom</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Nom de famille</value>
+  </data>
+  <data name="Date of Birth" xml:space="preserve">
+    <value>Date de naissance</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>ID de l'utilisateur</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="You didn't rate any game yet" xml:space="preserve">
+    <value>Vous n'avez encore noté aucun jeu</value>
+  </data>
+  <data name="Games you rated" xml:space="preserve">
+    <value>Jeux que vous avez notés</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>épargne...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>Changer le mot de passe</value>
+  </data>
+  <data name="Checking authentication" xml:space="preserve">
+    <value>Vérification de l'authentification...</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Mot de passe oublié</value>
+  </data>
+  <data name="Reset Password" xml:space="preserve">
+    <value>Réinitialiser le mot de passe</value>
+  </data>
+  <data name="Redirecting" xml:space="preserve">
+    <value>Redirection...</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>Mot de passe actuel</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>Nouveau mot de passe</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Traitement...</value>
+  </data>
+  <data name="Send Reset Link" xml:space="preserve">
+    <value>Envoyer le lien de réinitialisation</value>
+  </data>
+  <data name="Register Account" xml:space="preserve">
+    <value>Créer un compte</value>
+  </data>
+  <data name="Already have an account? Login" xml:space="preserve">
+    <value>Vous avez déjà un compte ? Se connecter</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>Confirmer le nouveau mot de passe</value>
+  </data>
 </root>

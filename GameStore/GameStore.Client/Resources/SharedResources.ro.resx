@@ -279,4 +279,94 @@
   <data name="Update" xml:space="preserve">
     <value>Actualizeaza</value>
   </data>
+  <data name="No rated games yet" xml:space="preserve">
+    <value>Inca nu sunt jocuri cu evaluari</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rang</value>
+  </data>
+  <data name="Ratings Count" xml:space="preserve">
+    <value>Numar evaluari</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Afisare</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Parola</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Trimite</value>
+  </data>
+  <data name="Forgot Password?" xml:space="preserve">
+    <value>Ai uitat parola?</value>
+  </data>
+  <data name="Your Profile" xml:space="preserve">
+    <value>Profilul tau</value>
+  </data>
+  <data name="Member since" xml:space="preserve">
+    <value>Membru din</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>Prenume</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Nume</value>
+  </data>
+  <data name="Date of Birth" xml:space="preserve">
+    <value>Data nasterii</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>ID utilizator</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editeaza</value>
+  </data>
+  <data name="You didn't rate any game yet" xml:space="preserve">
+    <value>Nu ai dat rating la niciun joc</value>
+  </data>
+  <data name="Games you rated" xml:space="preserve">
+    <value>Jocuri pe care le-ei evaluat</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Salvare...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvare</value>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>Schimba parola</value>
+  </data>
+  <data name="Checking authentication" xml:space="preserve">
+    <value>Verificare autentificare...</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>ParolaUitata</value>
+  </data>
+  <data name="Reset Password" xml:space="preserve">
+    <value>Schimba parola</value>
+  </data>
+  <data name="Redirecting" xml:space="preserve">
+    <value>Redirecționare...</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>Parola curenta</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>Parola noua</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Procesare...</value>
+  </data>
+  <data name="Send Reset Link" xml:space="preserve">
+    <value>Trimite link resetare</value>
+  </data>
+  <data name="Register Account" xml:space="preserve">
+    <value>Inregistrare cont</value>
+  </data>
+  <data name="Already have an account? Login" xml:space="preserve">
+    <value>Ai deja un cont? Logare</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>Confirma noua parola</value>
+  </data>
 </root>

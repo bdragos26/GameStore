@@ -4,15 +4,16 @@
 @inject IUserClient UserClient
 @inject IGameRatingClient GameRatingClient
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<SharedResources> L
 @rendermode InteractiveWebAssembly
 
-<h3 class="mb-4" style="margin-top: 30px;">Your Profile</h3>
+<h3 class="mb-4" style="margin-top: 30px;">@L["Your Profile"]</h3>
 
 <AuthorizeView>
     <Authorized>
         @if (user == null)
         {
-            <div class="alert alert-info">Loading user...</div>
+            <div class="alert alert-info">@L["Loading"]</div>
         }
         else
         {
@@ -23,36 +24,36 @@
                         <i class="bi bi-person-circle fs-1 text-secondary me-3"></i>
                         <div>
                             <h4 class="mb-0">@user.Username</h4>
-                            <span class="text-muted">Member since @user.CreatedAt.ToString("yyyy-MM-dd")</span>
+							<span class="text-muted">@L["Member since"] @user.CreatedAt.ToString("yyyy-MM-dd")</span>
                         </div>
                     </div>
                     <dl class="row mb-0">
 	                    <dt class="col-sm-4 text-secondary">Email:</dt>
 	                    <dd class="col-sm-8">@user.Email</dd>
-	                    <dt class="col-sm-4 text-secondary">Username:</dt>
+						<dt class="col-sm-4 text-secondary">@L["Username"]:</dt>
 	                    <dd class="col-sm-8">@user.Username</dd>
-	                    <dt class="col-sm-4 text-secondary">First Name:</dt>
+						<dt class="col-sm-4 text-secondary">@L["First Name"]:</dt>
 	                    <dd class="col-sm-8">@user.FirstName</dd>
-	                    <dt class="col-sm-4 text-secondary">Last Name:</dt>
+						<dt class="col-sm-4 text-secondary">@L["Last Name"]:</dt>
 	                    <dd class="col-sm-8">@user.LastName</dd>
-	                    <dt class="col-sm-4 text-secondary">Date of Birth:</dt>
+						<dt class="col-sm-4 text-secondary">@L["Date of Birth"]:</dt>
 	                    <dd class="col-sm-8">@user.DateOfBirth?.ToString("yyyy-MM-dd")</dd>
-	                    <dt class="col-sm-4 text-secondary">User ID:</dt>
+						<dt class="col-sm-4 text-secondary">@L["User ID"]:</dt>
 	                    <dd class="col-sm-8">@user.UserId</dd>
                     </dl>
-                    <button class="btn btn-primary mt-3" @onclick="EnableEdit">Edit</button>
+					<button class="btn btn-primary mt-3" @onclick="EnableEdit">@L["Edit"]</button>
 
                     @if (userRatings == null)
                     {
-	                    <p>Loading user ratings...</p>
+	                    <p>@L["Loading"]</p>
                     }
                     else if(!userRatings.Any())
                     {
-	                    <p>You didn't rate any game yet</p>
+						<p>@L["You didn't rate any game yet"]</p>
                     }
                     else
                     {
-	                    <h4 class="mb-3 mt-4">Games you rated</h4>
+						<h4 class="mb-3 mt-4">@L["Games you rated"]</h4>
 	                    <div class="list-group">
 		                    @foreach (var rating in userRatings)
 		                    {
@@ -87,25 +88,25 @@
 		                <DataAnnotationsValidator />
 
 		                <div class="mb-2">
-			                <label for="username" class="form-label">Username</label>
+			                <label for="username" class="form-label">@L["Username"]</label>
 			                <InputText id="username" class="form-control" @bind-Value="editUser.Username" />
 			                <ValidationMessage For="@(() => editUser.Username)" />
 		                </div>
 
 		                <div class="mb-2">
-			                <label for="firstName" class="form-label">First Name</label>
+							<label for="firstName" class="form-label">@L["First Name"]</label>
                             <InputText id="firstName" class="form-control" @bind-Value="editUser.FirstName" />
 			                <ValidationMessage For="@(() => editUser.FirstName)" />
 		                </div>
 
 		                <div class="mb-2">
-                            <label for="lastName" class="form-label">Last Name</label>
+							<label for="lastName" class="form-label">@L["Last Name"]</label>
                             <InputText id="lastName" class="form-control" @bind-Value="editUser.LastName" />
 			                <ValidationMessage For="@(() => editUser.LastName)" />
 		                </div>
 
 		                <div class="mb-2">
-			                <label for="dateOfBirth" class="form-label">Date of Birth</label>
+							<label for="dateOfBirth" class="form-label">@L["Date of Birth"]</label>
 			                <InputDate id="dateOfBirth" class="form-control" @bind-Value="editUser.DateOfBirth" />
 		                </div>
 
@@ -116,24 +117,24 @@
 		                </div>
 
 		                <div class="d-flex gap-2 mt-3">
-			                <button class="btn btn-success btn-sm" type="submit" disabled="@isSaving">
+			                <button class="btn btn-success btn-sm" type="@L["Submit"]" disabled="@isSaving">
 				                @if (isSaving)
 				                {
 					                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-					                <span>Saving...</span>
+					                <span>@L["Saving"]</span>
 				                }
 				                else
 				                {
-					                <span>Save</span>
+					                <span>@L["Save"]</span>
 				                }
 			                </button>
 			                <button class="btn btn-secondary btn-sm" @onclick="CancelEdit" type="button" disabled="@isSaving">
-				                Cancel
+								@L["Cancel"]
 			                </button>
 		                </div>
 	                </EditForm>
 	                <br/>
-                    <NavLink href="/ChangePassword" class="btn btn-warning">Change password</NavLink>
+					<NavLink href="/ChangePassword" class="btn btn-warning">@L["Change password"]</NavLink>
                 }
             </div>
         }
@@ -141,7 +142,7 @@
     <Authorizing>
         <div class="d-flex align-items-center">
             <div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
-            <span>Checking authentication...</span>
+			<span>@L["Checking authentication"]</span>
         </div>
     </Authorizing>
 </AuthorizeView>

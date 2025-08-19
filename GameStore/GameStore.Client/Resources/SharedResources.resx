@@ -279,4 +279,94 @@
   <data name="Update" xml:space="preserve">
     <value>Update</value>
   </data>
+  <data name="No rated games yet" xml:space="preserve">
+    <value>No rated games yet</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+  <data name="Ratings Count" xml:space="preserve">
+    <value>Ratings Count</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Forgot Password?" xml:space="preserve">
+    <value>Forgot Password?</value>
+  </data>
+  <data name="Your Profile" xml:space="preserve">
+    <value>Your Profile</value>
+  </data>
+  <data name="Member since" xml:space="preserve">
+    <value>Member since</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="Date of Birth" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
+  <data name="User ID" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="You didn't rate any game yet" xml:space="preserve">
+    <value>You didn't rate any game yet</value>
+  </data>
+  <data name="Games you rated" xml:space="preserve">
+    <value>Games you rated</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="Checking authentication" xml:space="preserve">
+    <value>Checking authentication...</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>ForgotPassword</value>
+  </data>
+  <data name="Reset Password" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="Redirecting" xml:space="preserve">
+    <value>Redirecting...</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="Send Reset Link" xml:space="preserve">
+    <value>Send Reset Link</value>
+  </data>
+  <data name="Register Account" xml:space="preserve">
+    <value>Register Account</value>
+  </data>
+  <data name="Already have an account? Login" xml:space="preserve">
+    <value>Already have an account? Login</value>
+  </data>
+  <data name="Confirm New Password" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
 </root>

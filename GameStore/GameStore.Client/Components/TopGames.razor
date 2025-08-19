@@ -1,14 +1,15 @@
 ﻿@inject NavigationManager NavigationManager
 @inject IGameRatingClient GameRatingClient
+@inject IStringLocalizer<SharedResources> L
 
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0"><i class="bi bi-trophy me-2"></i>Top Rated Games</h3>
+                    <h3 class="mb-0"><i class="bi bi-trophy me-2"></i>@L["TopRated"]</h3>
                     <div class="d-flex align-items-center">
-                        <span class="me-2">Show:</span>
+                        <span class="me-2">@L["Show"]:</span>
                         <select class="form-select form-select-sm w-auto" @onchange="OnTopCountChanged" value="@topCount">
                             <option value="5">Top 5</option>
                             <option value="10">Top 10</option>
@@ -21,13 +22,13 @@
                     {
                         <div class="text-center">
                             <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                                <span class="visually-hidden">@L["Loading"]</span>
                             </div>
                         </div>
                     }
                     else if (!topGames.Any())
                     {
-                        <p class="text-muted">No rated games yet.</p>
+                        <p class="text-muted">@L["No rated games yet"].</p>
                     }
                     else
                     {
@@ -35,10 +36,10 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Rank</th>
-                                        <th>Game</th>
-                                        <th>Average Rating</th>
-                                        <th>Ratings Count</th>
+                                        <th>@L["Rank"]</th>
+                                        <th>@L["Game"]</th>
+                                        <th>@L["AverageRating"]</th>
+                                        <th>@L["Ratings Count"]</th>
                                     </tr>
                                 </thead>
                                 <tbody>
