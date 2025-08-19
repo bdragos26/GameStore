@@ -1,4 +1,7 @@
-﻿<CascadingAuthenticationState>
+﻿@using GameStore.Client.Services
+@inject LanguageService LanguageService
+
+<CascadingAuthenticationState>
 	<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
@@ -13,3 +16,11 @@
 		</Found>
 	</Router>
 </CascadingAuthenticationState>
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		var lang = await LanguageService.GetCurrentCultureAsync();
+		await LanguageService.SetLanguageAsync(lang);
+	}
+}

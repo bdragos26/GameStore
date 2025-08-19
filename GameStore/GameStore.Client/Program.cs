@@ -1,11 +1,13 @@
 using Blazored.LocalStorage;
 using GameStore.Client;
 using GameStore.Client.Components;
+using GameStore.Client.Services;
 using GameStore.Client.Services.ApiClients;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -31,6 +33,16 @@ builder.Services.AddAuthenticationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<LanguageService>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+// Set culture from local storage before running app
+var localStorage = host.Services.GetRequiredService<ILocalStorageService>();
+var lang = await localStorage.GetItemAsync<string>("selectedLanguage") ?? "en";
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(lang);
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(lang);
+
+await host.RunAsync();

@@ -1,5 +1,10 @@
 ﻿@inject ICartClient CartClient
+@using GameStore.Client.Services
+@using Microsoft.Extensions.Localization
 @implements IDisposable
+@inject LanguageService LanguageService
+@inject IStringLocalizer<SharedResources> L
+@inject NavigationManager NavigationManager
 @* @rendermode InteractiveWebAssembly *@
 
 <nav class="navbar sticky-top shadow-sm" style="background-color: #e3f2fd;" data-bs-theme="light">
@@ -7,22 +12,28 @@
 
 		<div class="d-flex align-items-center">
 			<NavLink href="/" Match="NavLinkMatch.All" class="nav-link custom-nav">
-				<i class="bi bi-house-door me-2"></i> Game Store
+				<i class="bi bi-house-door me-2"></i> @L["Home"]
 			</NavLink>
 		</div>
 
 		<div class="d-flex align-items-center gap-4 position-absolute start-50 translate-middle-x">
 			<NavLink href="/gameList" Match="NavLinkMatch.All" class="nav-link custom-nav">
-				<i class="bi bi-list-ul me-2"></i> Game Catalog
+				<i class="bi bi-list-ul me-2"></i> @L["GameCatalog"]
 			</NavLink>
 			<AuthorizeView Roles="Admin">
 				<NavLink href="/gameStats" Match="NavLinkMatch.Prefix" class="nav-link custom-nav">
-					<i class="bi bi-bar-chart me-2"></i> Game Stats
+					<i class="bi bi-bar-chart me-2"></i> @L["GameStats"]
 				</NavLink>
 			</AuthorizeView>
 		</div>
 		
 		<div class="d-flex align-items-center">
+			<select class="form-select form-select-sm me-3" style="width: 90px;" @bind="selectedLanguage" @bind:after="async () => await ChangeLanguage()">
+				<option value="en">EN</option>
+				<option value="ro">RO</option>
+				<option value="fr">FR</option>
+			</select>
+
 			<div class="nav-cart position-relative me-3">
 				<NavLink href="/cart" class="nav-link p-0">
 					<button class="btn btn-link p-0 position-relative">
@@ -119,11 +130,13 @@
 @code
 {
 	private int CartItemCount { get; set; }
+	private string selectedLanguage = "en";
 
 	protected override async Task OnInitializedAsync()
 	{
 		await LoadCartCount();
 		CartClient.OnChange += OnCartChanged;
+		selectedLanguage = await LanguageService.GetCurrentCultureAsync();
 	}
 
 	private async Task LoadCartCount()
@@ -136,6 +149,12 @@
 	private async void OnCartChanged()
 	{
 		await LoadCartCount();
+	}
+
+	private async Task ChangeLanguage()
+	{
+		await LanguageService.SetLanguageAsync(selectedLanguage);
+		NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
 	}
 
 	public void Dispose()
