@@ -13,6 +13,11 @@
 			<NavLink href="/" Match="NavLinkMatch.All" class="nav-link custom-nav">
 				<i class="bi bi-house-door me-2"></i> @L["Home"]
 			</NavLink>
+			<select class="form-select form-select-sm me-3" style="width: 90px; margin-left: 10px;" @bind="selectedLanguage" @bind:after="async () => await ChangeLanguage()">
+				<option value="en">EN</option>
+				<option value="ro">RO</option>
+				<option value="fr">FR</option>
+			</select>
 		</div>
 
 		<div class="d-flex align-items-center gap-4 position-absolute start-50 translate-middle-x">
@@ -27,12 +32,6 @@
 		</div>
 		
 		<div class="d-flex align-items-center">
-			<select class="form-select form-select-sm me-3" style="width: 90px;" @bind="selectedLanguage" @bind:after="async () => await ChangeLanguage()">
-				<option value="en">EN</option>
-				<option value="ro">RO</option>
-				<option value="fr">FR</option>
-			</select>
-
 			<div class="nav-cart position-relative me-3">
 				<NavLink href="/cart" class="nav-link p-0">
 					<button class="btn btn-link p-0 position-relative">
