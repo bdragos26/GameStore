@@ -369,4 +369,7 @@
   <data name="Confirm New Password" xml:space="preserve">
     <value>Confirmer le nouveau mot de passe</value>
   </data>
+  <data name="Image" xml:space="preserve">
+    <value>Imagine</value>
+  </data>
 </root>

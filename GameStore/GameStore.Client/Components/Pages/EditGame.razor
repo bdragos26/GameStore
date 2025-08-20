@@ -49,6 +49,14 @@ else
 				<label for="releaseDate" class="form-label">@L["Release"]: </label>
 				<InputDate id="releaseDate" class="form-control" @bind-Value="game.ReleaseDate"/>
 			</div>
+			<div class="mb-3">
+				<label for="imageUpload" class="form-label">@L["Image"]: </label>
+				<InputFile id="imageUpload" OnChange="OnImageUpload" />
+				@if (game.ImageData != null)
+				{
+					<img src="@($"data:image/jpeg;base64,{Convert.ToBase64String(game.ImageData)}")" style="max-width: 200px; max-height: 200px; margin-top: 10px;" />
+				}
+			</div>
 
 				<button class="btn btn-primary" type="submit">@L["Submit"]</button>
 				<button class="btn btn-secondary" @onclick="CancelAsync">@L["Cancel"]</button>
@@ -83,7 +91,7 @@ else
 			{
 				Name = string.Empty,
 				ReleaseDate = DateOnly.FromDateTime(DateTime.Now),
-				ImageUrl = string.Empty
+				ImageData = null
 			};
 			title = L["NewGame"];
 		}
@@ -118,6 +126,18 @@ else
 		if (leave)
 		{
 			NavigationManager.NavigateTo("/");
+		}
+	}
+
+	private async Task OnImageUpload(InputFileChangeEventArgs e)
+	{
+		var file = e.File;
+		if (file != null)
+		{
+			using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+			using var ms = new MemoryStream();
+			await stream.CopyToAsync(ms);
+			game.ImageData = ms.ToArray();
 		}
 	}
 }

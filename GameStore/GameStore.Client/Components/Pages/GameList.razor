@@ -76,7 +76,7 @@ else
             <div class="col">
                 <div class="card h-100 position-relative" style="cursor: pointer;">
                     <div @onclick="@(() => GoToDetails(game.GameId))">
-                        <img src="@game.ImageUrl" class="card-img-top" alt="@game.Name" style="height: 200px; object-fit: cover;" />
+                        <img src="@(game.ImageData != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(game.ImageData)}" : "https://via.placeholder.com/200x200?text=No+Image")" class="card-img-top" alt="@game.Name" style="height: 200px; object-fit: cover;" />
                         <div class="card-body">
                             <h5 class="card-title">@game.Name</h5>
                             <p class="card-text">

@@ -58,7 +58,7 @@ namespace GameStore.Tests.ServiceTests
                 Name = "Test Game",
                 Price = 10,
                 GenreId = 1,
-                ImageUrl = "test.jpg"
+                ImageData = new byte[] { 1, 2, 3 }
             });
 
             await context.SaveChangesAsync();

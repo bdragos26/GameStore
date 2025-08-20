@@ -59,6 +59,10 @@ namespace GameStore.Data
             modelBuilder.Entity<PasswordResetToken>()
                 .HasIndex(t => t.Token)
                 .IsUnique();
+
+            modelBuilder.Entity<Game>()
+                .Property(g => g.ImageData)
+                .HasColumnType("varbinary(max)");
         }
     }
 }
