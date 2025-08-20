@@ -24,7 +24,7 @@ namespace GameStore.E2ETests
             registerNavLink.Click();
             Thread.Sleep(2000);
 
-            var title = _driver.FindElement(By.XPath("//h3[text()='Register new account']"));
+            var title = _driver.FindElement(By.XPath("//h3[text()='Register Account']"));
             Assert.NotNull(title);
 
             var usernameInput = _driver.FindElement(By.XPath("//input[@id='username']"));

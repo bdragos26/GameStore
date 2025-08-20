@@ -23,7 +23,7 @@ namespace GameStore.E2ETests
             _driver.Navigate().GoToUrl("https://localhost:7194");
             Thread.Sleep(2000);
 
-            var catalogNavLink = _driver.FindElement(By.XPath("//a[contains(text(), 'Game Catalog')]"));
+            var catalogNavLink = _driver.FindElement(By.XPath("//a[@href='/gameList']"));
             catalogNavLink.Click();
             Thread.Sleep(1000);
 
@@ -31,12 +31,12 @@ namespace GameStore.E2ETests
             firstGameCard.Click();
             Thread.Sleep(1000);
 
-            var addToCartButton = _driver.FindElement(By.XPath("//button[contains(text(), 'Add to Cart')]"));
+            var addToCartButton = _driver.FindElement(By.CssSelector("button.btn-success"));
             addToCartButton.Click();
             Thread.Sleep(1000);
 
-            var confirmation = _driver.FindElement(By.XPath("//*[contains(text(), 'Added to cart!')]"));
-            Assert.NotNull(confirmation);
+            var confirmation = _driver.FindElement(By.CssSelector("span.text-success"));
+            Assert.True(confirmation.Displayed);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace GameStore.E2ETests
             _driver.Navigate().GoToUrl("https://localhost:7194");
             Thread.Sleep(2000);
 
-            var catalogNavLink = _driver.FindElement(By.XPath("//a[contains(text(), 'Game Catalog')]"));
+            var catalogNavLink = _driver.FindElement(By.XPath("//a[@href='/gameList']"));
             catalogNavLink.Click();
             Thread.Sleep(1000);
 
@@ -53,12 +53,12 @@ namespace GameStore.E2ETests
             firstGameCard.Click();
             Thread.Sleep(1000);
 
-            var addToCartButton = _driver.FindElement(By.XPath("//button[contains(text(), 'Add to Cart')]"));
+            var addToCartButton = _driver.FindElement(By.CssSelector("button.btn-success"));
             addToCartButton.Click();
             Thread.Sleep(1000);
 
-            var confirmation = _driver.FindElement(By.XPath("//*[contains(text(), 'Added to cart!')]"));
-            Assert.NotNull(confirmation);
+            var confirmation = _driver.FindElement(By.CssSelector("span.text-success"));
+            Assert.True(confirmation.Displayed);
             Thread.Sleep(1000);
 
             var cartIcon = _driver.FindElement(By.XPath("//a[@href='/cart']"));
@@ -86,7 +86,7 @@ namespace GameStore.E2ETests
             deleteButton.Click();
             Thread.Sleep(1000);
 
-            var emptyCartMessage = _driver.FindElement(By.XPath("//p[contains(text(), 'Cart empty.')]"));
+            var emptyCartMessage = _driver.FindElement(By.XPath("//p[contains(text(), 'Cart empty')]"));
             Assert.NotNull(emptyCartMessage);
         }
 
