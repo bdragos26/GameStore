@@ -7,6 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="EndpointTests\**" />
+	  <Content Remove="EndpointTests\**" />
+	  <EmbeddedResource Remove="EndpointTests\**" />
+	  <None Remove="EndpointTests\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Using Include="Bunit" />
 		<Using Include="Bunit.TestDoubles" />
 		<Using Include="Microsoft.Extensions.DependencyInjection" />
@@ -39,10 +46,6 @@
 	  <ProjectReference Include="..\GameStore.Shared\GameStore.Shared.csproj" />
 	  <ProjectReference Include="..\GameStore\GameStore.Client\GameStore.Client.csproj" />
 	  <ProjectReference Include="..\GameStore\GameStore\GameStore.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="EndpointTests\" />
 	</ItemGroup>
 
 

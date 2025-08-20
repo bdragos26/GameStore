@@ -13,11 +13,16 @@
 			<NavLink href="/" Match="NavLinkMatch.All" class="nav-link custom-nav">
 				<i class="bi bi-house-door me-2"></i> @L["Home"]
 			</NavLink>
-			<select class="form-select form-select-sm me-3" style="width: 90px; margin-left: 10px;" @bind="selectedLanguage" @bind:after="async () => await ChangeLanguage()">
-				<option value="en">EN</option>
-				<option value="ro">RO</option>
-				<option value="fr">FR</option>
-			</select>
+			<div class="d-flex align-items-center language-selector">
+				<span class="language-icon me-1" title="Change language">
+					<i class="bi bi-globe2"></i>
+				</span>
+				<select class="form-select form-select-sm custom-language-select" @bind="selectedLanguage" @bind:after="async () => await ChangeLanguage()">
+					<option value="en"> EN</option>
+					<option value="ro"> RO</option>
+					<option value="fr"> FR</option>
+				</select>
+			</div>
 		</div>
 
 		<div class="d-flex align-items-center gap-4 position-absolute start-50 translate-middle-x">
@@ -123,6 +128,51 @@
 	.active:focus {
 			background-color: lightblue;
 	}
+
+	.language-selector {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 2px 10px 2px 8px;
+    margin-left: 10px;
+    transition: box-shadow 0.2s;
+}
+
+.language-selector:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+
+.language-icon {
+    font-size: 1.2rem;
+    color: #1b6ec2;
+    transition: color 0.2s;
+}
+
+.custom-language-select {
+    border: none;
+    background: transparent;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #1b6ec2;
+    padding: 2px 0 2px 4px;
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+    min-width: 70px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.custom-language-select:focus {
+    background: #e3f2fd;
+    color: #1861ac;
+}
+
+.custom-language-select option {
+    color: #1b6ec2;
+    font-weight: 500;
+}
 </style>
 
 @code
