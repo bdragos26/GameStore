@@ -62,7 +62,7 @@ namespace GameStore.Data
 
             modelBuilder.Entity<Game>()
                 .Property(g => g.ImageData)
-                .HasColumnType("varbinary(max)");
+                .HasColumnType("bytea");
         }
     }
 }

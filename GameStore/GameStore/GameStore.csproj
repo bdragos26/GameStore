@@ -32,6 +32,7 @@
     </PackageReference>
     <PackageReference Include="MimeKit" Version="4.13.0" />
     <PackageReference Include="MudBlazor" Version="8.10.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="ProtectedBrowserStorage.NETStandard" Version="1.1.2" />
   </ItemGroup>
 
